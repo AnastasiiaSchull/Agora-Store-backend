@@ -17,7 +17,7 @@ namespace Agora.Controllers
         }
 
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadAudio([FromForm] IFormFile audio)
+        public async Task<IActionResult> UploadAudio([FromForm] IFormFile audio, [FromForm] string locale)
         {
             if (audio == null || audio.Length == 0)
                 return BadRequest("No audio uploaded");
@@ -33,7 +33,17 @@ namespace Agora.Controllers
             string speechRegion = _config["AZURE_SPEECH_REGION"]!;
 
             var config = SpeechConfig.FromSubscription(speechKey, speechRegion);
-            config.SpeechRecognitionLanguage = "en-US";
+            // config.SpeechRecognitionLanguage = "en-US";
+            config.SpeechRecognitionLanguage = locale switch
+            {
+                "ua" => "uk-UA",//locale = "uk"  стандартная поддержка
+                "uk" => "uk-UA",
+                "ru" => "ru-RU",
+                "en" => "en-US",
+                "de" => "de-DE",
+                "fr" => "fr-FR",
+                _ => "en-US" // fallback на английский
+            };
 
             // pаспознавание
             string recognizedText = "";
@@ -54,7 +64,11 @@ namespace Agora.Controllers
             System.IO.File.Delete(tempPath);
 
             // переводим текст, если надо
-            var translated = await TranslateText(recognizedText);
+            // var translated = await TranslateText(recognizedText);
+
+            // переводим, если язык не английский
+            string translated = locale == "en" ? recognizedText : await TranslateText(recognizedText, locale);
+
 
             return Ok(new
             {
@@ -63,13 +77,24 @@ namespace Agora.Controllers
             });
         }
 
-        private async Task<string> TranslateText(string input)
+        private async Task<string> TranslateText(string input, string fromLocale)
         {
             string key = _config["AZURE_TRANSLATOR_KEY"]!;
             string endpoint = _config["AZURE_TRANSLATOR_ENDPOINT"]!;
             string region = _config["AZURE_SPEECH_REGION"]!;
 
-            string route = "/translate?api-version=3.0&from=en&to=en";
+            string fromLang = fromLocale switch
+            {
+                "ua" => "uk",//locale = "uk"  стандартная поддержка
+                "uk" => "uk",
+                "ru" => "ru",
+                "de" => "de",
+                "fr" => "fr",
+                _ => "en"
+            };
+
+            //string route = "/translate?api-version=3.0&from=en&to=en";
+            string route = $"/translate?api-version=3.0&from={fromLang}&to=en";
 
             object[] body = new object[] { new { Text = input } };
             var bodyJson = JsonConvert.SerializeObject(body);
