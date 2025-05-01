@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Agora.BLL.DTO;
 
 
+
 namespace Agora.BLL.Interfaces
 {
     public interface IOrderItemService
@@ -13,6 +14,7 @@ namespace Agora.BLL.Interfaces
         Task<IQueryable<OrderItemDTO>> GetAll();
         Task<List<OrderItemDTO>> GetNewOrders(int storeId);
         Task<List<OrderItemDTO>> GetAllByStore(int storeId);
+        Task<List<OrderItemDTO>> GetFiltredOrders(int storeId, string field, string value);
         Task<OrderItemDTO> Get(int id);
         Task Create(OrderItemDTO orderItemDTO);
         Task Update(OrderItemDTO orderItemDTO);

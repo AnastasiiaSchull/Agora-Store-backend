@@ -31,9 +31,18 @@ namespace Agora.Controllers
         [HttpGet("get-orders-by-store/{storeId}")]
         public async Task<IActionResult> GetOrdersByStore(int storeId)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("inside controller");
+            
             IEnumerable<OrderItemDTO> orders = await _orderItemService.GetAllByStore(storeId);
+            if (orders == null)
+                return new JsonResult(new { message = "Server error!" }) { StatusCode = 500 };
+            return Ok(orders);
+        }
+
+        [HttpGet("get-filtered-orders-by-store/id={storeId}&filterField={field}&filterValue={value}")]
+        public async Task<IActionResult> GetFiltredOrders(int storeId, string field, string value)
+        {
+           
+            IEnumerable<OrderItemDTO> orders = await _orderItemService.GetFiltredOrders(storeId, field, value);
             if (orders == null)
                 return new JsonResult(new { message = "Server error!" }) { StatusCode = 500 };
             return Ok(orders);

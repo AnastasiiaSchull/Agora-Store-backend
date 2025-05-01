@@ -8,8 +8,9 @@ using Agora.BLL.Infrastructure;
 using Agora.BLL.Interfaces;
 using Agora.DAL.Entities;
 using Agora.DAL.Interfaces;
+using Agora.Enums;
 using AutoMapper;
-
+using Microsoft.EntityFrameworkCore;
 namespace Agora.BLL.Services
 {
     public class OrderItemService : IOrderItemService
@@ -39,6 +40,13 @@ namespace Agora.BLL.Services
             var orderItem = await Database.OrderItems.GetAllByStore(storeId);
             return _mapper.Map<List<OrderItemDTO>>(orderItem.ToList());
 
+        }
+        public async Task<List<OrderItemDTO>> GetFiltredOrders(int storeId, string field, string value)
+        {
+          
+            var orderItem = await Database.OrderItems.GetFiltredOrders(storeId, field, value);
+            return _mapper.Map<List<OrderItemDTO>>(orderItem.ToList());
+           
         }
         public async Task<OrderItemDTO> Get(int id)
         {
