@@ -215,7 +215,7 @@ namespace Agora.DAL.Repository
                 return productRepository;
             }
         }
-        public IRepository<ProductReview> ProductReviews
+        public IProductReviewRepository ProductReviews
         {
             get
             {

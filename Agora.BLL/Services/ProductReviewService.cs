@@ -44,6 +44,19 @@ namespace Agora.BLL.Services
             return _mapper.Map<IEnumerable<ProductReviewDTO>>(productReviews);
         }
 
+        public async Task<IEnumerable<ProductReviewDTO>> GetFilteredReviewsByStoreId(int storeId, string field, string value)
+        {
+            var query = await Database.ProductReviews.GetFilteredReviews(storeId, field, value);
+
+            var filteredReviews = await query
+                .Include(r => r.Customer)
+                    .ThenInclude(c => c.User)
+                .Include(r => r.Product)  
+                .ToListAsync();
+
+            return _mapper.Map<IEnumerable<ProductReviewDTO>>(filteredReviews);
+        }
+
 
         public async Task<ProductReviewDTO> Get(int id)
         {
