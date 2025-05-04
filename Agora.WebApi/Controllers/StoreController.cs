@@ -47,6 +47,8 @@ namespace Agora.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            store.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
+
             await _storeService.Create(store);
             return Ok("Store created");
         }
