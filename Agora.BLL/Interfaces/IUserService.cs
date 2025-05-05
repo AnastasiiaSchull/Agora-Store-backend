@@ -28,5 +28,6 @@ namespace Agora.BLL.Interfaces
         Task<string> GetGeneratePasswordResetTokenAsync(ApplicationUser user);
         Task<string> CreatePasswordResetTokenAsync(string email);
         Task<bool> ValidateResetTokenAsync(string token);
+        Task<UserDTO> GetById(int id);
     }
 }

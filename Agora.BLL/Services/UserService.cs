@@ -142,6 +142,24 @@ namespace Agora.BLL.Services
             return userDTO;
         }
 
+        public async Task<UserDTO> GetById(int id)
+        {
+            var user = await Database.Users.Get(id);
+            if (user == null)
+                return null;
+
+            return new UserDTO
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Surname = user.Surname,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Password = user.Password,
+                GoogleId = user.GoogleId
+            };
+        }
+
         public async Task<RoleDTO> GetRoleByUserId(int id)
         {
             var customer = await Database.Customers.GetByUserId(id);
