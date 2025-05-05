@@ -1,4 +1,5 @@
-﻿using Agora.BLL.Interfaces;
+﻿using Agora.BLL.DTO;
+using Agora.BLL.Interfaces;
 using Agora.DAL.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -8,7 +9,7 @@ using System.Text.Json;
 
 namespace Agora.BLL.Services
 {
-    public class StatisticsCacheService : IHostedService, IDisposable
+    public class StatisticsCacheService : IHostedService, IDisposable, IStatisticsInitializer
     {
         private Timer _timer;
         private readonly IServiceScopeFactory _scopeFactory;
@@ -163,6 +164,26 @@ namespace Agora.BLL.Services
         {
             var daysInMonth = DateTime.DaysInMonth(date.Year, date.Month);
             return TimeSpan.FromDays(daysInMonth);
+        }
+
+        public async Task InitializeEmptyStatsForStore(int storeId)
+        {
+            var db = _redis.GetDatabase();
+
+            await db.StringSetAsync($"weekly_stats:{storeId}", "[]");
+            await db.StringSetAsync($"top_products:{storeId}", "[]");
+            await db.StringSetAsync($"store_total_stats:{storeId}", JsonSerializer.Serialize(new StoreTotalStatisticsDTO()));
+
+            var twoMonthsAgo = DateTime.Now.AddMonths(-2);
+            var oneMonthAgo = DateTime.Now.AddMonths(-1);
+
+            var lastMonthKey = $"monthly_revenue:{twoMonthsAgo.Year}-{twoMonthsAgo.Month:D2}:{storeId}";
+            var thisMonthKey = $"monthly_revenue:{oneMonthAgo.Year}-{oneMonthAgo.Month:D2}:{storeId}";
+
+            var emptyListJson = JsonSerializer.Serialize(new List<DailyRevenueDTO>());
+
+            await db.StringSetAsync(lastMonthKey, emptyListJson);
+            await db.StringSetAsync(thisMonthKey, emptyListJson);
         }
         
         public Task StopAsync(CancellationToken cancellationToken)
