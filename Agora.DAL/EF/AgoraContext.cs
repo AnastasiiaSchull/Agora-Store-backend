@@ -64,5 +64,19 @@ namespace Agora.DAL.EF
                 return new AgoraContext(optionsBuilder.Options);
             }
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder); 
+
+            // каскадное удаление вопросов FAQ при удалении категории
+            modelBuilder.Entity<FAQ>()
+                .HasOne(f => f.FAQCategory)
+                .WithMany(c => c.FAQs)
+                .HasForeignKey(f => f.FAQCategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+        }
+
     }
 }
