@@ -9,10 +9,11 @@ namespace Agora.Controllers
     public class StoreController : ControllerBase
     {
         private readonly IStoreService _storeService;
-
-        public StoreController(IStoreService storeService)
+        private readonly IStatisticsInitializer _statisticsInitializer;
+        public StoreController(IStoreService storeService, IStatisticsInitializer statisticsInitializer)
         {
             _storeService = storeService;
+            _statisticsInitializer = statisticsInitializer;
         }
 
         [HttpGet("{sellerId}/stores")]
@@ -49,8 +50,13 @@ namespace Agora.Controllers
 
             store.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
 
-            await _storeService.Create(store);
-            return Ok("Store created");
+            var newStoreId = await _storeService.Create(store);
+
+            Console.WriteLine($"Store ID: {newStoreId}");
+
+            await _statisticsInitializer.InitializeEmptyStatsForStore(newStoreId);
+
+            return Ok(new { storeId = newStoreId });
         }
 
         // PUT: api/stores/{id}
