@@ -112,17 +112,19 @@ namespace Agora.DAL.Repository
             return Task.FromResult(query.Cast<object>());
         }
 
-        // top 10 products for the month
+        // top 10 products for the week
         public Task<IQueryable<object>> GetTop10BestProducts(int storeId)
         {
-            var today = DateTime.Today;
-            var monthAgoDate = today.AddMonths(-1); 
-            var monthAgo = DateOnly.FromDateTime(monthAgoDate);
+            //var today = DateTime.Today;
+            //var monthAgoDate = today.AddMonths(-1); 
+            //var monthAgo = DateOnly.FromDateTime(monthAgoDate);
+            var dateNow = DateOnly.FromDateTime(DateTime.Now);
+            var weekAgo = dateNow.AddDays(-7);
 
             var query = db.OrderItems
                 .Where(o => o.Product.Store.Id == storeId)
                 .Where(o => o.Status == Enums.OrderStatus.Completed)
-                .Where(o => o.Date >= monthAgo)
+                .Where(o => o.Date >= weekAgo)
                 .Select(o => new
                 {
                     o.Date,
