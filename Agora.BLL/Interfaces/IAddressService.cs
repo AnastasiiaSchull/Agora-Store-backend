@@ -13,6 +13,7 @@ namespace Agora.BLL.Interfaces
         Task<AddressDTO> Get(int id);
         Task Create(AddressDTO addressDTO);
         Task Update(AddressDTO addressDTO);
+        Task UpdateSellerAddressAsync(UpdateSellerAddressDTO dto);
         Task Delete(int id);
     }
 }

@@ -474,5 +474,19 @@ namespace Agora.Controllers
                 return NotFound(new { message = ex.Message });
             }
         }
+
+        [HttpPut("update-seller-address")]
+        public async Task<IActionResult> UpdateSellerAddress([FromBody] UpdateSellerAddressDTO dto)
+        {
+            try
+            {
+                await _addressService.UpdateSellerAddressAsync(dto);
+                return Ok(new { message = "Address updated successfully" });
+            }
+            catch (ValidationExceptionFromService ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
     }
 }

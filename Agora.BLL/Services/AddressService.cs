@@ -77,6 +77,24 @@ namespace Agora.BLL.Services
             await Database.Save();
         }
 
+        public async Task UpdateSellerAddressAsync(UpdateSellerAddressDTO dto)
+        {
+            var address = await Database.Addresses.Get(dto.AddressId);
+
+            if (address == null)
+                throw new ValidationExceptionFromService("Address not found", "");
+
+            address.Building = dto.Building;
+            address.Appartement = dto.Appartement;
+            address.Street = dto.Street;
+            address.City = dto.City;
+            address.PostalCode = dto.PostalCode;
+            address.CountryId = dto.CountryId;
+
+            Database.Addresses.Update(address);
+            await Database.Save();
+        }
+
         public async Task Delete(int id)
         {
             await Database.Addresses.Delete(id);
