@@ -446,5 +446,19 @@ namespace Agora.Controllers
 
             return Ok(user);
         }
+
+        [HttpPut("update-seller-email")]
+        public async Task<IActionResult> UpdateSellerEmail([FromBody] UpdateSellerEmailDTO dto)
+        {
+            try
+            {
+                await _userService.UpdateSellerEmailAsync(dto.UserId, dto.NewEmail);
+                return Ok(new { message = "Email updated successfully" });
+            }
+            catch (ValidationExceptionFromService ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
     }
 }
