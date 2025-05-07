@@ -460,5 +460,19 @@ namespace Agora.Controllers
                 return NotFound(new { message = ex.Message });
             }
         }
+
+        [HttpPut("update-seller-phone")]
+        public async Task<IActionResult> UpdateSellerPhoneNumber([FromBody] UpdateSellerPhoneNumberDTO dto)
+        {
+            try
+            {
+                await _userService.UpdateSellerPhoneNumberAsync(dto.UserId, dto.NewPhoneNumber);
+                return Ok(new { message = "Phone number updated successfully" });
+            }
+            catch (ValidationExceptionFromService ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
     }
 }

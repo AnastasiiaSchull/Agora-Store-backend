@@ -256,6 +256,19 @@ namespace Agora.BLL.Services
             await Database.Save();
         }
 
+        public async Task UpdateSellerPhoneNumberAsync(int userId, string newPhoneNumber)
+        {
+            var user = await Database.Users.Get(userId);
+
+            if (user == null)
+                throw new ValidationExceptionFromService("User not found", "");
+
+            user.PhoneNumber = newPhoneNumber;
+
+            Database.Users.Update(user);
+            await Database.Save();
+        }
+
         public async Task Delete(int id)
         {
             await Database.Users.Delete(id);
