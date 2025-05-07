@@ -278,7 +278,7 @@ namespace Agora.Controllers
 
                     CreateSessions(user.Id, role.Id, role.Role);
 
-                    return Ok(new { message = "Authenticated"});
+                    return Ok(new { message = "Authenticated", userId = user.Id });
                 }
                 else
                 {
@@ -435,6 +435,58 @@ namespace Agora.Controllers
                 return Ok(new { message = "Password has been reset successfully." });
 
             return BadRequest(new { message = "Invalid token or reset failed." });
+        }
+
+        [HttpPost("getById/{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var user = await _userService.GetById(id);
+            if (user == null)
+                return NotFound(new { message = "User not found" });
+
+            return Ok(user);
+        }
+
+        [HttpPut("update-seller-email")]
+        public async Task<IActionResult> UpdateSellerEmail([FromBody] UpdateSellerEmailDTO dto)
+        {
+            try
+            {
+                await _userService.UpdateSellerEmailAsync(dto.UserId, dto.NewEmail);
+                return Ok(new { message = "Email updated successfully" });
+            }
+            catch (ValidationExceptionFromService ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("update-seller-phone")]
+        public async Task<IActionResult> UpdateSellerPhoneNumber([FromBody] UpdateSellerPhoneNumberDTO dto)
+        {
+            try
+            {
+                await _userService.UpdateSellerPhoneNumberAsync(dto.UserId, dto.NewPhoneNumber);
+                return Ok(new { message = "Phone number updated successfully" });
+            }
+            catch (ValidationExceptionFromService ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("update-seller-address")]
+        public async Task<IActionResult> UpdateSellerAddress([FromBody] UpdateSellerAddressDTO dto)
+        {
+            try
+            {
+                await _addressService.UpdateSellerAddressAsync(dto);
+                return Ok(new { message = "Address updated successfully" });
+            }
+            catch (ValidationExceptionFromService ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
         }
     }
 }

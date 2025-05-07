@@ -4,11 +4,6 @@ using Agora.DAL.Entities;
 using Agora.DAL.Interfaces;
 using AutoMapper;
 using Agora.BLL.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Agora.BLL.Services
 {
@@ -23,10 +18,10 @@ namespace Agora.BLL.Services
             _mapper = mapper;
         }
 
-        public async Task<IQueryable<FAQDTO>> GetAll()
+        public async Task<IEnumerable<FAQDTO>> GetAll()
         {
-            var faqs = await Database.FAQs.GetAll();
-            return _mapper.Map<IQueryable<FAQDTO>>(faqs.ToList());
+            var faq = await Database.FAQs.GetAll();
+            return _mapper.Map<IQueryable<FAQ>, IEnumerable<FAQDTO>>(faq);
         }
 
         public async Task<FAQDTO> Get(int id)
@@ -45,23 +40,42 @@ namespace Agora.BLL.Services
 
         public async Task Create(FAQDTO faqDTO)
         {
+            if (faqDTO.FAQCategoryId == null)
+                throw new ValidationExceptionFromService("Category is required", "");
+
+            var category = await Database.FAQCategories.Get(faqDTO.FAQCategoryId.Value);
+            if (category == null)
+                throw new ValidationExceptionFromService("Category not found", "");
+
             var faq = new FAQ
             {
                 Id = faqDTO.Id,
                 Question = faqDTO.Question,
                 Answer = faqDTO.Answer,
+                FAQCategory = category
             };
+
             await Database.FAQs.Create(faq);
             await Database.Save();
         }
+
         public async Task Update(FAQDTO faqDTO)
         {
+            if (faqDTO.FAQCategoryId == null)
+                throw new ValidationExceptionFromService("Category is required", "");
+
+            var category = await Database.FAQCategories.Get(faqDTO.FAQCategoryId.Value);
+            if (category == null)
+                throw new ValidationExceptionFromService("Category not found", "");
+
             var faq = new FAQ
             {
                 Id = faqDTO.Id,
                 Question = faqDTO.Question,
                 Answer = faqDTO.Answer,
+                FAQCategory = category
             };
+
             Database.FAQs.Update(faq);
             await Database.Save();
         }

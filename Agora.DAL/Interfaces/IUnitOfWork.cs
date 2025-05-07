@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Agora.DAL.Entities;
+using Agora.DAL.Repository;
 
 namespace Agora.DAL.Interfaces
 {
@@ -27,7 +28,7 @@ namespace Agora.DAL.Interfaces
         IRepository<Payment> Payments { get; }
         IRepository<PaymentMethod> PaymentMethods { get; }
         IProductRepository Products { get; }
-        IRepository<ProductReview> ProductReviews { get; }
+        IProductReviewRepository ProductReviews { get; }
         IRepository<Return> Returns { get; }
         IRepository<ReturnItem> ReturnItems { get; }
         ISellerRepository Sellers { get; }

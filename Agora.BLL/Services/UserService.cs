@@ -142,6 +142,24 @@ namespace Agora.BLL.Services
             return userDTO;
         }
 
+        public async Task<UserDTO> GetById(int id)
+        {
+            var user = await Database.Users.Get(id);
+            if (user == null)
+                return null;
+
+            return new UserDTO
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Surname = user.Surname,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Password = user.Password,
+                GoogleId = user.GoogleId
+            };
+        }
+
         public async Task<RoleDTO> GetRoleByUserId(int id)
         {
             var customer = await Database.Customers.GetByUserId(id);
@@ -221,6 +239,32 @@ namespace Agora.BLL.Services
                 Email = userDTO.Email,
                 Password = userDTO.Password
             };
+            Database.Users.Update(user);
+            await Database.Save();
+        }
+
+        public async Task UpdateSellerEmailAsync(int userId, string newEmail)
+        {
+            var user = await Database.Users.Get(userId);
+
+            if (user == null)
+                throw new ValidationExceptionFromService("User not found", "");
+
+            user.Email = newEmail;
+
+            Database.Users.Update(user);
+            await Database.Save();
+        }
+
+        public async Task UpdateSellerPhoneNumberAsync(int userId, string newPhoneNumber)
+        {
+            var user = await Database.Users.Get(userId);
+
+            if (user == null)
+                throw new ValidationExceptionFromService("User not found", "");
+
+            user.PhoneNumber = newPhoneNumber;
+
             Database.Users.Update(user);
             await Database.Save();
         }

@@ -11,6 +11,7 @@ namespace Agora.BLL.Interfaces
     {
         Task<IEnumerable<ProductReviewDTO>> GetAll();
         Task<IEnumerable<ProductReviewDTO>> GetReviewsByStoreId(int storeId);
+        Task<IEnumerable<ProductReviewDTO>> GetFilteredReviewsByStoreId(int storeId, string field, string value);
         Task<ProductReviewDTO> Get(int id);
         Task Create(ProductReviewDTO productReviewDTO);
         Task Update(ProductReviewDTO productReviewDTO);

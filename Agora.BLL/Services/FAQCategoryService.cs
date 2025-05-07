@@ -23,10 +23,10 @@ namespace Agora.BLL.Services
             _mapper = mapper;
         }
 
-        public async Task<IQueryable<FAQCategoryDTO>> GetAll()
+        public async Task<IEnumerable<FAQCategoryDTO>> GetAll()
         {
             var faqCategory = await Database.FAQCategories.GetAll();
-            return _mapper.Map<IQueryable<FAQCategoryDTO>>(faqCategory.ToList());
+            return _mapper.Map<IQueryable<FAQCategory>, IEnumerable<FAQCategoryDTO>>(faqCategory);
         }
 
         public async Task<FAQCategoryDTO> Get(int id)

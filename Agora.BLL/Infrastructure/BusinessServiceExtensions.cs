@@ -3,6 +3,7 @@ using Agora.BLL.Services;
 using Agora.DAL.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Agora.BLL.Infrastructure
 {
@@ -44,8 +45,9 @@ namespace Agora.BLL.Infrastructure
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUtilsService, UtilsService>();
             services.AddScoped<UserManager<ApplicationUser>>();
-            services.AddHostedService<StatisticsCacheService>();
-
+            services.AddSingleton<StatisticsCacheService>();
+            services.AddSingleton<IHostedService>(sp => sp.GetRequiredService<StatisticsCacheService>());
+            services.AddSingleton<IStatisticsInitializer>(sp => sp.GetRequiredService<StatisticsCacheService>());
         }
     }
 }

@@ -65,5 +65,31 @@ namespace Agora.Controllers
             var fileName = Path.GetFileName(firstImage);
             return $"{request.Scheme}://{request.Host}/{folderPath}/{fileName}";
         }
+
+        [HttpGet("get-filtered-reviews-by-store/id={storeId}&filterField={field}&filterValue={value}")]
+        public async Task<IActionResult> GetFiltredProductReviews(int storeId, string field, string value)
+        {
+
+        var reviews = await _productReviewService.GetFilteredReviewsByStoreId(storeId, field, value);
+            
+        if (reviews == null || !reviews.Any())
+           return NotFound("No reviews found for this store.");
+            
+        var productReviews = reviews
+        .Select(r => new
+        {
+            UserName = r.Customer?.User?.Name,
+            UserSurname = r.Customer?.User?.Surname,
+            ProductName = r.Product?.Name,
+            ProductDescription = r.Product?.Description,
+            ProductImage = GetFirstProductImageUrl(r.Product?.ImagesPath, Request),
+            ProductRating = r.Product?.Rating,
+            r.Comment,
+            r.Rating,
+            Date = r.Date.ToString()
+        })
+        .ToList();
+            return Ok(productReviews);
+        }
     }
 }
