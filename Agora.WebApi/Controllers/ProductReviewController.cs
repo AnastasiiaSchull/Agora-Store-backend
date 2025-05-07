@@ -27,8 +27,8 @@ namespace Agora.Controllers
         var productReviews = reviews
         .Select(r => new
         {
-            UserName = r.Customer?.User?.Name,
-            UserSurname = r.Customer?.User?.Surname,
+            UserName = r.Customer?.UserDTO?.Name,
+            UserSurname = r.Customer?.UserDTO?.Surname,
             ProductName = r.Product?.Name,
             ProductDescription = r.Product?.Description,
             ProductImage = GetFirstProductImageUrl(r.Product?.ImagesPath, Request),

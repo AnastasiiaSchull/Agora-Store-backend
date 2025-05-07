@@ -15,9 +15,9 @@ namespace Agora.BLL.DTO
         public DateOnly PaymentDeadline { get; set; }
        
         //public ProductDTO Product { get; set; }
-        //public CustomerDTO Customer { get; set; }
+        public CustomerDTO CustomerDTO { get; set; }
         //public PaymentDTO Payment { get; set; }
-        //public ShippingDTO Shipping { get; set; }
+        public ShippingDTO ShippingDTO { get; set; }
         //public ReturnDTO Return { get; set; }
 
     }

@@ -8,6 +8,6 @@ namespace Agora.BLL.DTO
         public int? UserId { get; set; }
         public int? CashbackId { get; set; }
 
-        public UserDTO? User { get; set; }
+        public UserDTO? UserDTO { get; set; }
     }
 }

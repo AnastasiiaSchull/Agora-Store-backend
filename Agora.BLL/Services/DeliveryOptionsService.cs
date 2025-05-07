@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Agora.Enums;
 
 namespace Agora.BLL.Services
 {
@@ -37,7 +38,7 @@ namespace Agora.BLL.Services
             return new DeliveryOptionsDTO
             {
                 Id = deliveryOptions.Id,
-                Type = deliveryOptions.Type,
+                Type = deliveryOptions.Type.ToString(),
                 Price = deliveryOptions.Price,
                 EstimatedDays = deliveryOptions.EstimatedDays,
                 ShippingId = deliveryOptions.Shipping.Id,
@@ -49,7 +50,7 @@ namespace Agora.BLL.Services
             var deliveryOptions = new DeliveryOptions
             {
                 Id = deliveryOptionsDTO.Id,
-                Type= deliveryOptionsDTO.Type,
+                Type= Enum.Parse<DeliveryType>(deliveryOptionsDTO.Type, ignoreCase: true),
                 Price = deliveryOptionsDTO.Price,
                 EstimatedDays= deliveryOptionsDTO.EstimatedDays,
             };
@@ -61,7 +62,7 @@ namespace Agora.BLL.Services
             var deliveryOptions = new DeliveryOptions
             {
                 Id = deliveryOptionsDTO.Id,
-                Type = deliveryOptionsDTO.Type,
+                Type = Enum.Parse<DeliveryType>(deliveryOptionsDTO.Type, ignoreCase: true),
                 Price = deliveryOptionsDTO.Price,
                 EstimatedDays = deliveryOptionsDTO.EstimatedDays,
             };

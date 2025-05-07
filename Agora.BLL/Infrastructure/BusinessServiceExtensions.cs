@@ -42,6 +42,7 @@ namespace Agora.BLL.Infrastructure
             services.AddScoped<ISecureService, SecureService>();
             services.AddScoped<IStatisticsService, StatisticsService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IUtilsService, UtilsService>();
             services.AddScoped<UserManager<ApplicationUser>>();
             services.AddHostedService<StatisticsCacheService>();
 

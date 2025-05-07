@@ -260,7 +260,7 @@ namespace Agora.DAL.Repository
                 return sellerReviewRepository;
             }
         }
-        public IRepository<Shipping> Shippings
+        public IShippingRepository Shippings
         {
             get
             {

@@ -9,6 +9,8 @@ using Agora.BLL.Infrastructure;
 using Agora.DAL.Interfaces;
 using AutoMapper;
 using Agora.DAL.Entities;
+using Agora.Enums;
+using StackExchange.Redis;
 
 namespace Agora.BLL.Services
 {
@@ -34,17 +36,34 @@ namespace Agora.BLL.Services
             return new ShippingDTO
             {
                 Id = shipping.Id,
-                Status = shipping.Status,
+                Status = shipping.Status.ToString(),
                 TrackingNumber = shipping.TrackingNumber,
                 OrderItemId = shipping.OrderItemId,
                 DeliveryOptionsId = shipping.DeliveryOptionsId
+            };
+        }
+        public async Task<ShippingDTO> GetByOrderItem(int id)
+        {
+            var shipping = await Database.Shippings.GetByOrderItem(id);
+            if (shipping == null)
+                throw new ValidationExceptionFromService("There is no shipping with this id", "");
+            return new ShippingDTO
+            {
+                Id = shipping.Id,
+                Status = shipping.Status.ToString(),
+                TrackingNumber = shipping.TrackingNumber,
+                OrderItemId = shipping.OrderItemId,
+                DeliveryOptionsId = shipping.DeliveryOptionsId,
+                //OrderItemDTO = _mapper.Map<OrderItemDTO>(shipping.OrderItem),
+                DeliveryOptionsDTO = _mapper.Map<DeliveryOptionsDTO>(shipping.DeliveryOptions),
+                AddressDTO = _mapper.Map<AddressDTO>(shipping.Address)
             };
         }
         public async Task Create(ShippingDTO shippingDTO)
         {
             var shipping = new Shipping
             {
-                Status = shippingDTO.Status,
+                Status = Enum.Parse<ShippingStatus>(shippingDTO.Status, ignoreCase: true),
                 TrackingNumber = shippingDTO.TrackingNumber,
                 OrderItemId = shippingDTO.OrderItemId,
                 DeliveryOptionsId = shippingDTO.DeliveryOptionsId
@@ -57,7 +76,7 @@ namespace Agora.BLL.Services
             var shipping = new Shipping
             {
                 Id = shippingDTO.Id,
-                Status = shippingDTO.Status,
+                Status = Enum.Parse<ShippingStatus>(shippingDTO.Status, ignoreCase: true),
                 TrackingNumber = shippingDTO.TrackingNumber,
                 OrderItemId = shippingDTO.OrderItemId,
                 DeliveryOptionsId = shippingDTO.DeliveryOptionsId

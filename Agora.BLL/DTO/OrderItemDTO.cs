@@ -12,7 +12,11 @@ namespace Agora.BLL.DTO
         public int Id { get; set; }
         public decimal PriceAtMoment { get; set; }
         public int Quantity { get; set; }
+        public string ?FormattedDate { get; set; }
+
         public ProductDTO ProductDTO { get; set; }
+        public OrderDTO OrderDTO { get; set; }
+        public ShippingDTO ShippingDTO { get; set; }
         public DateOnly Date { get; set; }
         public string Status { get; set; }
 

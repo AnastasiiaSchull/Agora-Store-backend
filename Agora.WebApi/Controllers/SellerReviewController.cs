@@ -21,8 +21,8 @@ namespace Agora.Controllers
             var sellerReviews = reviews.Where(r => r.SellerId == sellerId)
                 .Select(r => new
                 {
-                    UserName = r.Customer.User.Name,
-                    UserSunname = r.Customer.User.Surname,
+                    UserName = r.Customer.UserDTO.Name,
+                    UserSunname = r.Customer.UserDTO.Surname,
                     r.Comment,
                     r.Rating, 
                     Date = r.Date.ToString()

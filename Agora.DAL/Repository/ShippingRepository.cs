@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Agora.DAL.Repository
 {
-    public class ShippingRepository: IRepository<Shipping>
+    public class ShippingRepository: IShippingRepository
     {
         private AgoraContext db;
         public ShippingRepository(AgoraContext context)
@@ -21,6 +21,10 @@ namespace Agora.DAL.Repository
         public async Task<Shipping> Get(int id)
         {
             return await db.Shippings.FindAsync(id);
+        }
+        public async Task<Shipping> GetByOrderItem(int id)
+        {
+            return await db.Shippings.FirstOrDefaultAsync(s => s.OrderItemId == id);
         }
 
         public async Task Create(Shipping shipping)

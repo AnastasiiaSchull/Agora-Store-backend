@@ -8,6 +8,7 @@ namespace Agora.DAL.Entities
         public ShippingStatus Status { get; set; }                                            
         public string? TrackingNumber { get; set; }
          
+        public int? AddressId { get;  set; }
         public virtual Address? Address { get; set; }
         public virtual Seller? Seller{ get; set; }
 

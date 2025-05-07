@@ -15,6 +15,7 @@ namespace Agora.BLL.DTO
         public int StockQuantity { get; set; }
         public decimal Rating { get; set; }
         public string? ImagesPath { get; set; }
+        public string? ImagePath { get; set; } //not sure but still
         public bool IsAvailable { get; set; }
         public int? StoreId { get; set; }
     }
