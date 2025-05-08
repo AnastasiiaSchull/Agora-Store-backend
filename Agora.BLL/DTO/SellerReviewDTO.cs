@@ -11,9 +11,10 @@ namespace Agora.BLL.DTO
         public int Id { get; set; }
         public string? Comment { get; set; }
         public decimal Rating { get; set; }
-        public DateOnly Date { get; set; }
+        public DateOnly? Date { get; set; }
         
         public int? SellerId { get; set; }
+        public int? CustomerId { get; set; }
         public CustomerDTO? Customer { get; set; }
     }
 }
