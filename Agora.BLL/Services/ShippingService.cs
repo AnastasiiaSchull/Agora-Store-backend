@@ -73,15 +73,23 @@ namespace Agora.BLL.Services
         }
         public async Task Update(ShippingDTO shippingDTO)
         {
-            var shipping = new Shipping
-            {
-                Id = shippingDTO.Id,
-                Status = Enum.Parse<ShippingStatus>(shippingDTO.Status, ignoreCase: true),
-                TrackingNumber = shippingDTO.TrackingNumber,
-                OrderItemId = shippingDTO.OrderItemId,
-                DeliveryOptionsId = shippingDTO.DeliveryOptionsId
-            };
-            Database.Shippings.Update(shipping);
+            var existingShipping = await Database.Shippings.Get(shippingDTO.Id);
+            if (!string.IsNullOrWhiteSpace(shippingDTO.Status))
+                existingShipping.Status = Enum.Parse<ShippingStatus>(shippingDTO.Status, true);
+
+            if (!string.IsNullOrWhiteSpace(shippingDTO.TrackingNumber))
+                existingShipping.TrackingNumber = shippingDTO.TrackingNumber;
+
+            if (shippingDTO.OrderItemId.HasValue)
+                existingShipping.OrderItemId = shippingDTO.OrderItemId.Value;
+
+            if (shippingDTO.AddressId.HasValue)
+                existingShipping.AddressId = shippingDTO.AddressId.Value;
+
+            if (shippingDTO.DeliveryOptionsId.HasValue)
+                existingShipping.DeliveryOptionsId = shippingDTO.DeliveryOptionsId.Value;
+           
+            await Database.Shippings.Update(existingShipping);
             await Database.Save();
         }
         public async Task Delete(int id)
