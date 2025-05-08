@@ -13,7 +13,7 @@ namespace Agora.DAL.Interfaces
         Task<Shipping> Get(int id);
         Task<Shipping> GetByOrderItem(int id);
         Task Create(Shipping item);
-        void Update(Shipping item);
+        Task Update(Shipping item);
         Task Delete(int id);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Agora.BLL.DTO;
+using Agora.BLL.Infrastructure;
 using Agora.BLL.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,14 +23,25 @@ namespace Agora.Controllers
             _shippingService = shippingService;
         }
 
-        //[HttpPost("create-shipping")]
-        //public async Task<IActionResult> CreateShipping([FromBody] ShippingDTO shippingDTO)
-        //{
-        //    if(shippingDTO == null)
-        //        return new JsonResult(new { message = "No data!" }) { StatusCode = 400 };
-        //    shippingDTO.Status = 0; 
+        [HttpPost("create-shipping")]
+        public async Task<IActionResult> CreateShipping([FromBody] ShippingDTO shippingDTO)
+        {
+            try
+            {
+                if (shippingDTO == null)
+                    return new JsonResult(new { message = "No data!" }) { StatusCode = 400 };
+                shippingDTO.Status = "InTransit";
+                await _shippingService.Update(shippingDTO);
+                return Ok();
+            }
+            catch (ValidationExceptionFromService ex)
+            {
+                return new JsonResult(new { message = ex.Message}) { StatusCode = 400 };
 
-        //}
+            }
             
+
+        }
+
     }
 }

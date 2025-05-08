@@ -32,9 +32,11 @@ namespace Agora.DAL.Repository
             await db.Shippings.AddAsync(shipping);
         }
 
-        public void Update(Shipping shipping)
+        public async Task Update(Shipping shipping)
         {
+            Console.WriteLine(shipping.Id);
             db.Entry(shipping).State = EntityState.Modified;
+          
         }
 
         public async Task Delete(int id)
