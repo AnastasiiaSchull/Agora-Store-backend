@@ -91,5 +91,24 @@ namespace Agora.Controllers
         .ToList();
             return Ok(productReviews);
         }
+        [HttpPost("{productId}/review")]
+        public async Task<IActionResult> CreateProductReview(int productId, [FromBody] ProductReviewDTO reviewDto)
+        {
+            if (productId != reviewDto.ProductId)
+                return BadRequest("Product ID mismatch.");
+
+            var review = new ProductReviewDTO
+            {
+                Comment = reviewDto.Comment,
+                Rating = reviewDto.Rating,
+                Date = DateOnly.FromDateTime(DateTime.Today),
+                ProductId = reviewDto.ProductId,
+                CustomerId = reviewDto.CustomerId
+            };
+
+            await _productReviewService.Create(review);
+
+            return Ok("Review submitted successfully.");
+        }
     }
 }
