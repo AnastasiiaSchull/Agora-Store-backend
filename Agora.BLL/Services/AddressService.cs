@@ -46,6 +46,21 @@ namespace Agora.BLL.Services
             };
         }
 
+        public async Task<IEnumerable<AddressDTO>> GetByUserId(int userId)
+        {
+            var user = await Database.Users.Get(userId);
+
+            if (user == null)
+                throw new ValidationExceptionFromService("User not found", "");
+
+            var addresses = user.Addresses;
+
+            if (addresses == null)
+                return Enumerable.Empty<AddressDTO>();
+
+            return _mapper.Map<IEnumerable<AddressDTO>>(addresses);
+        }
+
         public async Task Create(AddressDTO addressDTO)
         {
             var address = new Address
