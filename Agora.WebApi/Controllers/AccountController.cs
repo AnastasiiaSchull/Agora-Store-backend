@@ -379,7 +379,8 @@ namespace Agora.Controllers
                     Name = user.Name!,
                     Surname = user.Surname!,
                     Email = user.Email!,
-                    Role = role.Role
+                    Role = role.Role,
+                    PhoneNumber = user.PhoneNumber!
                 };
 
                 return Ok(profile);
