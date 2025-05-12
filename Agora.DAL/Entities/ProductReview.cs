@@ -9,8 +9,9 @@ namespace Agora.DAL.Entities
         public DateOnly Date { get; set; }
 
         public virtual int? ProductId { get; set; }
-        public virtual Product? Product { get; set; } 
-        
+        public virtual Product? Product { get; set; }
+
+        public virtual int? CustomerId { get; set; }
         public virtual Customer? Customer { get; set; }
     }
 }

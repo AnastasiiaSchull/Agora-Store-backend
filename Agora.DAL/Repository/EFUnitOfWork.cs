@@ -305,7 +305,7 @@ namespace Agora.DAL.Repository
                 return userRepository;
             }
         }
-        public IRepository<Wishlist> Wishlists
+        public IWishlistRepository Wishlists
         {
             get
             {

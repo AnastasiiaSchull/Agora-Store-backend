@@ -79,8 +79,9 @@ namespace Agora.BLL.Services
             {
                 Comment = productReviewDTO.Comment,
                 Rating = productReviewDTO.Rating,
-                Date = productReviewDTO.Date,
-                ProductId = productReviewDTO.ProductId
+                Date = productReviewDTO.Date ?? DateOnly.FromDateTime(DateTime.Today),
+                ProductId = productReviewDTO.ProductId,
+                CustomerId = productReviewDTO.CustomerId
             };
             await Database.ProductReviews.Create(productReview);
             await Database.Save();
@@ -92,8 +93,9 @@ namespace Agora.BLL.Services
                 Id = productReviewDTO.Id,
                 Comment = productReviewDTO.Comment,
                 Rating = productReviewDTO.Rating,
-                Date = productReviewDTO.Date,
-                ProductId = productReviewDTO.ProductId
+                Date = productReviewDTO.Date ?? DateOnly.FromDateTime(DateTime.Today),
+                ProductId = productReviewDTO.ProductId,
+                CustomerId = productReviewDTO.CustomerId
             };
             Database.ProductReviews.Update(productReview);
             await Database.Save();

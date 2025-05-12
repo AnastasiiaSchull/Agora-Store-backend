@@ -14,6 +14,7 @@ namespace Agora.DAL.Interfaces
         Task<IQueryable<User>> GetAll();
         Task<User> GetByEmail(string email);
         Task<User> Get(int id);
+        Task<ICollection<Address>> GetAddressesByUserId(int userId);
         Task Create(User user);  
         void Update(User user);
         Task Delete(int id);

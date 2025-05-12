@@ -1,4 +1,5 @@
-﻿using Agora.BLL.Interfaces;
+﻿using Agora.BLL.DTO;
+using Agora.BLL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Agora.Controllers
@@ -30,6 +31,26 @@ namespace Agora.Controllers
                 .ToList();
 
             return Ok(sellerReviews);
-        }        
+        }
+        [HttpPost("{sellerId}/review")]
+        public async Task<IActionResult> CreateSellerReview(int sellerId, [FromBody] SellerReviewDTO reviewDto)
+        {
+            if (sellerId != reviewDto.SellerId)
+                return BadRequest("Seller ID mismatch.");           
+
+            var review = new SellerReviewDTO
+            {
+                Comment = reviewDto.Comment,
+                Rating = reviewDto.Rating,
+                Date = DateOnly.FromDateTime(DateTime.Today),                
+                SellerId = reviewDto.SellerId,
+                CustomerId = reviewDto.CustomerId 
+            };
+
+            await _sellerReviewService.Create(review);
+
+            return Ok("Review submitted successfully.");
+        }
+
     }
 }

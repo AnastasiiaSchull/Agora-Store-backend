@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Agora.DAL.Repository
 {
-    public class WishlistRepository: IRepository<Wishlist>
+    public class WishlistRepository: IWishlistRepository
     {
         private AgoraContext db;
         public WishlistRepository(AgoraContext context)
@@ -38,6 +38,12 @@ namespace Agora.DAL.Repository
             Wishlist? wishlist = await db.Wishlists.FindAsync(id);
             if (wishlist != null)
                 db.Wishlists.Remove(wishlist);
+        }
+        public async Task<Wishlist?> GetWithProducts(int id)
+        {
+            return await db.Wishlists
+                .Include(w => w.Products)
+                .FirstOrDefaultAsync(w => w.Id == id);
         }
     }
 }

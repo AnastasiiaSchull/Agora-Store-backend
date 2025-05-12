@@ -68,7 +68,15 @@ namespace Agora.DAL.Repository
             var user = await db.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
             return user;
         }
-  
+
+        public async Task<ICollection<Address>> GetAddressesByUserId(int userId)
+        {
+            var user = await db.Users
+                .Include(u => u.Addresses)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            return user?.Addresses?.ToList() ?? new List<Address>();
+        }
 
         public async Task Create(User user)
         {

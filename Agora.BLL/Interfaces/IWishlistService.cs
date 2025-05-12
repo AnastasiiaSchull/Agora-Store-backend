@@ -8,11 +8,15 @@ using Agora.BLL.DTO;
 namespace Agora.BLL.Interfaces
 {
     public interface IWishlistService
-    { 
-        Task<IQueryable<WishlistDTO>> GetAll();
+    {
+        Task<IEnumerable<WishlistDTO>> GetAll();
         Task<WishlistDTO> Get(int id);
         Task Create(WishlistDTO wishlistDTO);
         Task Update(WishlistDTO wishlistDTO);
         Task Delete(int id);
+
+        Task AddProductToWishlist(int wishlistId, int productId);
+        Task RemoveProductFromWishlist(int wishlistId, int productId);
+        Task<WishlistDTO> GetWithProducts(int id);
     }
 }
