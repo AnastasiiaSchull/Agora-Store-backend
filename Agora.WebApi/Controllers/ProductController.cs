@@ -1,5 +1,6 @@
 ﻿using Agora.BLL.DTO;
 using Agora.BLL.Interfaces;
+using Agora.BLL.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Agora.Controllers
@@ -9,16 +10,29 @@ namespace Agora.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
+        private readonly IUtilsService _utilsService;
 
-        public ProductController(IProductService productService)
+        public ProductController(IProductService productService, IUtilsService utilsService)
         {
             _productService = productService;
+            _utilsService = utilsService;
         }
 
         [HttpGet("all")]
         public async Task<IActionResult> GetAllProducts()
         {
             var products = await _productService.GetAll();
+            return Ok(products);
+        }
+
+        [HttpGet("get-all-by-seller/{sellerId}")]
+        public async Task<IActionResult> GetAllProductsBySeller(int sellerId )
+        {
+            var products = await _productService.GetProductsBySeller(sellerId);
+            foreach(var item in products)
+                item.ImagePath = _utilsService.GetFirstImageUrl(item.ImagesPath, Request);
+            if (products == null)
+                return BadRequest("This seller doesn't have products or id is wrong");
             return Ok(products);
         }
 
