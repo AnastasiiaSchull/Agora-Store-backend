@@ -12,6 +12,7 @@ namespace Agora.DAL.Interfaces
     {
         Task<IQueryable<Product>> GetAll();
         Task<Product> Get(int id);
+        Task<Product> GetByName(string name);
         Task<IQueryable<Product>> GetProductsBySeller(int sellerId);
         Task Create(Product item);
         void Update(Product item);

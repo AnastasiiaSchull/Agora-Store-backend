@@ -40,6 +40,8 @@ namespace Agora.Controllers
         {
 
             IEnumerable<OrderItemDTO> orders = await _orderItemService.GetAllByStore(storeId);
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.WriteLine("WTF");
             if (orders == null)
                 return new JsonResult(new { message = "Server error!" }) { StatusCode = 500 };
             return Ok(orders);

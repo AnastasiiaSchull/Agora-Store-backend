@@ -65,6 +65,24 @@ namespace Agora.BLL.Services
 
             };
         }
+        public async Task<ProductDTO> GetByName(string name)
+        {
+            var product = await Database.Products.GetByName(name);
+            if (product == null)
+                throw new ValidationExceptionFromService("There is no product with this id", "");
+            return new ProductDTO
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                StockQuantity = product.StockQuantity,
+                Rating = product.Rating,
+                ImagesPath = product.ImagesPath,
+                IsAvailable = product.IsAvailable
+
+            };
+        }
 
         public async Task Create(ProductDTO productDTO)
         {
