@@ -23,6 +23,10 @@ namespace Agora.DAL.Repository
         {
             return await db.Products.FindAsync(id);
         }
+        public async Task<Product> GetByName(string name)
+        {
+            return await db.Products.Where(p => p.Name == name).FirstOrDefaultAsync();
+        }
         public async Task<IQueryable<Product>> GetProductsBySeller(int sellerId)
         {
             return db.Products.Where(p=> p.Store.SellerId == sellerId);
