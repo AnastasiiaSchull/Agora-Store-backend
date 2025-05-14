@@ -28,6 +28,10 @@ namespace Agora.DAL.Repository
         {
             return db.OrderItems.Where(o => o.Product.Store.Id == storeId).OrderByDescending(o => o.Date);
         }
+        public async Task<IQueryable<OrderItem>> GetAllByCustomer(int customerId)
+        {
+            return db.OrderItems.Where(oi => oi.Order.CustomerId == customerId).OrderByDescending(oi => oi.Date);
+        }
         public async Task<IEnumerable<OrderItem>> GetFiltredOrders(int storeId, string field, string value)
         {
             

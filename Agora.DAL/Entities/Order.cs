@@ -8,7 +8,8 @@ namespace Agora.DAL.Entities
         public decimal TotalPrice { get; set; }
       
         public DateOnly PaymentDeadline { get; set; }
-       
+
+        public int? CustomerId { get; set; }
         public virtual Customer? Customer { get; set; }
         public virtual Payment? Payment { get; set; }                 
         public virtual ICollection<OrderItem>? OrderItems { get; set; }
