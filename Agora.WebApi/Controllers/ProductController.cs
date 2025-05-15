@@ -43,6 +43,12 @@ namespace Agora.Controllers
                 return BadRequest("Search query is empty");
 
             var products = await _productService.GetFilteredByName(name);
+
+            //путь к Image для  продукта
+            foreach (var product in products)
+            {
+                product.ImagePath = _utilsService.GetFirstImageUrl(product.ImagesPath, Request);
+            }
             return Ok(products);
         }
 
