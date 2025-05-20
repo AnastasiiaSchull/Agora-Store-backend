@@ -13,8 +13,13 @@ namespace Agora.DAL.Entities
         public string? ImagesPath { get; set; }
         public bool IsAvailable {  get; set; }
 
+        public virtual int? SubcategoryId{ get; set; }
         public virtual Subcategory? Subcategory { get; set; }
+
+        public virtual int? CategoryId{ get; set; }
         public virtual Category? Category { get; set; }
+
+        public virtual int? BrandId { get; set; }
         public virtual Brand? Brand { get; set; }
 
         public virtual int? StoreId { get; set; }

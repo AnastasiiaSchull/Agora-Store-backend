@@ -94,8 +94,11 @@ namespace Agora.BLL.Services
                 StockQuantity = productDTO.StockQuantity,
                 Rating = productDTO.Rating,
                 ImagesPath = productDTO.ImagesPath,
-                IsAvailable = productDTO.IsAvailable
-
+                IsAvailable = productDTO.IsAvailable,
+                StoreId = productDTO.StoreId,
+                SubcategoryId = productDTO.SubcategoryId,
+                CategoryId = productDTO.CategoryId,
+                BrandId = productDTO.BrandId
             };
             await Database.Products.Create(product);
             await Database.Save();

@@ -1,6 +1,7 @@
 ﻿using Agora.BLL.DTO;
 using Agora.BLL.Interfaces;
 using Agora.BLL.Services;
+using Agora.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Agora.Controllers
@@ -52,12 +53,53 @@ namespace Agora.Controllers
             return Ok(products);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] ProductDTO product)
+        [HttpPost]        
+        public async Task<IActionResult> Create([FromForm] ProductCreateModel model)
         {
+            if (model.Images == null || model.Images.Count == 0)
+                return BadRequest("No images uploaded.");
+
+            var productName = model.Name?.Trim();
+            if (string.IsNullOrWhiteSpace(productName))
+                return BadRequest("Product name is required.");
+
+            // Папка: wwwroot/images/{ProductName}
+            var imagesFolder = Path.Combine("wwwroot", "images", productName);
+            if (!Directory.Exists(imagesFolder))
+                Directory.CreateDirectory(imagesFolder);
+
+            var imagePaths = new List<string>();
+
+            foreach (var image in model.Images)
+            {
+                var fileName = Path.GetFileName(image.FileName);
+                var savePath = Path.Combine(imagesFolder, fileName);
+                using var stream = new FileStream(savePath, FileMode.Create);
+                await image.CopyToAsync(stream);
+
+                imagePaths.Add($"/images/{productName}/{fileName}");
+            }
+
+            var product = new ProductDTO
+            {
+                Name = model.Name,
+                Description = model.Description,
+                Price = model.Price,
+                StockQuantity = model.StockQuantity,
+                Rating = 0, 
+                ImagesPath = $"images/{productName}", // Папка
+                ImagePath = imagePaths.FirstOrDefault(), // Первая картинка (если нужно отображать превью)
+                StoreId = model.StoreId,
+                SubcategoryId = model.SubcategoryId,
+                CategoryId = model.CategoryId,
+                BrandId = model.BrandId,
+                IsAvailable = true
+            };
+
             await _productService.Create(product);
             return Ok("Product created");
         }
+
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] ProductDTO product)
