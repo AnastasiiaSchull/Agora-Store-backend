@@ -1,4 +1,5 @@
-﻿using Agora.BLL.Interfaces;
+﻿using Agora.BLL.DTO;
+using Agora.BLL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Agora.Controllers
@@ -30,5 +31,14 @@ namespace Agora.Controllers
             return Ok(addresses);
         }
 
+        [HttpPost("create-address")]
+        public async Task<IActionResult> Create([FromBody] AddressDTO dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            await _addressService.CreateAddress(dto);
+            return Ok(new { message = "Address created successfully" });
+        }
     }
 }

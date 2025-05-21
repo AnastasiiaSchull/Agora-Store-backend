@@ -9,5 +9,6 @@
         public string? City { get; set; }
         public string? PostalCode { get; set; }
         public int? CountryId { get; set; }
+        public int UserId { get; set; }
     }
 }
