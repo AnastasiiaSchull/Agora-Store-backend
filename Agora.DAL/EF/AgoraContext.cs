@@ -38,6 +38,7 @@ namespace Agora.DAL.EF
         public DbSet<User> Users { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
         public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
+        public DbSet<AddressUser> AddressUser { get; set; }
 
         public AgoraContext(DbContextOptions<AgoraContext> options)
                    : base(options)
@@ -67,7 +68,23 @@ namespace Agora.DAL.EF
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder); 
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<AddressUser>()
+                .HasKey(au => new { au.UserId, au.AddressesId });
+
+            modelBuilder.Entity<AddressUser>()
+                .HasOne(au => au.User)
+                .WithMany(u => u.AddressUsers)
+                .HasForeignKey(au => au.UserId);
+
+            modelBuilder.Entity<AddressUser>()
+                .HasOne(au => au.Address)
+                .WithMany(a => a.AddressUsers)
+                .HasForeignKey(au => au.AddressesId);
+
+            modelBuilder.Entity<AddressUser>()
+                .ToTable("AddressUser");
 
             // каскадное удаление вопросов FAQ при удалении категории
             modelBuilder.Entity<FAQ>()

@@ -23,5 +23,6 @@ namespace Agora.DAL.Interfaces
         Task<string> GeneratePasswordResetTokenAsync(ApplicationUser user);
         Task SavePasswordResetTokenAsync(string email, string token, DateTime expiresAt);
         Task<PasswordResetToken?> GetValidResetTokenAsync(string token);
+        Task<User> GetAddresses(int id);
     }
 }

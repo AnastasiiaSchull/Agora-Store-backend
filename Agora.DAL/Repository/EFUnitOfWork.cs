@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Agora.DAL.EF;
+using Agora.DAL.Entities;
+using Agora.DAL.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Agora.DAL.EF;
-using Agora.DAL.Entities;
-using Agora.DAL.Interfaces;
-using Microsoft.AspNetCore.Identity;
 
 namespace Agora.DAL.Repository
 {
@@ -44,6 +45,7 @@ namespace Agora.DAL.Repository
         private UserRepository userRepository;
         private WishlistRepository wishlistRepository;
         private StatisticsRepository statisticsRepository;
+        private AddressUserRepository addressUserRepository;
 
         private readonly UserManager<ApplicationUser> _userManager;
 
@@ -53,7 +55,7 @@ namespace Agora.DAL.Repository
             _userManager = userManager;
         }
 
-        public IRepository<Address> Addresses
+        public IAddressRepository Addresses
         {
             get
             {
@@ -321,6 +323,16 @@ namespace Agora.DAL.Repository
                 if (statisticsRepository == null)
                     statisticsRepository = new StatisticsRepository(db);
                 return statisticsRepository;
+            }
+        }
+
+        public IAddressUserRepository AddressUser
+        {
+            get
+            {
+                if (addressUserRepository == null)
+                    addressUserRepository = new AddressUserRepository(db);
+                return addressUserRepository;
             }
         }
 

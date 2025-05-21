@@ -1,14 +1,15 @@
 ﻿using Agora.BLL.DTO;
+using Agora.BLL.Infrastructure;
 using Agora.BLL.Interfaces;
+using Agora.DAL.Entities;
 using Agora.DAL.Interfaces;
 using AutoMapper;
-using Agora.BLL.Infrastructure;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Agora.DAL.Entities;
 
 namespace Agora.BLL.Services
 {
@@ -42,7 +43,7 @@ namespace Agora.BLL.Services
                 Street = address.Street,
                 City = address.City,
                 PostalCode = address.PostalCode,
-                CountryId = address.Country.Id
+                CountryId = address.CountryId
             };
         }
 
@@ -53,9 +54,9 @@ namespace Agora.BLL.Services
             if (user == null)
                 throw new ValidationExceptionFromService("User not found", "");
 
-            var addresses = user.Addresses;
+            var addresses = await Database.Addresses.GetWithCountryByUserId(userId);
 
-            if (addresses == null)
+            if (!addresses.Any())
                 return Enumerable.Empty<AddressDTO>();
 
             return _mapper.Map<IEnumerable<AddressDTO>>(addresses);
@@ -113,6 +114,35 @@ namespace Agora.BLL.Services
         public async Task Delete(int id)
         {
             await Database.Addresses.Delete(id);
+            await Database.Save();
+        }
+
+        public async Task CreateAddress(AddressDTO dto)
+        {
+            var user = await Database.Users.Get(dto.UserId);
+            if (user == null)
+                throw new ValidationExceptionFromService("User not found", "");
+
+            var address = new Address
+            {
+                Building = dto.Building,
+                Appartement = dto.Appartement,
+                Street = dto.Street,
+                City = dto.City,
+                PostalCode = dto.PostalCode,
+                CountryId = dto.CountryId
+            };
+
+            await Database.Addresses.Create(address);
+            await Database.Save();
+
+            var addressUser = new AddressUser
+            {
+                AddressesId = address.Id,
+                UserId = user.Id
+            };
+
+            await Database.AddressUser.Create(addressUser);
             await Database.Save();
         }
     }
