@@ -23,6 +23,8 @@ namespace Agora.Controllers
         public async Task<IActionResult> GetAllProducts()
         {
             var products = await _productService.GetAll();
+            foreach (var item in products)
+                item.ImagePath = _utilsService.GetFirstImageUrl(item.ImagesPath, Request);
             return Ok(products);
         }
 
