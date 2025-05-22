@@ -48,29 +48,29 @@ namespace Agora.Controllers
         }
 
         [HttpGet("get-orders-by-customer/{customerId}")]
-        public async Task<IActionResult> GetOrdersByCustomer(int customerId)
+        public async Task<IActionResult> GetOrdersByCustomer(int customerId, [FromQuery] int? months = null)
         {
-
-            IEnumerable<OrderItemDTO> orders = await _orderItemService.GetAllByCustomer(customerId);
+            IEnumerable<OrderItemDTO> orders = await _orderItemService.GetAllByCustomer(customerId, months);
             if (orders == null || !orders.Any())
                 return NotFound("No orders found for this customer.");
 
             var orderItems = orders
-            .Select(oi => new
-            {
-                UserName = oi.OrderDTO.CustomerDTO?.UserDTO?.Name,
-                UserSurname = oi.OrderDTO.CustomerDTO?.UserDTO?.Surname,
-                UserAddress = oi.ShippingDTO?.AddressDTO,
-                OrderNumber = oi.OrderDTO.Id,
-                ProductName = oi.ProductDTO?.Name,
-                ProductDescription = oi.ProductDTO?.Description,
-                ProductImage = _utilsService.GetFirstImageUrl(oi.ProductDTO?.ImagesPath, Request),
-                oi.Status,           
-                oi.PriceAtMoment,
-                oi.Quantity,
-                Date = oi.Date.ToString()
-            })
-            .ToList();
+                .Select(oi => new
+                {
+                    UserName = oi.OrderDTO.CustomerDTO?.UserDTO?.Name,
+                    UserSurname = oi.OrderDTO.CustomerDTO?.UserDTO?.Surname,
+                    UserAddress = oi.ShippingDTO?.AddressDTO,
+                    OrderNumber = oi.OrderDTO.Id,
+                    ProductName = oi.ProductDTO?.Name,
+                    ProductDescription = oi.ProductDTO?.Description,
+                    ProductImage = _utilsService.GetFirstImageUrl(oi.ProductDTO?.ImagesPath, Request),
+                    oi.Status,
+                    oi.PriceAtMoment,
+                    oi.Quantity,
+                    Date = oi.Date.ToString()
+                })
+                .ToList();
+
             return Ok(orderItems);
         }
 

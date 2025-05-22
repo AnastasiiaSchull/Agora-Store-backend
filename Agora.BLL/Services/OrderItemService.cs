@@ -42,12 +42,19 @@ namespace Agora.BLL.Services
             return _mapper.Map<List<OrderItemDTO>>(orderItem.ToList());
 
         }
-
-        public async Task<List<OrderItemDTO>> GetAllByCustomer(int customerId)
+        
+        public async Task<List<OrderItemDTO>> GetAllByCustomer(int customerId, int? months = null)
         {
-            var orderItem = await Database.OrderItems.GetAllByCustomer(customerId);
-            return _mapper.Map<List<OrderItemDTO>>(orderItem.ToList());
+            var query = await Database.OrderItems.GetAllByCustomer(customerId);
 
+            if (months.HasValue)
+            {
+                var fromDate = DateOnly.FromDateTime(DateTime.Today.AddMonths(-months.Value));
+                query = query.Where(oi => oi.Date >= fromDate);
+            }
+
+            var orderItems = await query.ToListAsync();
+            return _mapper.Map<List<OrderItemDTO>>(orderItems);
         }
         public async Task<List<OrderItemDTO>> GetFiltredOrders(int storeId, string field, string value)
         {
