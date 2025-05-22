@@ -3,6 +3,7 @@ using Agora.BLL.Infrastructure;
 using Agora.BLL.Interfaces;
 using Agora.DAL.Entities;
 using Agora.DAL.Interfaces;
+using Agora.DAL.Repository;
 using AutoMapper;
 using MySqlConnector;
 using System;
@@ -143,6 +144,23 @@ namespace Agora.BLL.Services
             };
 
             await Database.AddressUser.Create(addressUser);
+            await Database.Save();
+        }
+
+        public async Task UpdateAddress(AddressDTO dto, int id)
+        {
+            var existingAddress = await Database.Addresses.Get(id);
+            if (existingAddress == null)
+                throw new Exception($"Address with ID {id} not found.");
+
+            existingAddress.CountryId = dto.CountryId;
+            existingAddress.City = dto.City;
+            existingAddress.PostalCode = dto.PostalCode;
+            existingAddress.Street = dto.Street;
+            existingAddress.Building = dto.Building;
+            existingAddress.Appartement = dto.Appartement;
+
+            Database.Addresses.Update(existingAddress);
             await Database.Save();
         }
     }

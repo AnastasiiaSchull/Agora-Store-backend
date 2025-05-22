@@ -40,5 +40,15 @@ namespace Agora.Controllers
             await _addressService.CreateAddress(dto);
             return Ok(new { message = "Address created successfully" });
         }
+
+        [HttpPut("update-address/{id}")]
+        public async Task<IActionResult> Update([FromBody] AddressDTO dto, int id)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            await _addressService.UpdateAddress(dto, id);
+            return Ok(new { message = "Address updated successfully" });
+        }
     }
 }
