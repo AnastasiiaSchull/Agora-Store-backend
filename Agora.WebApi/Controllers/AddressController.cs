@@ -50,5 +50,15 @@ namespace Agora.Controllers
             await _addressService.UpdateAddress(dto, id);
             return Ok(new { message = "Address updated successfully" });
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAddress(int id)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            await _addressService.DeleteAddress(id);
+            return Ok(new { message = "Address deleted successfully" });
+        }
     }
 }

@@ -5,5 +5,6 @@ namespace Agora.DAL.Interfaces
     public interface IAddressUserRepository
     {
         Task Create(AddressUser entity);
+        Task Delete(int id);
     }
 }

@@ -163,5 +163,16 @@ namespace Agora.BLL.Services
             Database.Addresses.Update(existingAddress);
             await Database.Save();
         }
+
+        public async Task DeleteAddress(int id)
+        {
+            var address = await Database.Addresses.Get(id);
+            if (address == null)
+                throw new Exception($"Address with ID {id} not found.");
+
+            await Database.AddressUser.Delete(id);
+            await Database.Addresses.Delete(id);
+            await Database.Save();
+        }
     }
 }

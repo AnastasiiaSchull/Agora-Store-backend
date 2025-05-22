@@ -18,5 +18,15 @@ namespace Agora.DAL.Repository
         {
             await _context.AddressUser.AddAsync(entity);
         }
+
+        public async Task Delete(int addressId)
+        {
+            var addressUsers = await _context.AddressUser
+                .Where(au => au.AddressesId == addressId)
+                .ToListAsync();
+            
+            if (addressUsers.Any())
+                _context.AddressUser.RemoveRange(addressUsers);
+        }
     }
 }
