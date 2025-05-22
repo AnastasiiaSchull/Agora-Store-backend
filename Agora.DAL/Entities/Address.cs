@@ -14,6 +14,7 @@ namespace Agora.DAL.Entities
         public virtual Country? Country { get; set; }
 
         public virtual ICollection<Shipping>? Shipping { get; set; }
-        public virtual ICollection<User>? User { get; set; }
+        //public virtual ICollection<User>? User { get; set; }
+        public virtual ICollection<AddressUser> AddressUsers { get; set; }
     }
 }

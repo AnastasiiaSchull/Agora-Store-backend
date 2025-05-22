@@ -13,7 +13,8 @@ namespace Agora.DAL.Entities
         public string? Password { get; set; }
         public string? GoogleId { get; set; }
 
-        public virtual ICollection<Address>? Addresses { get; set; }
+        //public virtual ICollection<Address>? Addresses { get; set; }
+        public virtual ICollection<AddressUser> AddressUsers { get; set; }
 
         [JsonIgnore]
         public virtual Admin? Admin { get; set; }

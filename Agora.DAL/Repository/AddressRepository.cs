@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Agora.DAL.Repository
 {
-    public class AddressRepository : IRepository<Address>
+    public class AddressRepository : IAddressRepository
     {
         private AgoraContext db;
         public AddressRepository(AgoraContext context)
@@ -15,12 +15,22 @@ namespace Agora.DAL.Repository
 
         public async Task<IQueryable<Address>> GetAll()
         {
-            return db.Addresses;
+            return db.Addresses.Include(a => a.Country);
         }
 
         public async Task<Address> Get(int id)
         {
-            return await db.Addresses.FindAsync(id);
+            return await db.Addresses
+                   .Include(a => a.Country)
+                   .FirstOrDefaultAsync(a => a.Id == id);
+        }
+
+        public async Task<IEnumerable<Address>> GetWithCountryByUserId(int userId)
+        {
+            return await db.Addresses
+                .Include(a => a.Country)
+                .Where(a => a.AddressUsers.Any(au => au.UserId == userId))
+                .ToListAsync();
         }
 
         public async Task Create(Address address)

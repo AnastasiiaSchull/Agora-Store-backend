@@ -63,6 +63,15 @@ namespace Agora.DAL.Repository
         {
             return await db.Users.FindAsync(id);
         }
+
+        public async Task<User> GetAddresses(int id)
+        {
+            return await db.Users
+                .Include(u => u.AddressUsers)
+                    .ThenInclude(au => au.Address)
+                .FirstOrDefaultAsync(u => u.Id == id);
+        }
+
         public async Task<User> GetByEmail(string email)
         {
             var user = await db.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
@@ -72,10 +81,13 @@ namespace Agora.DAL.Repository
         public async Task<ICollection<Address>> GetAddressesByUserId(int userId)
         {
             var user = await db.Users
-                .Include(u => u.Addresses)
+                .Include(u => u.AddressUsers)
+                    .ThenInclude(au => au.Address)
                 .FirstOrDefaultAsync(u => u.Id == userId);
 
-            return user?.Addresses?.ToList() ?? new List<Address>();
+            return user?.AddressUsers?
+                .Select(au => au.Address)
+                .ToList() ?? new List<Address>();
         }
 
         public async Task Create(User user)

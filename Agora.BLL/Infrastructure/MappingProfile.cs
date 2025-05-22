@@ -54,8 +54,9 @@ namespace Agora.BLL.Infrastructure
                 .ForMember(dest => dest.OrderDTO, opt => opt.MapFrom(src => src.Order)) 
                 .ForMember(dest => dest.ShippingDTO, opt => opt.MapFrom(src => src.Shipping))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+            CreateMap<Address, AddressDTO>()
+                .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country.Name));
 
-          
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Agora.DAL.Interfaces
 {
     public interface IUnitOfWork
     {
-        IRepository<Address> Addresses { get; }
+        //IRepository<Address> Addresses { get; }
         IAdminRepository Admins { get; }
         IRepository<BankCard> BankCards { get; }
         IRepository<Brand> Brands { get; }
@@ -40,6 +40,8 @@ namespace Agora.DAL.Interfaces
         IUserRepository Users { get; }
         IWishlistRepository Wishlists { get; }
         IStatisticsRepository Statistics { get; }
+        IAddressRepository Addresses { get; }
+        IAddressUserRepository AddressUser { get; }
         Task Save();
     }
 }

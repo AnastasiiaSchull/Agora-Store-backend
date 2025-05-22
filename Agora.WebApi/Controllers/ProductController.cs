@@ -23,6 +23,8 @@ namespace Agora.Controllers
         public async Task<IActionResult> GetAllProducts()
         {
             var products = await _productService.GetAll();
+            foreach (var item in products)
+                item.ImagePath = _utilsService.GetFirstImageUrl(item.ImagesPath, Request);
             return Ok(products);
         }
 
@@ -44,6 +46,12 @@ namespace Agora.Controllers
                 return BadRequest("Search query is empty");
 
             var products = await _productService.GetFilteredByName(name);
+
+            //путь к Image для  продукта
+            foreach (var product in products)
+            {
+                product.ImagePath = _utilsService.GetFirstImageUrl(product.ImagesPath, Request);
+            }
             return Ok(products);
         }
 
