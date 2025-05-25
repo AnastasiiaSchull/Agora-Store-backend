@@ -61,6 +61,7 @@ namespace Agora.Controllers
                     UserSurname = oi.OrderDTO.CustomerDTO?.UserDTO?.Surname,
                     UserAddress = oi.ShippingDTO?.AddressDTO,
                     OrderNumber = oi.OrderDTO.Id,
+                    ProductId = oi.ProductDTO?.Id,
                     ProductName = oi.ProductDTO?.Name,
                     ProductDescription = oi.ProductDTO?.Description,
                     ProductImage = _utilsService.GetFirstImageUrl(oi.ProductDTO?.ImagesPath, Request),

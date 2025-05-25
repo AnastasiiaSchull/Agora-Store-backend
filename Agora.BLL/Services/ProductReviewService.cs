@@ -85,7 +85,31 @@ namespace Agora.BLL.Services
             };
             await Database.ProductReviews.Create(productReview);
             await Database.Save();
+
+            // После добавления отзыва, пересчёт рейтинга
+            if (productReviewDTO.ProductId.HasValue)
+            {
+                await UpdateProductRating(productReviewDTO.ProductId.Value);
+            }
         }
+        private async Task UpdateProductRating(int productId)
+        {
+            var allReviews = await Database.ProductReviews.GetAll(); 
+            var reviews = allReviews.Where(r => r.ProductId == productId).ToList();
+
+            if (reviews.Count == 0) return;
+
+            var averageRating = reviews.Average(r => r.Rating);
+
+            var product = await Database.Products.Get(productId);
+            if (product != null)
+            {
+                product.Rating = (decimal)Math.Round(averageRating, 2);
+                Database.Products.Update(product);
+                await Database.Save();
+            }
+        }
+
         public async Task Update(ProductReviewDTO productReviewDTO)
         {
             var productReview = new ProductReview
