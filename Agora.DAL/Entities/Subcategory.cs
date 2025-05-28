@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Agora.DAL.Entities
+﻿namespace Agora.DAL.Entities
 {
     public class Subcategory
     {
@@ -13,5 +7,7 @@ namespace Agora.DAL.Entities
 
         public virtual Category? Category { get; set; }
         public virtual ICollection<Product>? Products { get; set; }
+        public virtual ICollection<BrandSubcategory>? BrandSubcategories { get; set; }
+
     }
 }

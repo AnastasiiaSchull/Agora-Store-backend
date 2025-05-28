@@ -37,6 +37,12 @@ namespace Agora.BLL.Services
             };
         }
 
+        public async Task<IEnumerable<BrandDTO>> GetBySubcategory(int subcategoryId)
+        {
+            var brands = await Database.Brands.GetBrandsBySubcategoryAsync(subcategoryId);
+            return _mapper.Map<List<BrandDTO>>(brands);
+        }
+
         public async Task Create(BrandDTO brandDTO)
         {
             var brand = new Brand

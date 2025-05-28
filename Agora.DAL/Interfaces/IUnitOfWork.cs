@@ -13,7 +13,7 @@ namespace Agora.DAL.Interfaces
         //IRepository<Address> Addresses { get; }
         IAdminRepository Admins { get; }
         IRepository<BankCard> BankCards { get; }
-        IRepository<Brand> Brands { get; }
+        IBrandRepository Brands { get; }
         IRepository<Cashback> Cashbacks { get; }
         IRepository<Category> Categories { get; }
         IRepository<Country> Countries { get; }

@@ -37,7 +37,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AddressUser");
+                    b.ToTable("AddressUser", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.Address", b =>
@@ -70,7 +70,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasIndex("CountryId");
 
-                    b.ToTable("Addresses");
+                    b.ToTable("Addresses", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.Admin", b =>
@@ -89,7 +89,7 @@ namespace Agora.DAL.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Admins");
+                    b.ToTable("Admins", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.ApplicationUser", b =>
@@ -180,7 +180,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("BankCards");
+                    b.ToTable("BankCards", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.Brand", b =>
@@ -196,7 +196,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands");
+                    b.ToTable("Brands", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.Cashback", b =>
@@ -218,7 +218,7 @@ namespace Agora.DAL.Migrations
                     b.HasIndex("CustomerId")
                         .IsUnique();
 
-                    b.ToTable("Cashbacks");
+                    b.ToTable("Cashbacks", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.Category", b =>
@@ -234,7 +234,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.Country", b =>
@@ -250,7 +250,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Countries");
+                    b.ToTable("Countries", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.Customer", b =>
@@ -269,7 +269,7 @@ namespace Agora.DAL.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.DeliveryOptions", b =>
@@ -296,7 +296,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasIndex("SellerId");
 
-                    b.ToTable("DeliveryOptions");
+                    b.ToTable("DeliveryOptions", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.Discount", b =>
@@ -324,7 +324,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Discounts");
+                    b.ToTable("Discounts", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.FAQ", b =>
@@ -348,7 +348,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasIndex("FAQCategoryId");
 
-                    b.ToTable("FAQs");
+                    b.ToTable("FAQs", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.FAQCategory", b =>
@@ -364,7 +364,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("FAQCategories");
+                    b.ToTable("FAQCategories", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.GiftCard", b =>
@@ -391,7 +391,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("GiftCards");
+                    b.ToTable("GiftCards", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.Order", b =>
@@ -415,7 +415,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.OrderItem", b =>
@@ -450,7 +450,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderItems", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.PasswordResetToken", b =>
@@ -474,7 +474,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PasswordResetTokens");
+                    b.ToTable("PasswordResetTokens", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.Payment", b =>
@@ -516,7 +516,7 @@ namespace Agora.DAL.Migrations
                     b.HasIndex("PaymentMethodId")
                         .IsUnique();
 
-                    b.ToTable("Payments");
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.PaymentMethod", b =>
@@ -547,7 +547,7 @@ namespace Agora.DAL.Migrations
                     b.HasIndex("GiftCardId")
                         .IsUnique();
 
-                    b.ToTable("PaymentMethods");
+                    b.ToTable("PaymentMethods", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.Product", b =>
@@ -606,7 +606,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasIndex("SubcategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.ProductReview", b =>
@@ -638,7 +638,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductReviews");
+                    b.ToTable("ProductReviews", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.Return", b =>
@@ -670,7 +670,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("Returns");
+                    b.ToTable("Returns", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.ReturnItem", b =>
@@ -699,7 +699,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasIndex("ReturnId");
 
-                    b.ToTable("ReturnItems");
+                    b.ToTable("ReturnItems", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.Seller", b =>
@@ -721,7 +721,7 @@ namespace Agora.DAL.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Sellers");
+                    b.ToTable("Sellers", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.SellerReview", b =>
@@ -753,7 +753,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasIndex("SellerId");
 
-                    b.ToTable("SellerReviews");
+                    b.ToTable("SellerReviews", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.Shipping", b =>
@@ -794,7 +794,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasIndex("SellerId");
 
-                    b.ToTable("Shippings");
+                    b.ToTable("Shippings", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.Store", b =>
@@ -824,7 +824,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasIndex("SellerId");
 
-                    b.ToTable("Stores");
+                    b.ToTable("Stores", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.Subcategory", b =>
@@ -845,7 +845,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Subcategories");
+                    b.ToTable("Subcategories", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.Support", b =>
@@ -875,7 +875,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Supports");
+                    b.ToTable("Supports", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.User", b =>
@@ -906,7 +906,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.Wishlist", b =>
@@ -927,7 +927,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Wishlists");
+                    b.ToTable("Wishlists", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -1074,7 +1074,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasIndex("WishlistsId");
 
-                    b.ToTable("ProductWishlist");
+                    b.ToTable("ProductWishlist", (string)null);
                 });
 
             modelBuilder.Entity("AddressUser", b =>

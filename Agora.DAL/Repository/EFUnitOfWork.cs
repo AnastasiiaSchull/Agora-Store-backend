@@ -2,12 +2,6 @@
 using Agora.DAL.Entities;
 using Agora.DAL.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Agora.DAL.Repository
 {
@@ -82,7 +76,7 @@ namespace Agora.DAL.Repository
                 return bankCardRepository;
             }
         }
-        public IRepository<Brand> Brands
+        public IBrandRepository Brands
         {
             get
             {

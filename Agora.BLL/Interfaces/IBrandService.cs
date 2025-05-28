@@ -6,6 +6,7 @@ namespace Agora.BLL.Interfaces
     {
         Task<IEnumerable<BrandDTO>> GetAll();
         Task<BrandDTO> Get(int id);
+        Task<IEnumerable<BrandDTO>> GetBySubcategory(int subcategoryId);
         Task Create(BrandDTO brandDTO);
         Task Update(BrandDTO brandDTO);
         Task Delete(int id);
