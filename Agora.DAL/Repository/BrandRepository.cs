@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace Agora.DAL.Repository
 {
-    public class BrandRepository : IRepository<Brand>
+    public class BrandRepository : IBrandRepository
     {
         private AgoraContext db;
         public BrandRepository(AgoraContext context)
@@ -22,6 +22,15 @@ namespace Agora.DAL.Repository
         public async Task<Brand> Get(int id)
         {
             return await db.Brands.FindAsync(id);
+        }
+
+        public async Task<List<Brand>> GetBrandsBySubcategoryAsync(int subcategoryId)
+        {
+            return await db.BrandSubcategories
+                .Where(bs => bs.SubcategoryId == subcategoryId)
+                .Select(bs => bs.Brand)
+                .Distinct()
+                .ToListAsync();
         }
 
         public async Task Create(Brand brand)

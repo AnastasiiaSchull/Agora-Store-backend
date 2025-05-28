@@ -31,6 +31,13 @@ namespace Agora.Controllers
             return Ok(brand);
         }
 
+        [HttpGet("by-subcategory")]
+        public async Task<IActionResult> GetBrandsBySubcategory([FromQuery] int subcategoryId)
+        {
+            var brands = await _brandService.GetBySubcategory(subcategoryId);
+            return Ok(brands);
+        }
+
         // POST: api/brands
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] BrandDTO brand)
