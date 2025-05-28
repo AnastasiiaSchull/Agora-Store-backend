@@ -21,5 +21,6 @@ namespace Agora.BLL.DTO
         public int? SubcategoryId { get; set; }
         public int? CategoryId { get; set; }
         public int? BrandId { get; set; }
+        public List<string>? ImagesUrls { get; set; }
     }
 }

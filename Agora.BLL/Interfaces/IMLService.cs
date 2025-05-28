@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Agora_BLL.MLSearchByImage;
+using static Agora.BLL.ML.MLSearchByImage;
 
 namespace Agora.BLL.Interfaces
 {

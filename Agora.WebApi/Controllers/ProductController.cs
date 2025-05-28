@@ -103,13 +103,30 @@ namespace Agora.Controllers
         }
 
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] ProductDTO product)
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> Update(int id, [FromForm] ProductUpdateModel product)
         {
             if (id != product.Id)
                 return BadRequest("Product ID mismatch");
-
-            await _productService.Update(product);
+            var oldProduct = await _productService.Get(id);
+            var oldImagesFolder = Path.Combine("wwwroot", "images", oldProduct.Name);
+            var newImagesFolder = Path.Combine("wwwroot", "images", product.Name);
+            if (Directory.Exists(oldImagesFolder))
+                Directory.Delete(oldImagesFolder, true);
+            Directory.CreateDirectory(newImagesFolder);
+            foreach (var image in product.Images)
+            {
+                var fileName = Path.GetFileName(image.FileName);
+                var savePath = Path.Combine(newImagesFolder, fileName);
+                using var stream = new FileStream(savePath, FileMode.Create);
+                await image.CopyToAsync(stream);
+            }
+            var productDTO = ConvertToDTO(product);
+            productDTO.ImagesPath = $"images/{product.Name}";
+            productDTO.Rating = oldProduct.Rating;
+            productDTO.IsAvailable = oldProduct.IsAvailable;
+            productDTO.StoreId = oldProduct.StoreId;
+            await _productService.Update(productDTO);
             return Ok("Product updated");
         }
 
@@ -119,5 +136,37 @@ namespace Agora.Controllers
             await _productService.Delete(id);
             return Ok("Product deleted");
         }
+
+        [HttpGet("details/{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+             if(id <= 0)
+                return BadRequest("Invalid product ID");
+            var product = await _productService.Get(id);
+            if (product == null)
+                return NotFound("Product not found");
+            product.ImagePath = _utilsService.GetFirstImageUrl(product.ImagesPath, Request);
+            product.ImagesUrls = _utilsService.GetImagesUrl(product.ImagesPath, Request);
+            return Ok(product);
+        }
+
+        public ProductDTO ConvertToDTO(ProductUpdateModel model) {
+            ProductDTO productDTO = new ProductDTO
+            {
+                Id = model.Id,
+                Name = model.Name,
+                Description = model.Description,
+                Price = model.Price,
+                StockQuantity = model.StockQuantity,
+                StoreId = model.StoreId,
+                SubcategoryId = model.SubcategoryId,
+                CategoryId = model.CategoryId,
+                BrandId = model.BrandId,
+                ImagesPath = model.ImagesPath
+
+            };
+            return productDTO;
+        }
+
     }
 }

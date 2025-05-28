@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using System.IO;
 using System.Collections.Generic;
-namespace Agora_BLL
+namespace Agora.BLL.ML
 {
     public partial class MLSearchByImage
     {
@@ -49,21 +49,13 @@ namespace Agora_BLL
 
         #endregion
 
-        //private static string MLNetModelPath = Path.GetFullPath("MLSearchByImage.mlnet");
-        private static string MLNetModelPath = "L:/ITstep/diplom/Agora.BackEnd(new)/Agora.BLL/ML/MLSearchByImage.mlnet"; //too bad, fix it
-
-    
-
-
-
+        private static string MLNetModelPath = Path.GetFullPath("MLSearchByImage.mlnet");
 
         public static readonly Lazy<PredictionEngine<ModelInput, ModelOutput>> PredictEngine = new Lazy<PredictionEngine<ModelInput, ModelOutput>>(() => CreatePredictEngine(), true);
 
 
         private static PredictionEngine<ModelInput, ModelOutput> CreatePredictEngine()
         {
-            Console.BackgroundColor = ConsoleColor.Red;
-            Console.WriteLine(MLNetModelPath);
             var mlContext = new MLContext();
             ITransformer mlModel = mlContext.Model.Load(MLNetModelPath, out var _);
             return mlContext.Model.CreatePredictionEngine<ModelInput, ModelOutput>(mlModel);
@@ -97,9 +89,7 @@ namespace Agora_BLL
             {
                 // Map the names to the predicted result score array
                 var labelName = labelNames.ElementAt(i);
-                float percentage = unlabeledScores[i] * 100; //added
-                //labledScores.Add(labelName.ToString(), unlabeledScores[i]); iw was like that
-                labledScores.Add(labelName.ToString(), percentage);
+                labledScores.Add(labelName.ToString(), unlabeledScores[i]);
             }
 
             return labledScores.OrderByDescending(c => c.Value);

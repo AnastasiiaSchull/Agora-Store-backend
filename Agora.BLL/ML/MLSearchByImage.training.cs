@@ -9,7 +9,7 @@ using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.Vision;
 
-namespace Agora_BLL
+namespace Agora.BLL.ML
 {
     public partial class MLSearchByImage
     {

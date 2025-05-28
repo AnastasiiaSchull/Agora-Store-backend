@@ -21,7 +21,7 @@ namespace Agora.DAL.Repository
 
         public async Task<Product> Get(int id)
         {
-            return await db.Products.FindAsync(id);
+            return await db.Products.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
         }
         public async Task<Product> GetByName(string name)
         {

@@ -10,5 +10,6 @@ namespace Agora.BLL.Interfaces
     public interface IUtilsService
     {
         string GetFirstImageUrl(string? folderPath, HttpRequest request);
+        List<string> GetImagesUrl(string? folderPath, HttpRequest request);
     }
 }

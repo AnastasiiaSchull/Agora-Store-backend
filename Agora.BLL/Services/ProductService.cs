@@ -10,6 +10,7 @@ using Agora.DAL.Entities;
 using Agora.DAL.Interfaces;
 using Agora.DAL.Repository;
 using AutoMapper;
+using StackExchange.Redis;
 
 namespace Agora.BLL.Services
 {
@@ -61,7 +62,11 @@ namespace Agora.BLL.Services
                 StockQuantity = product.StockQuantity,
                 Rating = product.Rating,
                 ImagesPath = product.ImagesPath,
-                IsAvailable = product.IsAvailable
+                IsAvailable = product.IsAvailable,
+                CategoryId = _mapper.Map<int>(product.CategoryId),
+                SubcategoryId = _mapper.Map<int>(product.SubcategoryId),
+                BrandId = _mapper.Map<int>(product.BrandId),
+                StoreId = _mapper.Map<int>(product.StoreId)
 
             };
         }
@@ -115,7 +120,11 @@ namespace Agora.BLL.Services
                 StockQuantity = productDTO.StockQuantity,
                 Rating = productDTO.Rating,
                 ImagesPath = productDTO.ImagesPath,
-                IsAvailable = productDTO.IsAvailable
+                IsAvailable = productDTO.IsAvailable,
+                SubcategoryId = productDTO.SubcategoryId,
+                CategoryId = productDTO.CategoryId,
+                BrandId = productDTO.BrandId,
+                StoreId = productDTO.StoreId,
 
             };
             Database.Products.Update(product);

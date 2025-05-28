@@ -43,7 +43,10 @@ namespace Agora.BLL.Infrastructure
             CreateMap<FAQCategory, FAQCategoryDTO>();
             CreateMap<GiftCard, GiftCardDTO>();
             CreateMap<ReturnItem, ReturnItemDTO>();
-            CreateMap<Product, ProductDTO>();
+            CreateMap<Product, ProductDTO>()
+                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
+                 .ForMember(dest => dest.SubcategoryId, opt => opt.MapFrom(src => src.SubcategoryId))
+                 .ForMember(dest => dest.BrandId, opt => opt.MapFrom(src => src.BrandId));
             CreateMap<ProductReview, ProductReviewDTO>();
             CreateMap<Payment, PaymentDTO>();
             CreateMap<PaymentMethod, PaymentMethodDTO>();

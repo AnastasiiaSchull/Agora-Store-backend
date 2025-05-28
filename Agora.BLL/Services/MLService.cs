@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Agora.BLL.Interfaces;
-using Agora_BLL;
+using Agora.BLL.ML;
 using Microsoft.ML;
-using static Agora_BLL.MLSearchByImage;
+using static Agora.BLL.ML.MLSearchByImage;
 
 namespace Agora.BLL.Services
 {
