@@ -168,5 +168,27 @@ namespace Agora.Controllers
             return productDTO;
         }
 
+        [HttpPut("update-status/{id}")]
+        public async Task<IActionResult> Update(int id, [FromForm] bool status)
+        {
+            try
+            {
+                var product = await _productService.Get(id);
+                if (product == null)
+                    return NotFound("Product not found");
+                product.IsAvailable = status;
+
+                await _productService.Update(product);
+
+                return Ok("Product updated");
+            }
+            catch(Exception ex)
+            {
+                return BadRequest($"Error updating product: {ex.Message}");
+            }
+
+            
+        }
+
     }
 }
