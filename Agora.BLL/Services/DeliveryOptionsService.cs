@@ -75,5 +75,22 @@ namespace Agora.BLL.Services
             await Database.DeliveryOptions.Delete(id);
             await Database.Save();
         }
+
+        public async Task<IEnumerable<DeliveryOptionsDTO>> GetBySellerId(int sellerId)
+        {
+            var deliveryOptions = await Database.DeliveryOptions.GetAll();
+            var filtered = deliveryOptions
+                .Where(opt => opt.Seller != null && opt.Seller.Id == sellerId)
+                .Select(opt => new DeliveryOptionsDTO
+                {
+                    Id = opt.Id,
+                    Type = opt.Type.ToString(),
+                    Price = opt.Price,
+                    EstimatedDays = opt.EstimatedDays,
+                    ShippingId = opt.Shipping.Id
+                });
+
+            return filtered;
+        }
     }
 }
