@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Agora.BLL.DTO;
+﻿using Agora.BLL.DTO;
 using Agora.BLL.Infrastructure;
 using Agora.BLL.Interfaces;
 using Agora.DAL.Entities;
 using Agora.DAL.Interfaces;
-using Agora.DAL.Repository;
 using AutoMapper;
 using StackExchange.Redis;
 
@@ -26,18 +20,21 @@ namespace Agora.BLL.Services
 
         public async Task<IEnumerable<ProductDTO>> GetAll()
         {
-            var products = await Database.Products.GetAll();
-            return _mapper.Map<IQueryable<Product>, IEnumerable<ProductDTO>>(products);
+            var products = await Database.Products.Find(p => p.IsAvailable);
+            return _mapper.Map<IEnumerable<ProductDTO>>(products);
         }
 
         public async Task<IEnumerable<ProductDTO>> GetFilteredByName(string filter)
         {
             var filteredProducts = await Database.Products.Find(p =>
-                           p.Name.Contains(filter) ||
-                           p.Category.Name.Contains(filter) ||
-                           p.Subcategory.Name.Contains(filter) ||
-                           p.Brand.Name.Contains(filter));
-
+                   p.IsAvailable &&
+                   (
+                       p.Name!.Contains(filter) ||
+                       p.Category!.Name!.Contains(filter) ||
+                       p.Subcategory!.Name!.Contains(filter) ||
+                       p.Brand!.Name!.Contains(filter)
+                   )
+               );
             return _mapper.Map<IEnumerable<ProductDTO>>(filteredProducts);
         }
 
