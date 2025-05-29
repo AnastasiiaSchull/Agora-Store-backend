@@ -15,5 +15,6 @@ namespace Agora.BLL.Interfaces
         Task Update(DeliveryOptionsDTO deliveryOptionsDTO);
         Task Delete(int id);
         Task<IEnumerable<DeliveryOptionsDTO>> GetBySellerId(int sellerId);
+        Task DeleteAllBySellerId(int sellerId);
     }
 }

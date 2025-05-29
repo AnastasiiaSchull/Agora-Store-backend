@@ -92,5 +92,18 @@ namespace Agora.BLL.Services
 
             return filtered;
         }
+
+        public async Task DeleteAllBySellerId(int sellerId)
+        {
+            var options = await Database.DeliveryOptions.GetAll();
+            var toDelete = options.Where(opt => opt.Seller != null && opt.Seller.Id == sellerId).ToList();
+
+            foreach (var option in toDelete)
+            {
+                await Database.DeliveryOptions.Delete(option.Id);
+            }
+
+            await Database.Save();
+        }
     }
 }

@@ -20,5 +20,12 @@ namespace Agora.Controllers
             var options = await _deliveryOptionsService.GetBySellerId(storeId);
             return Ok(options);
         }
+
+        [HttpDelete("all/{sellerId}")]
+        public async Task<IActionResult> DeleteAllBySellerId(int sellerId)
+        {
+            await _deliveryOptionsService.DeleteAllBySellerId(sellerId);
+            return NoContent();
+        }
     }
 }
