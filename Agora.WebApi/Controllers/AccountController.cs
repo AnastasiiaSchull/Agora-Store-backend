@@ -31,9 +31,10 @@ namespace Agora.Controllers
         private readonly ICustomerService _customerService;
         private readonly IConfiguration _config;
         private readonly IEmailService _emailService;
+        private readonly IStatisticsInitializer _statisticsInitializer;
 
         public AccountController(IUserService userService, ISellerService sellerService, IStoreService storeService, IAddressService addressService,
-            ICountryService countryService, ISecureService secureService, ICustomerService customerService, IConfiguration config, IEmailService emailService)
+            ICountryService countryService, ISecureService secureService, ICustomerService customerService, IConfiguration config, IEmailService emailService, IStatisticsInitializer statisticsInitializer)
 
         {
             _userService = userService;
@@ -45,6 +46,7 @@ namespace Agora.Controllers
             _customerService = customerService;
             _config = config;
             _emailService = emailService;
+            _statisticsInitializer = statisticsInitializer;            
         }
 
         [HttpPost("register-seller")]
@@ -69,12 +71,15 @@ namespace Agora.Controllers
 
                 int sellerId = await _sellerService.Create(sellerDTO);
 
+                await _statisticsInitializer.InitializeEmptyStatsForSeller(sellerId);
+
                 StoreDTO storeDTO = new StoreDTO();
                 storeDTO.Name = regSeller.StoreName;
                 storeDTO.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
                 storeDTO.SellerId = sellerId;
 
-                await _storeService.Create(storeDTO);
+                int storeId = await _storeService.Create(storeDTO);
+                await _statisticsInitializer.InitializeEmptyStatsForStore(storeId);
 
                 var country = await _countryService.Get(regSeller.CountryId);
 
@@ -88,8 +93,9 @@ namespace Agora.Controllers
                 addressDTO.City = regSeller.City;
                 addressDTO.PostalCode = regSeller.PostalCode;
                 addressDTO.CountryId = country.Id;
+                addressDTO.UserId = userDTO.Id;                
 
-                await _addressService.Create(addressDTO);
+                await _addressService.CreateAddress(addressDTO);
 
                 var seller = await _sellerService.Get(sellerId);
                 var role = await _userService.GetRoleByUserId(userDTO.Id);

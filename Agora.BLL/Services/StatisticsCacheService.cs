@@ -179,6 +179,19 @@ namespace Agora.BLL.Services
             await _redisSafe.SafeSetStringAsync($"monthly_revenue:{oneMonthAgo.Year}-{oneMonthAgo.Month:D2}:{storeId}", emptyListJson, GetCacheLifetimeForMonth(oneMonthAgo));
         }
 
+        public async Task InitializeEmptyStatsForSeller(int sellerId)
+        {
+            await _redisSafe.SafeSetStringAsync($"weekly_general_stats:{sellerId}", "[]", TimeSpan.FromDays(7));
+            await _redisSafe.SafeSetStringAsync($"sales_by_category_stats:{sellerId}", "[]", TimeSpan.FromDays(7));
+
+            var twoMonthsAgo = DateTime.Now.AddMonths(-2);
+            var oneMonthAgo = DateTime.Now.AddMonths(-1);
+            var emptyListJson = JsonSerializer.Serialize(new List<DailyRevenueDTO>());
+
+            await _redisSafe.SafeSetStringAsync($"monthly_revenue_general:{twoMonthsAgo.Year}-{twoMonthsAgo.Month:D2}:{sellerId}", emptyListJson, GetCacheLifetimeForMonth(twoMonthsAgo));
+            await _redisSafe.SafeSetStringAsync($"monthly_revenue_general:{oneMonthAgo.Year}-{oneMonthAgo.Month:D2}:{sellerId}", emptyListJson, GetCacheLifetimeForMonth(oneMonthAgo));
+        }
+
         public Task StopAsync(CancellationToken cancellationToken)
         {
             _timer?.Dispose();
