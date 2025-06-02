@@ -9,5 +9,6 @@ namespace Agora.BLL.Interfaces
     public interface IStatisticsInitializer
     {
         Task InitializeEmptyStatsForStore(int storeId);
+        Task InitializeEmptyStatsForSeller(int sellerId);
     }
 }
