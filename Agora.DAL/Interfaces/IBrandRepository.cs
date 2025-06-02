@@ -4,6 +4,6 @@ namespace Agora.DAL.Interfaces
 {
     public interface IBrandRepository : IRepository<Brand>
     {
-        Task<List<Brand>> GetBrandsBySubcategoryAsync(int subcategoryId);     
+        Task<List<Brand>> GetBrandsBySubcategoryOrCategoryAsync(int? subcategoryId = null, int? categoryId = null);
     }
 }

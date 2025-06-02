@@ -1,4 +1,5 @@
 ﻿using Agora.BLL.DTO;
+using System.Threading.Tasks;
 
 namespace Agora.BLL.Interfaces
 {
@@ -6,7 +7,7 @@ namespace Agora.BLL.Interfaces
     {
         Task<IEnumerable<BrandDTO>> GetAll();
         Task<BrandDTO> Get(int id);
-        Task<IEnumerable<BrandDTO>> GetBySubcategory(int subcategoryId);
+        Task<IEnumerable<BrandDTO>> GetBySubcategoryOrCategory(int? subcategoryId = null, int? categoryId = null);
         Task Create(BrandDTO brandDTO);
         Task Update(BrandDTO brandDTO);
         Task Delete(int id);

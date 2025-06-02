@@ -19,7 +19,7 @@ namespace Agora.BLL.Services
 
         public async Task<IEnumerable<SubcategoryDTO>> GetAll()
         {
-            var subcategories = await Database.Subcategories.GetAll();
+            var subcategories = await Database.Subcategories.GetAll();           
             return _mapper.Map<IEnumerable<SubcategoryDTO>>(subcategories);
         }
 

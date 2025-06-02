@@ -16,13 +16,17 @@ namespace Agora.DAL.Repository
 
         public async Task<IQueryable<Subcategory>> GetAll()
         {
-            return db.Subcategories;
+            // return db.Subcategories;
+            var list = await db.Subcategories
+               .Include(s => s.Category)
+               .ToListAsync();
+            return list.AsQueryable();
         }
 
         public async Task<Subcategory> Get(int id)
         {
             return await db.Subcategories.FindAsync(id);
-        }
+        }      
 
         public async Task Create(Subcategory subcategory)
         {

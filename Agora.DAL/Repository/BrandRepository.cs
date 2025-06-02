@@ -24,13 +24,31 @@ namespace Agora.DAL.Repository
             return await db.Brands.FindAsync(id);
         }
 
-        public async Task<List<Brand>> GetBrandsBySubcategoryAsync(int subcategoryId)
+        public async Task<List<Brand>> GetBrandsBySubcategoryOrCategoryAsync(int? subcategoryId = null, int? categoryId = null)
         {
-            return await db.BrandSubcategories
-                .Where(bs => bs.SubcategoryId == subcategoryId)
-                .Select(bs => bs.Brand)
-                .Distinct()
-                .ToListAsync();
+            if (subcategoryId.HasValue)
+            {
+                return await db.BrandSubcategories
+                    .Where(bs => bs.SubcategoryId == subcategoryId.Value)
+                    .Select(bs => bs.Brand)
+                    .Distinct()
+                    .ToListAsync();
+            }
+            else if (categoryId.HasValue)
+            {
+                var subcategoryIds = await db.Subcategories
+                    .Where(sc => sc.Category != null && sc.Category.Id == categoryId.Value)
+                    .Select(sc => sc.Id)
+                    .ToListAsync();
+
+                return await db.BrandSubcategories
+                    .Where(bs => subcategoryIds.Contains(bs.SubcategoryId))
+                    .Select(bs => bs.Brand)
+                    .Distinct()
+                    .ToListAsync();
+            }
+
+            return new List<Brand>();
         }
 
         public async Task Create(Brand brand)
