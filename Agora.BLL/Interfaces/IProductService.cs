@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Agora.BLL.DTO;
+﻿using Agora.BLL.DTO;
 
 namespace Agora.BLL.Interfaces
 {
@@ -11,7 +6,7 @@ namespace Agora.BLL.Interfaces
     {
         Task<IEnumerable<ProductDTO>> GetAll();
         Task<IEnumerable<ProductDTO>> GetFilteredByName(string filter); // to be continued
-        Task<IEnumerable<ProductDTO>> GetProductsBySeller(int sellerId); 
+        Task<IEnumerable<ProductDTO>> GetProductsBySeller(int sellerId);     
         Task<ProductDTO> Get(int id);
         Task<ProductDTO> GetByName(string name);
         Task Create(ProductDTO productDTO);

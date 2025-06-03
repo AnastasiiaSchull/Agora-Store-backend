@@ -30,13 +30,18 @@ namespace Agora.Controllers
             var brand = await _brandService.Get(id);
             return Ok(brand);
         }
+    
 
-        [HttpGet("by-subcategory")]
-        public async Task<IActionResult> GetBrandsBySubcategory([FromQuery] int subcategoryId)
+        [HttpGet("by-subcategory-or-category")]
+        public async Task<IActionResult> GetBrandsByFilter([FromQuery] int? subcategoryId, [FromQuery] int? categoryId)
         {
-            var brands = await _brandService.GetBySubcategory(subcategoryId);
+            if (subcategoryId == null && categoryId == null)
+                return BadRequest("Either subcategoryId or categoryId must be provided.");
+
+            var brands = await _brandService.GetBySubcategoryOrCategory(subcategoryId, categoryId);
             return Ok(brands);
         }
+
 
         // POST: api/brands
         [HttpPost]
