@@ -11,6 +11,7 @@ namespace Agora.BLL.Interfaces
     {
         Task<IQueryable<ShippingDTO>> GetAll();
         Task<ShippingDTO> Get(int id);
+        Task<ShippingDTO> GetByTrackingNumber(string trackingNumber);
         Task<ShippingDTO> GetByOrderItem(int id);
         Task Create(ShippingDTO sippingDTO);
         Task Update(ShippingDTO sippingDTO);

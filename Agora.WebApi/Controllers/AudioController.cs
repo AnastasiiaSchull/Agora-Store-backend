@@ -77,6 +77,7 @@ namespace Agora.Controllers
             });
         }
 
+        [NonAction]
         private async Task<string> TranslateText(string input, string fromLocale)
         {
             string key = _config["AZURE_TRANSLATOR_KEY"]!;

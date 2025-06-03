@@ -1,6 +1,7 @@
 ﻿using Agora.BLL.DTO;
 using Agora.BLL.Infrastructure;
 using Agora.BLL.Interfaces;
+using Agora.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,6 +43,50 @@ namespace Agora.Controllers
             
 
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Receive([FromBody] DhlPayload payload)
+        {
+            try
+            {
+                var status = payload.Status;
+                ShippingDTO shipping = await _shippingService.GetByTrackingNumber(payload.TrackingNumber);
+                if(shipping != null)
+                {
+                    shipping.Status = status.ToString();
+                    await _shippingService.Update(shipping);
+
+                    if(status == Enums.ShippingStatus.InTransit || status == Enums.ShippingStatus.Delivered)
+                    {
+                        var orderItem = await _orderItemService.Get(shipping.OrderItemId.Value);
+                     
+                        if (orderItem != null)
+                        {
+                            if(status == Enums.ShippingStatus.InTransit)
+                            {
+                                orderItem.Status = Enums.OrderStatus.Shipped.ToString();
+                                await _orderItemService.Update(orderItem);
+                            }
+                            else if (status == Enums.ShippingStatus.Delivered)
+                            {
+                                orderItem.Status = Enums.OrderStatus.Delivered.ToString();
+                                await _orderItemService.Update(orderItem);
+                            }
+                                
+                            
+                        }
+                    }
+                   
+                }
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { message = ex.Message }) { StatusCode = 500 };
+            }
+            return Ok();
+
+        }
+
 
     }
 }

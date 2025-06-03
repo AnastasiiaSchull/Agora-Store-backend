@@ -153,6 +153,7 @@ namespace Agora.Controllers
             return Ok(product);
         }
 
+        [NonAction]
         public ProductDTO ConvertToDTO(ProductUpdateModel model) {
             ProductDTO productDTO = new ProductDTO
             {

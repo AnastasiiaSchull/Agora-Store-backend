@@ -11,6 +11,7 @@ namespace Agora.DAL.Interfaces
     {
         Task<IQueryable<Shipping>> GetAll();
         Task<Shipping> Get(int id);
+        Task<Shipping> GetByTrackingNumber(string trackingNumber);
         Task<Shipping> GetByOrderItem(int id);
         Task Create(Shipping item);
         Task Update(Shipping item);
