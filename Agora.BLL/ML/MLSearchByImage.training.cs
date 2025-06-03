@@ -8,8 +8,9 @@ using System.Threading.Tasks;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.Vision;
+using static Agora.BLL.ML.MLSearchByImage;
 
-namespace Agora.BLL.ML
+namespace Agora_BLL
 {
     public partial class MLSearchByImage
     {

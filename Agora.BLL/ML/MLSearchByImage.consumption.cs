@@ -49,7 +49,14 @@ namespace Agora.BLL.ML
 
         #endregion
 
-        private static string MLNetModelPath = Path.GetFullPath("MLSearchByImage.mlnet");
+        public static string GetPath()
+        {
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+            DirectoryInfo currentDir = new DirectoryInfo(basePath);
+            string solutionRootPath = currentDir.Parent?.Parent?.Parent?.Parent?.FullName;
+            string MLNetModelPath = Path.Combine(solutionRootPath, "Agora.BLL", "ML", "MLSearchByImage.mlnet");
+            return MLNetModelPath;
+        }
 
         public static readonly Lazy<PredictionEngine<ModelInput, ModelOutput>> PredictEngine = new Lazy<PredictionEngine<ModelInput, ModelOutput>>(() => CreatePredictEngine(), true);
 
@@ -57,7 +64,7 @@ namespace Agora.BLL.ML
         private static PredictionEngine<ModelInput, ModelOutput> CreatePredictEngine()
         {
             var mlContext = new MLContext();
-            ITransformer mlModel = mlContext.Model.Load(MLNetModelPath, out var _);
+            ITransformer mlModel = mlContext.Model.Load(GetPath(), out var _);
             return mlContext.Model.CreatePredictionEngine<ModelInput, ModelOutput>(mlModel);
         }
 
@@ -89,7 +96,9 @@ namespace Agora.BLL.ML
             {
                 // Map the names to the predicted result score array
                 var labelName = labelNames.ElementAt(i);
-                labledScores.Add(labelName.ToString(), unlabeledScores[i]);
+                float percentage = unlabeledScores[i] * 100;
+                labledScores.Add(labelName.ToString(), percentage);
+                //labledScores.Add(labelName.ToString(), unlabeledScores[i]);
             }
 
             return labledScores.OrderByDescending(c => c.Value);
