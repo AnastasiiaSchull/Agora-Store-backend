@@ -38,10 +38,10 @@ namespace Agora.Controllers
         [HttpGet("get-orders-by-store/{storeId}")]
         public async Task<IActionResult> GetOrdersByStore(int storeId)
         {
-
-            IEnumerable<OrderItemDTO> orders = await _orderItemService.GetAllByStore(storeId);
             Console.BackgroundColor = ConsoleColor.Red;
             Console.WriteLine("WTF");
+            IEnumerable<OrderItemDTO> orders = await _orderItemService.GetAllByStore(storeId);
+            
             if (orders == null)
                 return new JsonResult(new { message = "Server error!" }) { StatusCode = 500 };
             return Ok(orders);

@@ -63,7 +63,11 @@ namespace Agora.DAL.Repository
         }
         public async Task<OrderItem> Get(int id)
         {
-            return await db.OrderItems.FindAsync(id);
+            return await db.OrderItems.AsNoTracking()
+                   .Include(o => o.Shipping)
+                   .Include(o => o.Order)
+                   .Include(o => o.Product)
+                   .FirstOrDefaultAsync(o => o.Id == id);
         }
 
         public async Task Create(OrderItem orderItem)

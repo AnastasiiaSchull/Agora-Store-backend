@@ -42,6 +42,20 @@ namespace Agora.BLL.Services
                 DeliveryOptionsId = shipping.DeliveryOptionsId
             };
         }
+        public async Task<ShippingDTO> GetByTrackingNumber(string trackingNumber)
+        {
+            var shipping = await Database.Shippings.GetByTrackingNumber(trackingNumber);
+            if (shipping == null)
+              return null; 
+            return new ShippingDTO
+            {
+                Id = shipping.Id,
+                Status = shipping.Status.ToString(),
+                TrackingNumber = shipping.TrackingNumber,
+                OrderItemId = shipping.OrderItemId,
+                DeliveryOptionsId = shipping.DeliveryOptionsId
+            };
+        }
         public async Task<ShippingDTO> GetByOrderItem(int id)
         {
             var shipping = await Database.Shippings.GetByOrderItem(id);
@@ -81,7 +95,7 @@ namespace Agora.BLL.Services
                 existingShipping.TrackingNumber = shippingDTO.TrackingNumber;
 
             if (shippingDTO.OrderItemId.HasValue)
-                existingShipping.OrderItemId = shippingDTO.OrderItemId.Value;
+                existingShipping.OrderItemId = shippingDTO.OrderItemId;
 
             if (shippingDTO.AddressId.HasValue)
                 existingShipping.AddressId = shippingDTO.AddressId.Value;

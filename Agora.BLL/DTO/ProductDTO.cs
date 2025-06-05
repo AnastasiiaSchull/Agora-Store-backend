@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Agora.BLL.DTO
+﻿namespace Agora.BLL.DTO
 {
     public class ProductDTO
     {
@@ -23,6 +17,7 @@ namespace Agora.BLL.DTO
         public int? BrandId { get; set; }
         public List<string>? ImagesUrls { get; set; }
         public BrandDTO? Brand { get; set; }
-        public StoreDTO? Store { get; set; }
+        public StoreShortDTO? Store { get; set; }
+        public StoreDTO? StoreDTO { get; set; }
     }
 }

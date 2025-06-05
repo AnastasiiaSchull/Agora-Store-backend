@@ -22,6 +22,12 @@ namespace Agora.DAL.Repository
         {
             return await db.Shippings.FindAsync(id);
         }
+
+        public async Task<Shipping> GetByTrackingNumber(string trackingNumber)
+        {
+            return await db.Shippings.Where(s => s.TrackingNumber == trackingNumber)
+                                     .FirstOrDefaultAsync();
+        }
         public async Task<Shipping> GetByOrderItem(int id)
         {
             return await db.Shippings.FirstOrDefaultAsync(s => s.OrderItemId == id);

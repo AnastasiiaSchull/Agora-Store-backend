@@ -8,6 +8,7 @@ using Agora.BLL.ML;
 using Microsoft.ML;
 using static Agora.BLL.ML.MLSearchByImage;
 
+
 namespace Agora.BLL.Services
 {
     public class MLService : IMLService

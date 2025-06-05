@@ -31,6 +31,17 @@ namespace Agora.DAL.Repository
         {
             return db.Products.Where(p=> p.Store.SellerId == sellerId);
         }
+
+        public Task<IQueryable<Product>> GetSimilar(int categoryId, int subcategoryId, int excludeId)
+        {
+            var query = db.Products.Where(p =>
+                p.Id != excludeId &&
+                (p.CategoryId == categoryId || p.SubcategoryId == subcategoryId));
+
+            return Task.FromResult(query);
+        }
+
+
         public async Task Create(Product product)
         {
             await db.Products.AddAsync(product);
@@ -50,6 +61,11 @@ namespace Agora.DAL.Repository
         public async Task<IEnumerable<Product>> Find(Expression<Func<Product, bool>> predicate)
         {
             return await db.Products.Where(predicate).ToListAsync();
+        }
+
+        public Task GetSimilar(int? categoryId, int? subcategoryId, int productId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

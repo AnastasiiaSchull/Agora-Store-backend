@@ -3,6 +3,7 @@ using Agora.DAL.Entities;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Agora.DAL.EF
 {
@@ -60,7 +61,9 @@ namespace Agora.DAL.EF
            
                 string connectionString = config.GetConnectionString("DefaultConnection");
                 optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
-                              .UseLazyLoadingProxies();
+                              .UseLazyLoadingProxies()
+                               .EnableSensitiveDataLogging()
+                                 .LogTo(Console.WriteLine, LogLevel.Information);
 
 
                 return new AgoraContext(optionsBuilder.Options);

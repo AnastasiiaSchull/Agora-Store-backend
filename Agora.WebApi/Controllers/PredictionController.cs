@@ -31,18 +31,17 @@ namespace Agora.Controllers
                 return NotFound("Image not found.");
             }
 
-            //string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "Apple Iphone 16 128", "1.jpg");
 
             byte[] imageBytes = await GetBytes(image);
-            var result = _mlService.PredictAllLabels(imageBytes);
+            var result = _mlService.PredictAllLabels(imageBytes); //Получение результатов предсказания в виде строки и значения предстказания в процентном соотношении
 
             List<ProductDTO> products = new List<ProductDTO>();
             foreach( var item in result)
             { 
-                if(item.Value >= 40.0)
+                if(item.Value >= 40.0) //Сортирока по процентному соотношению
                 {
-                    var product = await _productService.GetByName(item.Key);
-                    if(product.IsAvailable == true)
+                    var product = await _productService.GetByName(item.Key); // Получение продукта по имени, которое было предсказано моделью
+                    if (product.IsAvailable == true) 
                     {
                         product.ImagePath = _utilsService.GetFirstImageUrl(product.ImagesPath, Request);
                         products.Add(product);

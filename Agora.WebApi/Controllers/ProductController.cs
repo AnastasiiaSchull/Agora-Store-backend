@@ -153,6 +153,30 @@ namespace Agora.Controllers
             return Ok(product);
         }
 
+        [HttpGet("similar/{productId}")]
+        public async Task<IActionResult> GetSimilarProducts(int productId)
+        {
+            var product = await _productService.Get(productId);
+            if (product == null)
+                return NotFound("Product not found");
+
+            var all = await _productService.GetAll();
+
+            var similar = all
+                .Where(p => p.Id != productId &&
+                    (p.CategoryId == product.CategoryId ||
+                     p.SubcategoryId == product.SubcategoryId))
+                .Take(10)
+                .ToList();
+
+            foreach (var item in similar)
+                item.ImagePath = _utilsService.GetFirstImageUrl(item.ImagesPath, Request);
+
+            return Ok(similar);
+        }
+
+
+        [NonAction]
         public ProductDTO ConvertToDTO(ProductUpdateModel model) {
             ProductDTO productDTO = new ProductDTO
             {

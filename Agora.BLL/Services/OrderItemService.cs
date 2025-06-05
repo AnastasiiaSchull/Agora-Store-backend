@@ -11,7 +11,6 @@ using Agora.DAL.Interfaces;
 using Agora.Enums;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using StackExchange.Redis;
 namespace Agora.BLL.Services
 {
     public class OrderItemService : IOrderItemService
@@ -99,7 +98,14 @@ namespace Agora.BLL.Services
             {
                 Id = orderItemDTO.Id,
                 PriceAtMoment = orderItemDTO.PriceAtMoment,
-                Quantity = orderItemDTO.Quantity
+                Quantity = orderItemDTO.Quantity,
+                Date = orderItemDTO.Date,
+                Status = Enum.Parse<OrderStatus>(orderItemDTO.Status, true),
+                //Shipping = _mapper.Map<Shipping>(orderItemDTO.ShippingDTO),
+                //Order = _mapper.Map<Order>(orderItemDTO.OrderDTO),
+                //Product = _mapper.Map<Product>(orderItemDTO.ProductDTO)
+
+
             };
             Database.OrderItems.Update(orderItem);
             await Database.Save();

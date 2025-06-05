@@ -18,6 +18,7 @@ namespace Agora.BLL.Infrastructure
             CreateMap<Support, SupportDTO>();
             CreateMap<Subcategory, SubcategoryDTO>();
             CreateMap<Store, StoreDTO>();
+            CreateMap<Store, StoreShortDTO>();
             CreateMap<Shipping, ShippingDTO>()
                 .ForMember(dest => dest.DeliveryOptionsDTO, opt => opt.MapFrom(src => src.DeliveryOptions))
                 //.ForMember(dest => dest.OrderItemDTO, opt => opt.MapFrom(src => src.OrderItem))
@@ -44,6 +45,7 @@ namespace Agora.BLL.Infrastructure
             CreateMap<GiftCard, GiftCardDTO>();
             CreateMap<ReturnItem, ReturnItemDTO>();
             CreateMap<Product, ProductDTO>()
+                 .ForMember(dest => dest.Store, opt => opt.MapFrom(src => src.Store))
                  .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
                  .ForMember(dest => dest.SubcategoryId, opt => opt.MapFrom(src => src.SubcategoryId))
                  .ForMember(dest => dest.BrandId, opt => opt.MapFrom(src => src.BrandId))
