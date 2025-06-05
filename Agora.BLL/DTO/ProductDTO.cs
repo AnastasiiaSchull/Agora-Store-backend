@@ -23,5 +23,6 @@ namespace Agora.BLL.DTO
         public int? BrandId { get; set; }
         public List<string>? ImagesUrls { get; set; }
         public BrandDTO? Brand { get; set; }
+        public StoreDTO? Store { get; set; }
     }
 }
