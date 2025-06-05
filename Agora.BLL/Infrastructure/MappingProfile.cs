@@ -18,7 +18,6 @@ namespace Agora.BLL.Infrastructure
             CreateMap<Support, SupportDTO>();
             CreateMap<Subcategory, SubcategoryDTO>();
             CreateMap<Store, StoreDTO>();
-            CreateMap<Store, StoreShortDTO>();
             CreateMap<Shipping, ShippingDTO>()
                 .ForMember(dest => dest.DeliveryOptionsDTO, opt => opt.MapFrom(src => src.DeliveryOptions))
                 //.ForMember(dest => dest.OrderItemDTO, opt => opt.MapFrom(src => src.OrderItem))
