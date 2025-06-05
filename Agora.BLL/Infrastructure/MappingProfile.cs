@@ -46,6 +46,7 @@ namespace Agora.BLL.Infrastructure
             CreateMap<ReturnItem, ReturnItemDTO>();
             CreateMap<Product, ProductDTO>()
                  .ForMember(dest => dest.Store, opt => opt.MapFrom(src => src.Store))
+                 .ForMember(dest => dest.StoreDTO, opt => opt.MapFrom(src => src.Store))
                  .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
                  .ForMember(dest => dest.SubcategoryId, opt => opt.MapFrom(src => src.SubcategoryId))
                  .ForMember(dest => dest.BrandId, opt => opt.MapFrom(src => src.BrandId))
