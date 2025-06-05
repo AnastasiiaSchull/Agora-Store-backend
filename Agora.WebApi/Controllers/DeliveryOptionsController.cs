@@ -1,4 +1,6 @@
-﻿using Agora.BLL.Interfaces;
+﻿using Agora.BLL.DTO;
+using Agora.BLL.Infrastructure;
+using Agora.BLL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Agora.Controllers
@@ -26,6 +28,29 @@ namespace Agora.Controllers
         {
             await _deliveryOptionsService.DeleteAllBySellerId(sellerId);
             return NoContent();
+        }
+
+        [HttpPost("create-delivery-option")]
+        public async Task<IActionResult> Create([FromBody] DeliveryOptionsDTO deliveryOptionsDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                await _deliveryOptionsService.Create(deliveryOptionsDTO);
+                return Ok();
+            }
+            catch (ValidationExceptionFromService ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while creating the delivery option.");
+            }
         }
     }
 }

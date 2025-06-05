@@ -9,6 +9,7 @@ namespace Agora.DAL.Entities
         public decimal Price { get; set; }
         public int EstimatedDays { get; set; }
 
+        public int SellerId { get; set; }
         public virtual Shipping? Shipping { get; set; }
         public virtual Seller? Seller { get; set; }
     }

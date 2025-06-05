@@ -9,5 +9,6 @@ namespace Agora.BLL.DTO
         public decimal Price { get; set; }
         public int EstimatedDays { get; set; }
         public int? ShippingId { get; set; }
+        public int SellerId { get; set; }
     }
 }
