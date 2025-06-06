@@ -41,7 +41,7 @@ namespace Agora.BLL.Services
                 Type = deliveryOptions.Type.ToString(),
                 Price = deliveryOptions.Price,
                 EstimatedDays = deliveryOptions.EstimatedDays,
-                ShippingId = deliveryOptions.Shipping.Id,
+                ShippingId = deliveryOptions.Shipping?.Id,
             };
         }
 
@@ -53,19 +53,24 @@ namespace Agora.BLL.Services
                 Type= Enum.Parse<DeliveryType>(deliveryOptionsDTO.Type, ignoreCase: true),
                 Price = deliveryOptionsDTO.Price,
                 EstimatedDays= deliveryOptionsDTO.EstimatedDays,
+                SellerId = deliveryOptionsDTO.SellerId
             };
+
             await Database.DeliveryOptions.Create(deliveryOptions);
             await Database.Save();
         }
-        public async Task Update(DeliveryOptionsDTO deliveryOptionsDTO)
+
+        public async Task Update(int id, DeliveryOptionsDTO deliveryOptionsDTO)
         {
             var deliveryOptions = new DeliveryOptions
             {
-                Id = deliveryOptionsDTO.Id,
+                Id = id,
                 Type = Enum.Parse<DeliveryType>(deliveryOptionsDTO.Type, ignoreCase: true),
                 Price = deliveryOptionsDTO.Price,
                 EstimatedDays = deliveryOptionsDTO.EstimatedDays,
+                SellerId = deliveryOptionsDTO.SellerId
             };
+
             Database.DeliveryOptions.Update(deliveryOptions);
             await Database.Save();
         }
@@ -89,6 +94,13 @@ namespace Agora.BLL.Services
                     EstimatedDays = opt.EstimatedDays,
                     ShippingId = opt.Shipping.Id
                 });
+
+            Console.WriteLine($"Filtered count: {filtered.Count()}");
+
+            foreach (var item in filtered)
+            {
+                Console.WriteLine($"Filtered Option: {item.Id}, Type: {item.Type}, Price: {item.Price}, SellerId: {sellerId}");
+            }
 
             return filtered;
         }

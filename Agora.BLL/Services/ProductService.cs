@@ -63,7 +63,8 @@ namespace Agora.BLL.Services
                 CategoryId = _mapper.Map<int>(product.CategoryId),
                 SubcategoryId = _mapper.Map<int>(product.SubcategoryId),
                 BrandId = _mapper.Map<int>(product.BrandId),
-                StoreId = _mapper.Map<int>(product.StoreId)
+                StoreId = _mapper.Map<int>(product.StoreId),
+                Store = product.Store == null ? null : _mapper.Map<StoreDTO>(product.Store)
 
             };
         }
@@ -85,6 +86,20 @@ namespace Agora.BLL.Services
 
             };
         }
+
+        public async Task<IEnumerable<ProductDTO>> GetSimilarProducts(int productId)
+        {
+            var product = await Database.Products.Get(productId);
+            if (product == null)
+                throw new ValidationExceptionFromService("Product not found", "");
+
+            var all = await Database.Products.Find(p =>
+                p.Id != productId &&
+                (p.CategoryId == product.CategoryId || p.SubcategoryId == product.SubcategoryId));
+
+            return _mapper.Map<IEnumerable<ProductDTO>>(all.Take(10));
+        }
+
 
         public async Task Create(ProductDTO productDTO)
         {
@@ -122,7 +137,7 @@ namespace Agora.BLL.Services
                 CategoryId = productDTO.CategoryId,
                 BrandId = productDTO.BrandId,
                 StoreId = productDTO.StoreId,
-
+               
             };
             Database.Products.Update(product);
             await Database.Save();
