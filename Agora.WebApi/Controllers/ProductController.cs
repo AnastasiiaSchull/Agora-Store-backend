@@ -193,6 +193,23 @@ namespace Agora.Controllers
 
             
         }
+        [HttpPost("get-by-ids")]
+        public async Task<IActionResult> GetProductsByIds([FromBody] List<int> ids)
+        {
+            if (ids == null || ids.Count == 0)
+                return BadRequest("No product IDs provided");
+            var products = new List<ProductDTO>();
+            foreach (var id in ids)
+            {
+                var product = await _productService.Get(id);
+                if (product != null)
+                {
+                    product.ImagePath = _utilsService.GetFirstImageUrl(product.ImagesPath, Request);
+                    products.Add(product);
+                }
+            }
+            return Ok(products);
+        }
 
     }
 }
