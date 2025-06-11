@@ -64,8 +64,8 @@ namespace Agora.BLL.Services
                 SubcategoryId = _mapper.Map<int>(product.SubcategoryId),
                 BrandId = _mapper.Map<int>(product.BrandId),
                 StoreId = _mapper.Map<int>(product.StoreId),
-                Store = product.Store == null ? null : _mapper.Map<StoreDTO>(product.Store)
-
+                Store = product.Store == null ? null : _mapper.Map<StoreDTO>(product.Store),
+                ReviewCount = product.ProductReviews?.Count ?? 0
             };
         }
         public async Task<ProductDTO> GetByName(string name)
@@ -82,7 +82,8 @@ namespace Agora.BLL.Services
                 StockQuantity = product.StockQuantity,
                 Rating = product.Rating,
                 ImagesPath = product.ImagesPath,
-                IsAvailable = product.IsAvailable
+                IsAvailable = product.IsAvailable,
+                ReviewCount = product.ProductReviews?.Count ?? 0
 
             };
         }
