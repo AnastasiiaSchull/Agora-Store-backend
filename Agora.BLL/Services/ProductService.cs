@@ -65,7 +65,9 @@ namespace Agora.BLL.Services
                 BrandId = _mapper.Map<int>(product.BrandId),
                 StoreId = _mapper.Map<int>(product.StoreId),
                 Store = product.Store == null ? null : _mapper.Map<StoreDTO>(product.Store),
-                ReviewCount = product.ProductReviews?.Count ?? 0
+                ReviewCount = product.ProductReviews?.Count ?? 0,
+                SellerId = product.Store?.SellerId ?? 0,
+
             };
         }
         public async Task<ProductDTO> GetByName(string name)

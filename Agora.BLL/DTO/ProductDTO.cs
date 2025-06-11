@@ -13,6 +13,7 @@
         public string? ImagePath { get; set; } //not sure but still
         public bool IsAvailable { get; set; }
         public int? StoreId { get; set; }
+        public int SellerId { get; set; }
         public int? SubcategoryId { get; set; }
         public int? CategoryId { get; set; }
         public int? BrandId { get; set; }
