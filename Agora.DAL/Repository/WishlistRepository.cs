@@ -5,9 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Agora.DAL.Repository
 {
-    public class WishlistRepository: IWishlistRepository
+    public class WishlistRepository : IWishlistRepository
     {
-        private AgoraContext db;
+        private readonly AgoraContext db;
+
         public WishlistRepository(AgoraContext context)
         {
             this.db = context;
@@ -15,7 +16,9 @@ namespace Agora.DAL.Repository
 
         public async Task<IQueryable<Wishlist>> GetAll()
         {
-            return db.Wishlists;
+            return db.Wishlists
+                .Include(w => w.ProductWishlists)
+                    .ThenInclude(pw => pw.Product);
         }
 
         public async Task<Wishlist> Get(int id)
@@ -39,11 +42,24 @@ namespace Agora.DAL.Repository
             if (wishlist != null)
                 db.Wishlists.Remove(wishlist);
         }
+
         public async Task<Wishlist?> GetWithProducts(int id)
         {
             return await db.Wishlists
-                .Include(w => w.Products)
+                .Include(w => w.ProductWishlists)
+                    .ThenInclude(pw => pw.Product)
                 .FirstOrDefaultAsync(w => w.Id == id);
         }
+        public async Task<List<Wishlist>> GetByCustomerId(int customerId)
+        {
+            return await db.Wishlists
+                .Where(w => w.Customer.Id == customerId)
+                .Include(w => w.Customer)
+                .Include(w => w.ProductWishlists)
+                    .ThenInclude(pw => pw.Product)
+                .ToListAsync();
+        }
+
     }
+
 }

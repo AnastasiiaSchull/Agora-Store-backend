@@ -96,4 +96,12 @@ public class WishlistController : ControllerBase
             return NotFound(ex.Message);
         }
     }
+    // GET: api/Wishlist/by-customer/5
+    [HttpGet("by-customer/{customerId}")]
+    public async Task<ActionResult<IEnumerable<WishlistDTO>>> GetByCustomerId(int customerId)
+    {
+        var wishlists = await _wishlistService.GetByCustomerId(customerId);
+        return Ok(wishlists);
+    }
+
 }

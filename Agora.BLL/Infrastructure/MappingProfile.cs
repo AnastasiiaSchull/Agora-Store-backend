@@ -14,7 +14,12 @@ namespace Agora.BLL.Infrastructure
         public MappingProfile()
         {
             CreateMap<User, UserDTO>();
-            CreateMap<Wishlist, WishlistDTO>();
+            CreateMap<ProductWishlist, ProductWishlistDTO>();
+                //.ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product));
+            CreateMap<Wishlist, WishlistDTO>()
+                .ForMember(dest => dest.Customer, opt => opt.MapFrom(src => src.Customer))
+                .ForMember(dest => dest.Products, opt => opt.MapFrom(src => src.ProductWishlists.Select(pw => pw.Product)))
+                .ForMember(dest => dest.ProductWishlists, opt => opt.MapFrom(src => src.ProductWishlists));
             CreateMap<Support, SupportDTO>();
             CreateMap<Subcategory, SubcategoryDTO>();
             CreateMap<Store, StoreDTO>();
