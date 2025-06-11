@@ -15,5 +15,6 @@ namespace Agora.DAL.Interfaces
         void Update(Wishlist item);
         Task Delete(int id);
         Task<Wishlist?> GetWithProducts(int id);
+        Task<List<Wishlist>> GetByCustomerId(int customerId);
     }
 }

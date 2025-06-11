@@ -18,5 +18,6 @@ namespace Agora.BLL.Interfaces
         Task AddProductToWishlist(int wishlistId, int productId);
         Task RemoveProductFromWishlist(int wishlistId, int productId);
         Task<WishlistDTO> GetWithProducts(int id);
+        Task<IEnumerable<WishlistDTO>> GetByCustomerId(int customerId);
     }
 }

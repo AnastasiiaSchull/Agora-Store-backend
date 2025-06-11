@@ -28,7 +28,7 @@ namespace Agora.DAL.Entities
         public virtual Discount? Discount { get; set; }
         public virtual ICollection<OrderItem>? OrderItems { get; set; }
         public virtual ICollection<ReturnItem>? ReturnItems { get; set; }
-        public virtual ICollection<Wishlist>? Wishlists { get; set; }
+        public virtual ICollection<ProductWishlist>? ProductWishlists { get; set; }
         public virtual ICollection<ProductReview>? ProductReviews { get; set; }
     }
 }
