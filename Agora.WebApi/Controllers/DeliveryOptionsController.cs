@@ -44,6 +44,13 @@ namespace Agora.Controllers
             return NoContent();
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _deliveryOptionsService.Delete(id);
+            return NoContent();
+        }
+
         [HttpPost("create-delivery-option")]
         public async Task<IActionResult> Create([FromBody] DeliveryOptionsDTO deliveryOptionsDTO)
         {
