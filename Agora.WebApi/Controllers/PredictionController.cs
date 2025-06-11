@@ -38,7 +38,7 @@ namespace Agora.Controllers
             List<ProductDTO> products = new List<ProductDTO>();
             foreach( var item in result)
             { 
-                if(item.Value >= 40.0) //Сортирока по процентному соотношению
+                if(item.Value >= 20.0) //Сортирока по процентному соотношению
                 {
                     var product = await _productService.GetByName(item.Key); // Получение продукта по имени, которое было предсказано моделью
                     if (product.IsAvailable == true) 

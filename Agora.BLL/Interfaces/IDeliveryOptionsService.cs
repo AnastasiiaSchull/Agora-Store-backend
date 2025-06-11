@@ -12,7 +12,7 @@ namespace Agora.BLL.Interfaces
         Task<IQueryable<DeliveryOptionsDTO>> GetAll();
         Task<DeliveryOptionsDTO> Get(int id);
         Task Create(DeliveryOptionsDTO deliveryOptionsDTO);
-        Task Update(DeliveryOptionsDTO deliveryOptionsDTO);
+        Task Update(int id, DeliveryOptionsDTO deliveryOptionsDTO);
         Task Delete(int id);
         Task<IEnumerable<DeliveryOptionsDTO>> GetBySellerId(int sellerId);
         Task DeleteAllBySellerId(int sellerId);

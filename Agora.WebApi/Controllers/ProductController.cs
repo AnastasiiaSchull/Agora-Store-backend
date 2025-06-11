@@ -175,6 +175,43 @@ namespace Agora.Controllers
             return Ok(similar);
         }
 
+        [HttpPost("recommendations")]
+        public async Task<IActionResult> GetRecommendations([FromBody] RecommendationRequestModel request)
+        {
+            var allRecommendations = new List<ProductDTO>();
+
+            // обрабатываем поисковые запросы
+            foreach (var query in request.Queries.Distinct())
+            {
+                var results = await _productService.GetFilteredByName(query);
+                var selected = results
+                    .Where(p => p.IsAvailable)
+                    .OrderByDescending(p => p.Rating)
+                    .Take(8)
+                    .ToList();
+
+                allRecommendations.AddRange(selected);
+            }
+
+            // обрабатываем товары из корзины
+            foreach (var productId in request.BasketIds.Distinct())
+            {
+                var similar = await _productService.GetSimilarProducts(productId);
+                allRecommendations.AddRange(similar.Take(8));
+            }
+
+            // убираем дубликаты поId
+            var unique = allRecommendations
+                .GroupBy(p => p.Id)
+                .Select(g => g.First())
+                .ToList();
+           
+            foreach (var item in unique)
+                item.ImagePath = _utilsService.GetFirstImageUrl(item.ImagesPath, Request);
+
+            return Ok(unique);
+        }
+
 
         [NonAction]
         public ProductDTO ConvertToDTO(ProductUpdateModel model) {
@@ -215,6 +252,23 @@ namespace Agora.Controllers
             }
 
             
+        }
+        [HttpPost("get-by-ids")]
+        public async Task<IActionResult> GetProductsByIds([FromBody] List<int> ids)
+        {
+            if (ids == null || ids.Count == 0)
+                return BadRequest("No product IDs provided");
+            var products = new List<ProductDTO>();
+            foreach (var id in ids)
+            {
+                var product = await _productService.Get(id);
+                if (product != null)
+                {
+                    product.ImagePath = _utilsService.GetFirstImageUrl(product.ImagesPath, Request);
+                    products.Add(product);
+                }
+            }
+            return Ok(products);
         }
 
     }
