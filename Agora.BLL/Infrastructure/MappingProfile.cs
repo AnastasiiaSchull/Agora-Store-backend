@@ -14,7 +14,12 @@ namespace Agora.BLL.Infrastructure
         public MappingProfile()
         {
             CreateMap<User, UserDTO>();
-            CreateMap<Wishlist, WishlistDTO>();
+            CreateMap<ProductWishlist, ProductWishlistDTO>();
+                //.ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product));
+            CreateMap<Wishlist, WishlistDTO>()
+                .ForMember(dest => dest.Customer, opt => opt.MapFrom(src => src.Customer))
+                .ForMember(dest => dest.Products, opt => opt.MapFrom(src => src.ProductWishlists.Select(pw => pw.Product)))
+                .ForMember(dest => dest.ProductWishlists, opt => opt.MapFrom(src => src.ProductWishlists));
             CreateMap<Support, SupportDTO>();
             CreateMap<Subcategory, SubcategoryDTO>();
             CreateMap<Store, StoreDTO>();
@@ -48,7 +53,9 @@ namespace Agora.BLL.Infrastructure
                  .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
                  .ForMember(dest => dest.SubcategoryId, opt => opt.MapFrom(src => src.SubcategoryId))
                  .ForMember(dest => dest.BrandId, opt => opt.MapFrom(src => src.BrandId))
-                 .ForMember(dest => dest.StoreId, opt => opt.MapFrom(src => src.StoreId));
+                 .ForMember(dest => dest.StoreId, opt => opt.MapFrom(src => src.StoreId))
+                 .ForMember(dest => dest.ReviewCount, opt => opt.MapFrom(src => src.ProductReviews!.Count))
+                 .ForMember(dest => dest.SellerId, opt => opt.MapFrom(src => src.Store!.SellerId));
             CreateMap<ProductReview, ProductReviewDTO>();
             CreateMap<Payment, PaymentDTO>();
             CreateMap<PaymentMethod, PaymentMethodDTO>();

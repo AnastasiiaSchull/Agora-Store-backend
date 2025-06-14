@@ -3,6 +3,7 @@ using Agora.BLL.Infrastructure;
 using Agora.BLL.Interfaces;
 using Agora.DAL.Entities;
 using Agora.DAL.Interfaces;
+using Agora.DAL.Repository;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,7 @@ namespace Agora.BLL.Services
     {
         IUnitOfWork Database { get; set; }
         IMapper _mapper;
+
         public WishlistService(IUnitOfWork database, IMapper mapper)
         {
             Database = database;
@@ -21,17 +23,20 @@ namespace Agora.BLL.Services
         public async Task<IEnumerable<WishlistDTO>> GetAll()
         {
             var query = await Database.Wishlists.GetAll();
-            var wishlists =  await query
-                            .Include(w => w.Products) // если Products нужен    
-                              .ToListAsync();
+            var wishlists = await query
+                .Include(w => w.ProductWishlists)
+                    .ThenInclude(pw => pw.Product)
+                .ToListAsync();
+
             return _mapper.Map<IEnumerable<WishlistDTO>>(wishlists);
         }
-        
+
         public async Task<WishlistDTO> Get(int id)
         {
             var wishlist = await Database.Wishlists.Get(id);
-            if(wishlist == null)
+            if (wishlist == null)
                 throw new ValidationExceptionFromService("There is no user with this id", "");
+
             return new WishlistDTO
             {
                 Id = wishlist.Id,
@@ -45,10 +50,9 @@ namespace Agora.BLL.Services
             {
                 DateAdded = wishlistDTO.DateAdded ?? DateOnly.FromDateTime(DateTime.Today),
                 CustomerId = wishlistDTO.Customer.Id,
-                Products = new List<Product>()
+                ProductWishlists = new List<ProductWishlist>()
             };
 
-            
             if (wishlistDTO.ProductIds != null && wishlistDTO.ProductIds.Any())
             {
                 foreach (var productId in wishlistDTO.ProductIds)
@@ -56,26 +60,30 @@ namespace Agora.BLL.Services
                     var product = await Database.Products.Get(productId);
                     if (product == null)
                         throw new ValidationExceptionFromService($"Product with ID {productId} not found", "");
-                                        
-                    if (!wishlist.Products.Any(p => p.Id == productId))
-                        wishlist.Products.Add(product);
+
+                    wishlist.ProductWishlists.Add(new ProductWishlist
+                    {
+                        ProductId = product.Id,
+                        Wishlist = wishlist
+                    });
                 }
             }
 
             await Database.Wishlists.Create(wishlist);
             await Database.Save();
         }
+
         public async Task Update(WishlistDTO wishlistDTO)
         {
+            var wishlist = await Database.Wishlists.GetWithProducts(wishlistDTO.Id);
+            if (wishlist == null)
+                throw new ValidationExceptionFromService("Wishlist not found", "");
 
-            var wishlist = new Wishlist
-            {
-                Id = wishlistDTO.Id,
-                DateAdded = wishlistDTO.DateAdded ?? DateOnly.FromDateTime(DateTime.Today)
-            };
-            Database.Wishlists.Update(wishlist);
+            wishlist.DateAdded = wishlistDTO.DateAdded ?? DateOnly.FromDateTime(DateTime.Today);
+
             await Database.Save();
         }
+
         public async Task Delete(int id)
         {
             await Database.Wishlists.Delete(id);
@@ -84,7 +92,7 @@ namespace Agora.BLL.Services
 
         public async Task AddProductToWishlist(int wishlistId, int productId)
         {
-            var wishlist = await Database.Wishlists.Get(wishlistId);
+            var wishlist = await Database.Wishlists.GetWithProducts(wishlistId);
             if (wishlist == null)
                 throw new ValidationExceptionFromService("Wishlist not found", "");
 
@@ -92,9 +100,15 @@ namespace Agora.BLL.Services
             if (product == null)
                 throw new ValidationExceptionFromService("Product not found", "");
 
-            wishlist.Products ??= new List<Product>();
-            if (!wishlist.Products.Any(p => p.Id == productId))
-                wishlist.Products.Add(product);
+            wishlist.ProductWishlists ??= new List<ProductWishlist>();
+            if (!wishlist.ProductWishlists.Any(pw => pw.ProductId == productId))
+            {
+                wishlist.ProductWishlists.Add(new ProductWishlist
+                {
+                    WishlistId = wishlistId,
+                    ProductId = productId
+                });
+            }
 
             Database.Wishlists.Update(wishlist);
             await Database.Save();
@@ -102,18 +116,19 @@ namespace Agora.BLL.Services
 
         public async Task RemoveProductFromWishlist(int wishlistId, int productId)
         {
-            var wishlist = await Database.Wishlists.Get(wishlistId);
+            var wishlist = await Database.Wishlists.GetWithProducts(wishlistId);
             if (wishlist == null)
                 throw new ValidationExceptionFromService("Wishlist not found", "");
 
-            var productToRemove = wishlist.Products?.FirstOrDefault(p => p.Id == productId);
-            if (productToRemove != null)
+            var toRemove = wishlist.ProductWishlists?.FirstOrDefault(pw => pw.ProductId == productId);
+            if (toRemove != null)
             {
-                wishlist.Products!.Remove(productToRemove);
+                wishlist.ProductWishlists!.Remove(toRemove);
                 Database.Wishlists.Update(wishlist);
                 await Database.Save();
             }
         }
+
         public async Task<WishlistDTO> GetWithProducts(int id)
         {
             var wishlist = await Database.Wishlists.GetWithProducts(id);
@@ -124,5 +139,10 @@ namespace Agora.BLL.Services
             return _mapper.Map<WishlistDTO>(wishlist);
         }
 
+        public async Task<IEnumerable<WishlistDTO>> GetByCustomerId(int customerId)
+        {
+            var wishlists = await Database.Wishlists.GetByCustomerId(customerId);
+            return _mapper.Map<IEnumerable<WishlistDTO>>(wishlists);
+        }
     }
 }

@@ -41,6 +41,7 @@ namespace Agora.DAL.EF
         public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
         public DbSet<AddressUser> AddressUser { get; set; }
         public DbSet<BrandSubcategory> BrandSubcategories { get; set; }
+        public DbSet<ProductWishlist> ProductWishlists { get; set; }
 
         public AgoraContext(DbContextOptions<AgoraContext> options)
                    : base(options)
@@ -110,6 +111,19 @@ namespace Agora.DAL.EF
                 .HasOne(bs => bs.Subcategory)
                 .WithMany(sc => sc.BrandSubcategories)
                 .HasForeignKey(bs => bs.SubcategoryId);
+
+            modelBuilder.Entity<ProductWishlist>()
+                .HasKey(pw => new { pw.ProductId, pw.WishlistId });
+
+            modelBuilder.Entity<ProductWishlist>()
+                .HasOne(pw => pw.Product)
+                .WithMany(p => p.ProductWishlists)
+                .HasForeignKey(pw => pw.ProductId);
+
+            modelBuilder.Entity<ProductWishlist>()
+                .HasOne(pw => pw.Wishlist)
+                .WithMany(w => w.ProductWishlists)
+                .HasForeignKey(pw => pw.WishlistId);
 
         }
     }

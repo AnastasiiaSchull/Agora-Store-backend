@@ -23,6 +23,13 @@ namespace Agora.Controllers
             return Ok(options);
         }
 
+        [HttpGet("by-store-id/{storeId}")]
+        public async Task<IActionResult> GetDeliveryOptionsByStoreId(int storeId)
+        {
+            var options = await _deliveryOptionsService.GetByStoreId(storeId);
+            return Ok(options);
+        }
+
         [HttpGet("option/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -42,6 +49,13 @@ namespace Agora.Controllers
         public async Task<IActionResult> DeleteAllBySellerId(int sellerId)
         {
             await _deliveryOptionsService.DeleteAllBySellerId(sellerId);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _deliveryOptionsService.Delete(id);
             return NoContent();
         }
 

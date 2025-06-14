@@ -4,6 +4,7 @@ using Agora.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Agora.DAL.Migrations
 {
     [DbContext(typeof(AgoraContext))]
-    partial class AgoraContextModelSnapshot : ModelSnapshot
+    [Migration("20250609225755_AddProductWishlist")]
+    partial class AddProductWishlist
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -955,9 +958,6 @@ namespace Agora.DAL.Migrations
 
                     b.Property<DateOnly>("DateAdded")
                         .HasColumnType("date");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 

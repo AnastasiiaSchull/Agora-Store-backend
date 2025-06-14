@@ -5,10 +5,6 @@ using Agora.DAL.Interfaces;
 using AutoMapper;
 using Agora.BLL.Infrastructure;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Agora.Enums;
 
 namespace Agora.BLL.Services
@@ -50,9 +46,9 @@ namespace Agora.BLL.Services
             var deliveryOptions = new DeliveryOptions
             {
                 Id = deliveryOptionsDTO.Id,
-                Type= Enum.Parse<DeliveryType>(deliveryOptionsDTO.Type, ignoreCase: true),
+                Type = Enum.Parse<DeliveryType>(deliveryOptionsDTO.Type, ignoreCase: true),
                 Price = deliveryOptionsDTO.Price,
-                EstimatedDays= deliveryOptionsDTO.EstimatedDays,
+                EstimatedDays = deliveryOptionsDTO.EstimatedDays,
                 SellerId = deliveryOptionsDTO.SellerId
             };
 
@@ -101,8 +97,18 @@ namespace Agora.BLL.Services
             {
                 Console.WriteLine($"Filtered Option: {item.Id}, Type: {item.Type}, Price: {item.Price}, SellerId: {sellerId}");
             }
-
             return filtered;
+        }
+
+        public async Task<IEnumerable<DeliveryOptionsDTO>> GetByStoreId(int storeId)
+        {
+            // магазин по storeId
+            var store = await Database.Stores.Get(storeId);
+            if (store == null || store.SellerId == null)
+                return Enumerable.Empty<DeliveryOptionsDTO>();
+            // ищем по sellerId delivery options
+            var sellerId = store.SellerId.Value;
+            return await GetBySellerId(sellerId);
         }
 
         public async Task DeleteAllBySellerId(int sellerId)
