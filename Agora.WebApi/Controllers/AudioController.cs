@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Agora.BLL.Infrastructure;
+using Agora.BLL.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
-using Newtonsoft.Json;
-using System.Text;
 
 namespace Agora.Controllers
 {
@@ -11,9 +11,11 @@ namespace Agora.Controllers
     public class AudioController : ControllerBase
     {
         private readonly IConfiguration _config;
-        public AudioController(IConfiguration config)
+        private readonly ITranslationService _translationService;
+        public AudioController(IConfiguration config, ITranslationService translationService)
         {
             _config = config;
+            _translationService = translationService;
         }
 
         [HttpPost("upload")]
@@ -33,17 +35,8 @@ namespace Agora.Controllers
             string speechRegion = _config["AZURE_SPEECH_REGION"]!;
 
             var config = SpeechConfig.FromSubscription(speechKey, speechRegion);
-            // config.SpeechRecognitionLanguage = "en-US";
-            config.SpeechRecognitionLanguage = locale switch
-            {
-                "ua" => "uk-UA",//locale = "uk"  стандартная поддержка
-                "uk" => "uk-UA",
-                "ru" => "ru-RU",
-                "en" => "en-US",
-                "de" => "de-DE",
-                "fr" => "fr-FR",
-                _ => "en-US" // fallback на английский
-            };
+
+            config.SpeechRecognitionLanguage = LanguageUtils.NormalizeSpeechLocale(locale);
 
             // pаспознавание
             string recognizedText = "";
@@ -63,12 +56,10 @@ namespace Agora.Controllers
 
             System.IO.File.Delete(tempPath);
 
-            // переводим текст, если надо
-            // var translated = await TranslateText(recognizedText);
-
-            // переводим, если язык не английский
-            string translated = locale == "en" ? recognizedText : await TranslateText(recognizedText, locale);
-
+            // используем сервис перевода
+            string translated = locale == "en"
+                ? recognizedText
+                : await _translationService.Translate(recognizedText, locale);
 
             return Ok(new
             {
@@ -77,43 +68,5 @@ namespace Agora.Controllers
             });
         }
 
-        [NonAction]
-        private async Task<string> TranslateText(string input, string fromLocale)
-        {
-            string key = _config["AZURE_TRANSLATOR_KEY"]!;
-            string endpoint = _config["AZURE_TRANSLATOR_ENDPOINT"]!;
-            string region = _config["AZURE_SPEECH_REGION"]!;
-
-            string fromLang = fromLocale switch
-            {
-                "ua" => "uk",//locale = "uk"  стандартная поддержка
-                "uk" => "uk",
-                "ru" => "ru",
-                "de" => "de",
-                "fr" => "fr",
-                _ => "en"
-            };
-
-            //string route = "/translate?api-version=3.0&from=en&to=en";
-            string route = $"/translate?api-version=3.0&from={fromLang}&to=en";
-
-            object[] body = new object[] { new { Text = input } };
-            var bodyJson = JsonConvert.SerializeObject(body);
-
-            using var client = new HttpClient();
-            using var request = new HttpRequestMessage(HttpMethod.Post, endpoint + route)
-            {
-                Content = new StringContent(bodyJson, Encoding.UTF8, "application/json")
-            };
-
-            request.Headers.Add("Ocp-Apim-Subscription-Key", key);
-            request.Headers.Add("Ocp-Apim-Subscription-Region", region);
-
-            var response = await client.SendAsync(request);
-            var json = await response.Content.ReadAsStringAsync();
-
-            dynamic result = JsonConvert.DeserializeObject(json)!;
-            return result[0].translations[0].text;
-        }
     }
 }

@@ -50,6 +50,7 @@ namespace Agora.BLL.Infrastructure
             services.AddSingleton<IStatisticsInitializer>(sp => sp.GetRequiredService<StatisticsCacheService>());
             services.AddSingleton<IRedisSafeExecutor, RedisSafeExecutor>();
             services.AddScoped<IMLService, MLService>();
+            services.AddScoped<ITranslationService, TranslationService>(); 
         }
     }
 }

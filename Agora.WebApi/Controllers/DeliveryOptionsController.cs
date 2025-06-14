@@ -41,7 +41,6 @@ namespace Agora.Controllers
             catch (ValidationExceptionFromService ex)
             {
                 return NotFound(new { error = ex.Message });
-                return NotFound(new { error = ex.Message });
             }
         }
 
