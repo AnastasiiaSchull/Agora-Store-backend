@@ -11,12 +11,14 @@ namespace Agora.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
+        private readonly IDeliveryOptionsService _deliveryOptionsService;
         private readonly IUtilsService _utilsService;
 
-        public ProductController(IProductService productService, IUtilsService utilsService)
+        public ProductController(IProductService productService, IUtilsService utilsService, IDeliveryOptionsService deliveryOptionsService)
         {
             _productService = productService;
             _utilsService = utilsService;
+            _deliveryOptionsService = deliveryOptionsService;
         }
 
         [HttpGet("all")]
@@ -258,18 +260,43 @@ namespace Agora.Controllers
         {
             if (ids == null || ids.Count == 0)
                 return BadRequest("No product IDs provided");
-            var products = new List<ProductDTO>();
+            var products = new List<ProductForBasket>();
             foreach (var id in ids)
             {
                 var product = await _productService.Get(id);
                 if (product != null)
                 {
                     product.ImagePath = _utilsService.GetFirstImageUrl(product.ImagesPath, Request);
-                    products.Add(product);
+                    var convertedProduct = ConvertToProductForBasket(product);
+
+                    var deliveryOptions = await _deliveryOptionsService.GetBySellerId(product.Store.SellerId.Value);
+                    Console.BackgroundColor = ConsoleColor.DarkBlue;
+                    Console.WriteLine($"Delivery options: {deliveryOptions.Count()}");
+                    convertedProduct.DeliveryOptions = deliveryOptions.ToList();
+                    products.Add(convertedProduct);
                 }
             }
             return Ok(products);
         }
 
+        [NonAction]
+        public ProductForBasket ConvertToProductForBasket(ProductDTO model)
+        {
+            ProductForBasket product = new ProductForBasket
+            {
+                Id = model.Id,
+                Name = model.Name, 
+                Price = model.Price,
+                StockQuantity = model.StockQuantity,
+                StoreId = model.StoreId,
+                Rating = model.Rating,
+                IsAvailable = model.IsAvailable,
+                ImagePath = model.ImagePath,
+                
+
+
+            };
+            return product;
+        }
     }
 }
