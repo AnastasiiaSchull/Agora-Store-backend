@@ -8,10 +8,12 @@ using Agora.BLL.Interfaces;
 public class WishlistController : ControllerBase
 {
     private readonly IWishlistService _wishlistService;
+    private readonly IUtilsService _utilService;
 
-    public WishlistController(IWishlistService wishlistService)
+    public WishlistController(IWishlistService wishlistService, IUtilsService utilService)
     {
         _wishlistService = wishlistService;
+        _utilService = utilService;
     }
 
     // GET: api/Wishlist
@@ -97,11 +99,28 @@ public class WishlistController : ControllerBase
         }
     }
     // GET: api/Wishlist/by-customer/5
-    [HttpGet("by-customer/{customerId}")]
+    /*[HttpGet("by-customer/{customerId}")]
     public async Task<ActionResult<IEnumerable<WishlistDTO>>> GetByCustomerId(int customerId)
     {
         var wishlists = await _wishlistService.GetByCustomerId(customerId);
         return Ok(wishlists);
+    }*/
+    [HttpGet("by-customer/{customerId}")]
+    public async Task<ActionResult<IEnumerable<WishlistDTO>>> GetByCustomerId(int customerId)
+    {
+        var wishlists = await _wishlistService.GetByCustomerId(customerId);
+
+        foreach (var wishlist in wishlists)
+        {
+            foreach (var product in wishlist.Products)
+            {
+                // Например, если путь к папке с фото — product.ImagesPath (например: "images/products/1")
+                product.ImagePath = _utilService.GetFirstImageUrl(product.ImagesPath, Request);
+            }
+        }
+
+        return Ok(wishlists);
     }
+
 
 }
