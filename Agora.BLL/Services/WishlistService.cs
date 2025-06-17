@@ -106,9 +106,10 @@ namespace Agora.BLL.Services
                 wishlist.ProductWishlists.Add(new ProductWishlist
                 {
                     WishlistId = wishlistId,
-                    ProductId = productId
+                    ProductId = productId,
+                    DateAdded = DateTime.Now
                 });
-            }
+            }            
 
             Database.Wishlists.Update(wishlist);
             await Database.Save();
