@@ -33,6 +33,14 @@ namespace Agora.DAL.Repository
                 .ToListAsync();
         }
 
+        public async Task<Address> GetAddressByUserIdAsync(int userId)
+        {
+            return await db.AddressUser
+                .Where(au => au.UserId == userId)
+                .Select(au => au.Address)
+                .FirstOrDefaultAsync();
+        }
+
         public async Task Create(Address address)
         {
             await db.Addresses.AddAsync(address);
