@@ -481,12 +481,12 @@ namespace Agora.Controllers
             }
         }
 
-        [HttpPut("update-seller-address")]
-        public async Task<IActionResult> UpdateSellerAddress([FromBody] UpdateSellerAddressDTO dto)
+        [HttpPut("update-seller-address/{sellerId}")]
+        public async Task<IActionResult> UpdateSellerAddress([FromBody] UpdateSellerAddressDTO dto, int sellerId)
         {
             try
             {
-                await _addressService.UpdateSellerAddressAsync(dto);
+                await _addressService.UpdateSellerAddressAsync(dto, sellerId);
                 return Ok(new { message = "Address updated successfully" });
             }
             catch (ValidationExceptionFromService ex)

@@ -9,7 +9,7 @@ namespace Agora.BLL.Interfaces
         Task<IEnumerable<AddressDTO>> GetByUserId(int userId);
         Task Create(AddressDTO addressDTO);
         Task Update(AddressDTO addressDTO);
-        Task UpdateSellerAddressAsync(UpdateSellerAddressDTO dto);
+        Task UpdateSellerAddressAsync(UpdateSellerAddressDTO dto, int sellerId);
         Task Delete(int id);
         Task CreateAddress(AddressDTO dto);
         Task UpdateAddress(AddressDTO dto, int id);
