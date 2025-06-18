@@ -494,5 +494,26 @@ namespace Agora.Controllers
                 return NotFound(new { message = ex.Message });
             }
         }
+
+        [HttpGet("seller-info/{sellerId}")]
+        public async Task<IActionResult> GetSellerInfo(int sellerId)
+        {
+            try
+            {
+                var user = await _userService.GetById(sellerId);
+                if (user == null)
+                    return NotFound(new { message = "Seller not found" });
+
+                return Ok(new
+                {
+                    email = user.Email,
+                    phone = user.PhoneNumber
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
     }
 }

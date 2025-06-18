@@ -48,6 +48,24 @@ namespace Agora.BLL.Services
             };
         }
 
+        public async Task<AddressDTO> GetByUserIdAsync(int userId)
+        {
+            var address = await Database.Addresses.GetAddressByUserIdAsync(userId);
+            if (address == null)
+                return null;
+
+            return new AddressDTO
+            {
+                Id = address.Id,
+                Building = address.Building,
+                Appartement = address.Appartement,
+                Street = address.Street,
+                City = address.City,
+                PostalCode = address.PostalCode,
+                Country = address.Country.Name,
+            };
+        }
+
         public async Task<IEnumerable<AddressDTO>> GetByUserId(int userId)
         {
             var user = await Database.Users.Get(userId);

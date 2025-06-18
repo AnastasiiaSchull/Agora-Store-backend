@@ -1,6 +1,5 @@
 ﻿using Agora.BLL.DTO;
 using Agora.BLL.Interfaces;
-using Agora.BLL.Services;
 using Agora.Models;
 using Microsoft.AspNetCore.Mvc;
 using Tensorflow;
@@ -13,13 +12,15 @@ namespace Agora.Controllers
     {
         private readonly IProductService _productService;
         private readonly IDeliveryOptionsService _deliveryOptionsService;
+        private readonly ITranslationService _translationService;
         private readonly IUtilsService _utilsService;
 
-        public ProductController(IProductService productService, IUtilsService utilsService, IDeliveryOptionsService deliveryOptionsService)
+        public ProductController(IProductService productService, IUtilsService utilsService, IDeliveryOptionsService deliveryOptionsService, ITranslationService translationService)
         {
             _productService = productService;
             _utilsService = utilsService;
             _deliveryOptionsService = deliveryOptionsService;
+            _translationService = translationService;
         }
 
         [HttpGet("all")]
@@ -58,6 +59,25 @@ namespace Agora.Controllers
             {
                 product.ImagePath = _utilsService.GetFirstImageUrl(product.ImagesPath, Request);
             }
+            return Ok(products);
+        }
+
+        [HttpGet("search-multilang")] 
+        public async Task<IActionResult> SearchMultilingual([FromQuery] string query, [FromQuery] string locale)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+                return BadRequest("Search query is empty");
+
+            // если не английский -переводим запрос
+            string translatedQuery = locale.ToLower() == "en"
+                ? query
+                : await _translationService.Translate(query, locale);
+
+            var products = await _productService.GetFilteredByName(translatedQuery);
+
+            foreach (var product in products)
+                product.ImagePath = _utilsService.GetFirstImageUrl(product.ImagesPath, Request);
+
             return Ok(products);
         }
 
