@@ -8,5 +8,6 @@ namespace Agora.DAL.Interfaces
         //Task<IQueryable<Address>> GetAllWithDetails();
         //Task<IEnumerable<Address>> GetByUserIdWithDetails(int userId);
         Task<IEnumerable<Address>> GetWithCountryByUserId(int userId);
+        Task<Address> GetAddressByUserIdAsync(int userId);
     }
 }

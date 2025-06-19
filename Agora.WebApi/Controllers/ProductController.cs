@@ -2,6 +2,7 @@
 using Agora.BLL.Interfaces;
 using Agora.Models;
 using Microsoft.AspNetCore.Mvc;
+using Tensorflow;
 
 namespace Agora.Controllers
 {
@@ -275,9 +276,11 @@ namespace Agora.Controllers
 
             
         }
+
         [HttpPost("get-by-ids")]
         public async Task<IActionResult> GetProductsByIds([FromBody] List<int> ids)
         {
+            
             if (ids == null || ids.Count == 0)
                 return BadRequest("No product IDs provided");
             var products = new List<ProductForBasket>();
@@ -299,6 +302,31 @@ namespace Agora.Controllers
             return Ok(products);
         }
 
+        [HttpPost("get-by-ids-for-checkout")]
+        public async Task<IActionResult> GetProductsForCheckout([FromBody] List<Cart> cart)
+        {
+
+            if (cart == null || cart.Count == 0)
+                return BadRequest("No data provided");
+            var products = new List<ProductForCheckout>();
+            foreach (var item in cart)
+            {
+                var product = await _productService.Get(item.ProductId);
+                if (product != null)
+                {
+                    product.ImagePath = _utilsService.GetFirstImageUrl(product.ImagesPath, Request);
+                    var convertedProduct = ConvertToProductForCheckout(product);
+
+                    var deliveryOption = await _deliveryOptionsService.Get(item.DeliveryOptionId);
+
+                    convertedProduct.DeliveryOption = deliveryOption;
+                    convertedProduct.Quantity = item.Quantity;
+                    products.Add(convertedProduct);
+                }
+            }
+            return Ok(products);
+        }
+
         [NonAction]
         public ProductForBasket ConvertToProductForBasket(ProductDTO model)
         {
@@ -314,6 +342,23 @@ namespace Agora.Controllers
                 ImagePath = model.ImagePath,
                 
 
+
+            };
+            return product;
+        }
+
+        [NonAction]
+        public ProductForCheckout ConvertToProductForCheckout(ProductDTO model)
+        {
+            ProductForCheckout product = new ProductForCheckout
+            {
+                Id = model.Id,
+                Name = model.Name,
+                Price = model.Price,
+                Quantity = model.StockQuantity,
+                StoreName = model.Store.Name,
+                IsAvailable = model.IsAvailable,
+                ImagePath = model.ImagePath,
 
             };
             return product;

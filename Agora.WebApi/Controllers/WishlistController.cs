@@ -8,10 +8,12 @@ using Agora.BLL.Interfaces;
 public class WishlistController : ControllerBase
 {
     private readonly IWishlistService _wishlistService;
+    private readonly IUtilsService _utilService;
 
-    public WishlistController(IWishlistService wishlistService)
+    public WishlistController(IWishlistService wishlistService, IUtilsService utilService)
     {
         _wishlistService = wishlistService;
+        _utilService = utilService;
     }
 
     // GET: api/Wishlist
@@ -69,14 +71,14 @@ public class WishlistController : ControllerBase
         return NoContent();
     }
 
-    [HttpPost("{wishlistId}/products/{productId}")]
+    [HttpPost("{wishlistId}/add-product/{productId}")]
     public async Task<IActionResult> AddProductToWishlist(int wishlistId, int productId)
     {
         await _wishlistService.AddProductToWishlist(wishlistId, productId);
         return Ok();
     }
 
-    [HttpDelete("{wishlistId}/products/{productId}")]
+    [HttpDelete("{wishlistId}/remove-product/{productId}")]
     public async Task<IActionResult> RemoveProductFromWishlist(int wishlistId, int productId)
     {
         await _wishlistService.RemoveProductFromWishlist(wishlistId, productId);
@@ -96,12 +98,22 @@ public class WishlistController : ControllerBase
             return NotFound(ex.Message);
         }
     }
-    // GET: api/Wishlist/by-customer/5
+    // GET: api/Wishlist/by-customer/5    
     [HttpGet("by-customer/{customerId}")]
     public async Task<ActionResult<IEnumerable<WishlistDTO>>> GetByCustomerId(int customerId)
     {
         var wishlists = await _wishlistService.GetByCustomerId(customerId);
+
+        foreach (var wishlist in wishlists)
+        {
+            foreach (var product in wishlist.Products)
+            {                
+                product.ImagePath = _utilService.GetFirstImageUrl(product.ImagesPath, Request);
+            }
+        }
+
         return Ok(wishlists);
     }
+
 
 }

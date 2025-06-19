@@ -61,5 +61,30 @@ namespace Agora.Controllers
             await _addressService.DeleteAddress(id);
             return Ok(new { message = "Address deleted successfully" });
         }
+
+        [HttpGet("seller-address/{sellerId}")]
+        public async Task<IActionResult> GetSellerAddress(int sellerId)
+        {
+            try
+            {
+                var address = await _addressService.GetByUserIdAsync(sellerId);
+                if (address == null)
+                    return NotFound(new { message = "Address not found" });
+
+                return Ok(new
+                {
+                    country = address.Country,
+                    city = address.City,
+                    street = address.Street,
+                    building = address.Building,
+                    appartement = address.Appartement,
+                    postalСode = address.PostalCode,
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
     }
 }
