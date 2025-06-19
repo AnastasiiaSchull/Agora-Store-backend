@@ -7,6 +7,7 @@ namespace Agora.BLL.Interfaces
         Task<IEnumerable<ProductDTO>> GetAll();
         Task<IEnumerable<ProductDTO>> GetFilteredByName(string filter); // to be continued
         Task<IEnumerable<ProductDTO>> GetProductsBySeller(int sellerId);
+        Task<IEnumerable<ProductDTO>> GetProductsByStore(int storeId);
         Task<IEnumerable<ProductDTO>> GetSimilarProducts(int productId);
         Task<ProductDTO> Get(int id);
         Task<ProductDTO> GetByName(string name);

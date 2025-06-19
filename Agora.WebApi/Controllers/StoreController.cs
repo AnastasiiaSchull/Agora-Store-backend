@@ -9,11 +9,17 @@ namespace Agora.Controllers
     public class StoreController : ControllerBase
     {
         private readonly IStoreService _storeService;
+        private readonly IProductService _productService;
         private readonly IStatisticsInitializer _statisticsInitializer;
-        public StoreController(IStoreService storeService, IStatisticsInitializer statisticsInitializer)
+        private readonly IUtilsService _utilsService;
+
+
+        public StoreController(IStoreService storeService, IStatisticsInitializer statisticsInitializer, IProductService productService, IUtilsService utilsService)
         {
             _storeService = storeService;
+            _productService = productService;
             _statisticsInitializer = statisticsInitializer;
+            _utilsService = utilsService;
         }
 
         [HttpGet("{sellerId}/stores")]
@@ -40,6 +46,34 @@ namespace Agora.Controllers
             var store = await _storeService.Get(id);
             return Ok(store);
         }
+
+        [HttpGet("{id}/with-products")]
+        public async Task<IActionResult> GetStoreWithProducts(int id)
+        {
+            var store = await _storeService.Get(id);
+            if (store == null)
+                return NotFound($"Store with ID {id} not found");
+
+            Console.WriteLine("_productService == null: " + (_productService == null));
+
+            var products = await _productService.GetProductsByStore(id) ?? new List<ProductDTO>();
+            
+            foreach (var product in products)
+            {
+                Console.WriteLine($"Product: {product.Name}, imagePath: {product.ImagePath}, imagesPath: {product.ImagesPath}, imageUrls: {product.ImagesUrls}");
+            }
+            foreach (var p in products)
+            {
+                p.ImagePath = _utilsService.GetFirstImageUrl(p.ImagesPath, Request);
+                p.ImagesUrls = _utilsService.GetImagesUrl(p.ImagesPath, Request);
+            }
+            return Ok(new
+            {
+                store,
+                products
+            });
+        }
+
 
         // POST: api/stores
         [HttpPost]
