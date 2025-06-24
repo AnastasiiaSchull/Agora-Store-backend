@@ -22,35 +22,32 @@ public class WishlistController : ControllerBase
     {
         var wishlists = await _wishlistService.GetAll();
         return Ok(wishlists);
-    }
+    }    
 
-    // GET: api/Wishlist/5
-    [HttpGet("{id}")]
-    public async Task<ActionResult<WishlistDTO>> Get(int id)
-    {
-        try
-        {
-            var wishlist = await _wishlistService.Get(id);
-            return Ok(wishlist);
-        }
-        catch (ValidationExceptionFromService ex)
-        {
-            return NotFound(ex.Message);
-        }
-    }
-
-    // POST: api/Wishlist
-    [HttpPost]    
-    public async Task<ActionResult> Create([FromBody] WishlistDTO wishlistDTO)
+    // POST: api/Wishlist/create
+    [HttpPost("create")]    
+    public async Task<ActionResult<WishlistDTO>> Create([FromBody] WishlistDTO wishlistDTO)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        
-        wishlistDTO.DateAdded = DateOnly.FromDateTime(DateTime.Today); 
-        wishlistDTO.Customer.Id = wishlistDTO.Customer.Id;
-        await _wishlistService.Create(wishlistDTO);
-        return Ok();
+
+        wishlistDTO.DateAdded = DateOnly.FromDateTime(DateTime.Today);
+
+        var createdWishlist = await _wishlistService.Create(wishlistDTO);
+
+        return CreatedAtAction(nameof(GetById), new { id = createdWishlist.Id }, createdWishlist);
     }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<WishlistDTO>> GetById(int id)
+    {
+        var wishlist = await _wishlistService.Get(id);
+        if (wishlist == null)
+            return NotFound();
+
+        return Ok(wishlist);
+    }
+
 
     // PUT: api/Wishlist/5
     [HttpPut("{id}")]

@@ -40,16 +40,22 @@ namespace Agora.BLL.Services
             return new WishlistDTO
             {
                 Id = wishlist.Id,
-                DateAdded = wishlist.DateAdded
+                Name = wishlist.Name,
+                DateAdded = wishlist.DateAdded,
+                Customer = wishlist.CustomerId.HasValue
+                ? new CustomerDTO { Id = wishlist.CustomerId.Value }
+                : null,
+                ProductIds = wishlist.ProductWishlists?.Select(pw => pw.ProductId).ToList() ?? new List<int>()
             };
         }
 
-        public async Task Create(WishlistDTO wishlistDTO)
+        public async Task<WishlistDTO> Create(WishlistDTO wishlistDTO)
         {
             var wishlist = new Wishlist
             {
                 DateAdded = wishlistDTO.DateAdded ?? DateOnly.FromDateTime(DateTime.Today),
                 CustomerId = wishlistDTO.Customer.Id,
+                Name = wishlistDTO.Name,
                 ProductWishlists = new List<ProductWishlist>()
             };
 
@@ -71,7 +77,20 @@ namespace Agora.BLL.Services
 
             await Database.Wishlists.Create(wishlist);
             await Database.Save();
+
+            // Возвращаем созданный объект в виде DTO
+            return new WishlistDTO
+            {
+                Id = wishlist.Id,
+                Name = wishlist.Name,
+                DateAdded = wishlist.DateAdded,
+                Customer = wishlist.CustomerId.HasValue
+                ? new CustomerDTO { Id = wishlist.CustomerId.Value }
+                : null,
+                ProductIds = wishlist.ProductWishlists?.Select(pw => pw.ProductId).ToList() ?? new List<int>()
+            };
         }
+
 
         public async Task Update(WishlistDTO wishlistDTO)
         {
