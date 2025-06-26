@@ -10,6 +10,7 @@ namespace Agora.BLL.Interfaces
     public interface IProductReviewService
     {
         Task<IEnumerable<ProductReviewDTO>> GetAll();
+        Task<IEnumerable<ProductReviewDTO>> GetReviewsByProductId(int productId);
         Task<IEnumerable<ProductReviewDTO>> GetReviewsByStoreId(int storeId);
         Task<IEnumerable<ProductReviewDTO>> GetFilteredReviewsByStoreId(int storeId, string field, string value);
         Task<ProductReviewDTO> Get(int id);
