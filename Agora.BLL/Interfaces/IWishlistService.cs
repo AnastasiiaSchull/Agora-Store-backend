@@ -11,7 +11,7 @@ namespace Agora.BLL.Interfaces
     {
         Task<IEnumerable<WishlistDTO>> GetAll();
         Task<WishlistDTO> Get(int id);
-        Task Create(WishlistDTO wishlistDTO);
+        Task<WishlistDTO> Create(WishlistDTO wishlistDTO);
         Task Update(WishlistDTO wishlistDTO);
         Task Delete(int id);
 

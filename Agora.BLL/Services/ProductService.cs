@@ -4,7 +4,6 @@ using Agora.BLL.Interfaces;
 using Agora.DAL.Entities;
 using Agora.DAL.Interfaces;
 using AutoMapper;
-using StackExchange.Redis;
 
 namespace Agora.BLL.Services
 {
@@ -43,6 +42,12 @@ namespace Agora.BLL.Services
             var products = await Database.Products.GetProductsBySeller(sellerId);
             return _mapper.Map<IEnumerable<ProductDTO>>(products.ToList());
 
+        }
+
+        public async Task<IEnumerable<ProductDTO>> GetProductsByStore(int storeId)
+        {
+            var products = await Database.Products.Find(p => p.StoreId == storeId && p.IsAvailable);
+            return _mapper.Map<IEnumerable<ProductDTO>>(products);
         }
 
         public async Task<ProductDTO> Get(int id)

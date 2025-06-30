@@ -110,5 +110,28 @@ namespace Agora.Controllers
 
             return Ok("Review submitted successfully.");
         }
+
+        [HttpGet("product/{productId}")]
+        public async Task<ActionResult> GetReviewsByProductId(int productId)
+        {
+            var reviews = await _productReviewService.GetReviewsByProductId(productId);
+
+            if (reviews == null || !reviews.Any())
+                return NotFound("No reviews found for this product.");
+
+            var productReviews = reviews
+                .Select(r => new
+                {
+                    UserName = r.Customer?.UserDTO?.Name,
+                    UserSurname = r.Customer?.UserDTO?.Surname,                    
+                    r.Comment,
+                    r.Rating,
+                    Date = r.Date.ToString()
+                })
+                .ToList();
+
+            return Ok(productReviews);
+        }
+
     }
 }
