@@ -16,6 +16,7 @@ namespace Agora.BLL.DTO
        
         //public ProductDTO Product { get; set; }
         public CustomerDTO CustomerDTO { get; set; }
+        public int CustomerId { get; set; }
         //public PaymentDTO Payment { get; set; }
         public ShippingDTO ShippingDTO { get; set; }
         //public ReturnDTO Return { get; set; }

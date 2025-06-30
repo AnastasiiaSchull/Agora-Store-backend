@@ -80,7 +80,9 @@ namespace Agora.BLL.Services
                 Status = Enum.Parse<ShippingStatus>(shippingDTO.Status, ignoreCase: true),
                 TrackingNumber = shippingDTO.TrackingNumber,
                 OrderItemId = shippingDTO.OrderItemId,
-                DeliveryOptionsId = shippingDTO.DeliveryOptionsId
+                DeliveryOptionsId = shippingDTO.DeliveryOptionsId,
+                AddressId = shippingDTO.AddressId,
+                SellerId = shippingDTO.SellerId
             };
             await Database.Shippings.Create(shipping);
             await Database.Save();

@@ -68,7 +68,7 @@ namespace Agora
             {
                 options.AddPolicy("AllowSpecificOrigin", policy =>
                 {
-                    policy.WithOrigins("http://localhost:3000", "http://localhost:5193")
+                    policy.WithOrigins("http://localhost:3000", "http://localhost:5193", "https://www.liqpay.ua")
                           .AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials();

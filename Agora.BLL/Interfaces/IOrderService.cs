@@ -12,7 +12,7 @@ namespace Agora.BLL.Interfaces
         Task<IQueryable<OrderDTO>> GetAll();
        /* Task<IEnumerable<OrderDTO>> GetFilteredBy(string filter);*/ // to be continued
         Task<OrderDTO> Get(int id);
-        Task Create(OrderDTO orderDTO);
+        Task<int> Create(OrderDTO orderDTO);
         Task Update(OrderDTO orderDTO);
         Task Delete(int id);
     }

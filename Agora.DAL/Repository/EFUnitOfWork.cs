@@ -193,7 +193,7 @@ namespace Agora.DAL.Repository
                 return paymentMethodRepository;
             }
         }
-        public IRepository<Payment> Payments
+        public IPaymentRepository Payments
         {
             get
             {
@@ -332,7 +332,15 @@ namespace Agora.DAL.Repository
 
         public async Task Save()
         {
-            await db.SaveChangesAsync();
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            
 
         }
 

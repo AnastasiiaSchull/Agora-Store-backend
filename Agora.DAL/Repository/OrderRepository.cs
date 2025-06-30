@@ -27,6 +27,7 @@ namespace Agora.DAL.Repository
         public async Task Create(Order order)
         {
             await db.Orders.AddAsync(order);
+            
         }
 
         public void Update(Order order)

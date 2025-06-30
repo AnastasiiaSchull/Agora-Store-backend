@@ -82,15 +82,20 @@ namespace Agora.BLL.Services
             };
         }
 
-        public async Task Create(OrderItemDTO orderItemDTO)
+        public async Task<int> Create(OrderItemDTO orderItemDTO)
         {
             var orderItem = new OrderItem
             {
                 PriceAtMoment = orderItemDTO.PriceAtMoment,
-                Quantity = orderItemDTO.Quantity
+                Quantity = orderItemDTO.Quantity,
+                ProductId = orderItemDTO.ProductId,
+                OrderId = orderItemDTO.OrderId,
+                Date = orderItemDTO.Date,
+                Status = Enum.Parse<OrderStatus>(orderItemDTO.Status, ignoreCase: true)
             };
             await Database.OrderItems.Create(orderItem);
             await Database.Save();
+            return orderItem.Id;
         }
         public async Task Update(OrderItemDTO orderItemDTO)
         {

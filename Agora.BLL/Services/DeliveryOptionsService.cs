@@ -36,8 +36,7 @@ namespace Agora.BLL.Services
                 Id = deliveryOptions.Id,
                 Type = deliveryOptions.Type.ToString(),
                 Price = deliveryOptions.Price,
-                EstimatedDays = deliveryOptions.EstimatedDays,
-                ShippingId = deliveryOptions.Shipping?.Id,
+                EstimatedDays = deliveryOptions.EstimatedDays
             };
         }
 
@@ -87,8 +86,7 @@ namespace Agora.BLL.Services
                     Id = opt.Id,
                     Type = opt.Type.ToString(),
                     Price = opt.Price,
-                    EstimatedDays = opt.EstimatedDays,
-                    ShippingId = opt.Shipping.Id
+                    EstimatedDays = opt.EstimatedDays
                 });
 
             Console.WriteLine($"Filtered count: {filtered.Count()}");

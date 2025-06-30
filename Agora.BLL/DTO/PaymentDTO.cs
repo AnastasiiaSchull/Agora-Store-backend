@@ -15,9 +15,12 @@ namespace Agora.BLL.DTO
         public DateTime TransactionDate { get; set; }
         public decimal CashbackUsed { get; set; }
         //public CustomerDTO Customer { get; set; }
+        public int   CustomerId { get; set; }
         public int? PaymentMethodId { get; set; }
         //public PaymentMethodDTO PaymentMethod { get; set; }
         public int? OrderId { get; set; }
         //public OrderDTO Order { get; set; }
+        public string? Data { get; set; }
+        public string? Signature { get; set; }
     }
 }

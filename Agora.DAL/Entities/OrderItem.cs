@@ -12,6 +12,8 @@ namespace Agora.DAL.Entities
         public DateOnly Date { get; set; }
         public virtual Shipping? Shipping { get; set; }
         public virtual Order? Order { get; set; }
+        public int OrderId { get; set; }
         public virtual Product? Product { get; set; }
+        public int ProductId { get; set; }
     }
 }

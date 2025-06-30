@@ -4,6 +4,7 @@ using Agora.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Agora.DAL.Migrations
 {
     [DbContext(typeof(AgoraContext))]
-    partial class AgoraContextModelSnapshot : ModelSnapshot
+    [Migration("20250626165407_AddedFieldsToOrderItem")]
+    partial class AddedFieldsToOrderItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -812,7 +815,7 @@ namespace Agora.DAL.Migrations
                     b.Property<int?>("OrderItemId")
                         .HasColumnType("int");
 
-                    b.Property<int>("SellerId")
+                    b.Property<int?>("SellerId")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
@@ -825,7 +828,8 @@ namespace Agora.DAL.Migrations
 
                     b.HasIndex("AddressId");
 
-                    b.HasIndex("DeliveryOptionsId");
+                    b.HasIndex("DeliveryOptionsId")
+                        .IsUnique();
 
                     b.HasIndex("OrderItemId")
                         .IsUnique();
@@ -1416,8 +1420,8 @@ namespace Agora.DAL.Migrations
                         .HasForeignKey("AddressId");
 
                     b.HasOne("Agora.DAL.Entities.DeliveryOptions", "DeliveryOptions")
-                        .WithMany("Shipping")
-                        .HasForeignKey("DeliveryOptionsId");
+                        .WithOne("Shipping")
+                        .HasForeignKey("Agora.DAL.Entities.Shipping", "DeliveryOptionsId");
 
                     b.HasOne("Agora.DAL.Entities.OrderItem", "OrderItem")
                         .WithOne("Shipping")
@@ -1425,9 +1429,7 @@ namespace Agora.DAL.Migrations
 
                     b.HasOne("Agora.DAL.Entities.Seller", "Seller")
                         .WithMany("Shippings")
-                        .HasForeignKey("SellerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SellerId");
 
                     b.Navigation("Address");
 

@@ -51,6 +51,7 @@ namespace Agora.BLL.Infrastructure
             services.AddSingleton<IRedisSafeExecutor, RedisSafeExecutor>();
             services.AddScoped<IMLService, MLService>();
             services.AddScoped<ITranslationService, TranslationService>(); 
+            services.AddScoped<ILiqpayService, LiqpayService>(); 
         }
     }
 }

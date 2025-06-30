@@ -4,6 +4,7 @@ using Agora.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Agora.DAL.Migrations
 {
     [DbContext(typeof(AgoraContext))]
-    partial class AgoraContextModelSnapshot : ModelSnapshot
+    [Migration("20250630092720_ChangedConnectionBetweenShippingsAndDeliveryOptions")]
+    partial class ChangedConnectionBetweenShippingsAndDeliveryOptions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -304,12 +307,17 @@ namespace Agora.DAL.Migrations
                     b.Property<int>("SellerId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ShippingId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("SellerId");
+
+                    b.HasIndex("ShippingId");
 
                     b.ToTable("DeliveryOptions");
                 });
@@ -825,8 +833,6 @@ namespace Agora.DAL.Migrations
 
                     b.HasIndex("AddressId");
 
-                    b.HasIndex("DeliveryOptionsId");
-
                     b.HasIndex("OrderItemId")
                         .IsUnique();
 
@@ -1194,7 +1200,13 @@ namespace Agora.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Agora.DAL.Entities.Shipping", "Shipping")
+                        .WithMany("DeliveryOptions")
+                        .HasForeignKey("ShippingId");
+
                     b.Navigation("Seller");
+
+                    b.Navigation("Shipping");
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.FAQ", b =>
@@ -1415,10 +1427,6 @@ namespace Agora.DAL.Migrations
                         .WithMany("Shipping")
                         .HasForeignKey("AddressId");
 
-                    b.HasOne("Agora.DAL.Entities.DeliveryOptions", "DeliveryOptions")
-                        .WithMany("Shipping")
-                        .HasForeignKey("DeliveryOptionsId");
-
                     b.HasOne("Agora.DAL.Entities.OrderItem", "OrderItem")
                         .WithOne("Shipping")
                         .HasForeignKey("Agora.DAL.Entities.Shipping", "OrderItemId");
@@ -1430,8 +1438,6 @@ namespace Agora.DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("Address");
-
-                    b.Navigation("DeliveryOptions");
 
                     b.Navigation("OrderItem");
 
@@ -1584,11 +1590,6 @@ namespace Agora.DAL.Migrations
                     b.Navigation("Wishlists");
                 });
 
-            modelBuilder.Entity("Agora.DAL.Entities.DeliveryOptions", b =>
-                {
-                    b.Navigation("Shipping");
-                });
-
             modelBuilder.Entity("Agora.DAL.Entities.Discount", b =>
                 {
                     b.Navigation("Products");
@@ -1648,6 +1649,11 @@ namespace Agora.DAL.Migrations
                     b.Navigation("Shippings");
 
                     b.Navigation("Stores");
+                });
+
+            modelBuilder.Entity("Agora.DAL.Entities.Shipping", b =>
+                {
+                    b.Navigation("DeliveryOptions");
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.Store", b =>

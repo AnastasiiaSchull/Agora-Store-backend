@@ -28,6 +28,24 @@ namespace Agora.BLL.Services
             return _mapper.Map<IQueryable<PaymentDTO>>(payments.ToList());
 
         }
+        public async Task<PaymentDTO> GetByOrderId(int orderId)
+        {
+            var payment = await Database.Payments.GetByOrderId(orderId);
+            if (payment == null)
+                throw new ValidationExceptionFromService("There is no payment with this order id", "");
+            return new PaymentDTO
+            {
+                Id = payment.Id,
+                Amount = payment.Amount,
+                TransactionDate = payment.TransactionDate,
+                CashbackUsed = payment.CashbackUsed,
+                Status = payment.Status,
+                PaymentMethodId = payment.PaymentMethodId,
+                OrderId = payment.OrderId,
+                Signature = payment.Signature,
+                CustomerId = payment.CustomerId
+            };
+        }
         public async Task<PaymentDTO> Get(int id)
         {
             var payment = await Database.Payments.Get(id);
@@ -56,7 +74,10 @@ namespace Agora.BLL.Services
                 CashbackUsed = paymentDTO.CashbackUsed,
                 Status = paymentDTO.Status,
                 PaymentMethodId = paymentDTO.PaymentMethodId,
-                OrderId = paymentDTO.OrderId
+                OrderId = paymentDTO.OrderId,
+                CustomerId = paymentDTO.CustomerId,
+                Data = paymentDTO.Data,
+                Signature = paymentDTO.Signature
 
             };
             await Database.Payments.Create(payment);
@@ -64,18 +85,16 @@ namespace Agora.BLL.Services
         }
         public async Task Update(PaymentDTO paymentDTO)
         {
-            var payment = new Payment
-            {
-                Id = paymentDTO.Id,
-                Amount = paymentDTO.Amount,
-                TransactionDate = paymentDTO.TransactionDate,
-                CashbackUsed = paymentDTO.CashbackUsed,
-                Status = paymentDTO.Status,
-                PaymentMethodId = paymentDTO.PaymentMethodId,
-                OrderId = paymentDTO.OrderId
-
-            };
-            Database.Payments.Update(payment);
+            var existingPayment = await Database.Payments.Get(paymentDTO.Id);
+            existingPayment.Amount = paymentDTO.Amount;
+            existingPayment.TransactionDate = paymentDTO.TransactionDate;
+            existingPayment.CashbackUsed = paymentDTO.CashbackUsed;
+            existingPayment.Status = paymentDTO.Status;
+            existingPayment.PaymentMethodId = paymentDTO.PaymentMethodId;
+            existingPayment.OrderId = paymentDTO.OrderId;
+            existingPayment.Data = paymentDTO.Data;
+            existingPayment.Signature = paymentDTO.Signature;
+            Database.Payments.Update(existingPayment);
             await Database.Save();
         }
 

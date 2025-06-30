@@ -48,16 +48,24 @@ namespace Agora.BLL.Services
             };
         }
 
-        public async Task Create(OrderDTO orderDTO)
+        public async Task<int> Create(OrderDTO orderDTO)
         {
-            var order = new Order
+            try
             {
-                TotalPrice = orderDTO.TotalPrice,
-                PaymentDeadline = orderDTO.PaymentDeadline
-
-            };
-            await Database.Orders.Create(order);
-            await Database.Save();
+                var order = new Order
+                {
+                    TotalPrice = orderDTO.TotalPrice,
+                    PaymentDeadline = orderDTO.PaymentDeadline,
+                    CustomerId = orderDTO.CustomerId
+                };
+                await Database.Orders.Create(order);
+                await Database.Save();
+                return order.Id;
+            }
+            catch (Exception ex) {
+                throw new ValidationExceptionFromService("Error while creating order", ex.Message);
+            }
+          
         }
         public async Task Update(OrderDTO orderDTO)
         {

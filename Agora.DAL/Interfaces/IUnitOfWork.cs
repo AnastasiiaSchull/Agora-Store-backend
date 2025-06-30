@@ -25,7 +25,7 @@ namespace Agora.DAL.Interfaces
         IRepository<GiftCard> GiftCards { get; }
         IRepository<Order> Orders { get; }
         IOrderItemRepository OrderItems { get; }
-        IRepository<Payment> Payments { get; }
+        IPaymentRepository Payments { get; }
         IRepository<PaymentMethod> PaymentMethods { get; }
         IProductRepository Products { get; }
         IProductReviewRepository ProductReviews { get; }

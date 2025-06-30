@@ -11,6 +11,7 @@ namespace Agora.DAL.Entities
         public int? AddressId { get;  set; }
         public virtual Address? Address { get; set; }
         public virtual Seller? Seller{ get; set; }
+        public int SellerId { get; set; }
 
         public int? OrderItemId { get; set; }
         public virtual OrderItem? OrderItem { get; set; }

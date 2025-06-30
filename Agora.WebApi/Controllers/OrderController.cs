@@ -100,7 +100,9 @@ namespace Agora.Controllers
 
                 order.ProductDTO.ImagePath = _utilsService.GetFirstImageUrl(order.ProductDTO.ImagesPath, Request);
 
-                //order.ShippingDTO.ShipDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(De)); //migth be needed
+                order.ShippingDTO.ArrivingDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(order.ShippingDTO.DeliveryOptionsDTO.EstimatedDays))
+                .ToString("d MMM yyyy", CultureInfo.InvariantCulture);
+
                 return Ok(order);
             }
             catch (ValidationExceptionFromService ex)

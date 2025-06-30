@@ -17,7 +17,7 @@ namespace Agora.BLL.Interfaces
         Task<List<OrderItemDTO>> GetAllByCustomer(int customerId, int? months = null);
         Task<List<OrderItemDTO>> GetFiltredOrders(int storeId, string field, string value);
         Task<OrderItemDTO> Get(int id);
-        Task Create(OrderItemDTO orderItemDTO);
+        Task<int> Create(OrderItemDTO orderItemDTO);
         Task Update(OrderItemDTO orderItemDTO);
         Task Delete(int id);
     }

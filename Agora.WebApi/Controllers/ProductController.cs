@@ -293,8 +293,6 @@ namespace Agora.Controllers
                     var convertedProduct = ConvertToProductForBasket(product);
 
                     var deliveryOptions = await _deliveryOptionsService.GetBySellerId(product.Store.SellerId.Value);
-                    Console.BackgroundColor = ConsoleColor.DarkBlue;
-                    Console.WriteLine($"Delivery options: {deliveryOptions.Count()}");
                     convertedProduct.DeliveryOptions = deliveryOptions.ToList();
                     products.Add(convertedProduct);
                 }

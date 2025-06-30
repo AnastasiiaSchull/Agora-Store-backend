@@ -15,8 +15,11 @@ namespace Agora.BLL.DTO
         public string ?FormattedDate { get; set; }
 
         public ProductDTO ProductDTO { get; set; }
+        public int ProductId { get; set; }
         public OrderDTO OrderDTO { get; set; }
+        public int OrderId { get; set; }
         public ShippingDTO ShippingDTO { get; set; }
+        public int? ShippingId { get; set; } 
         public DateOnly Date { get; set; }
         public string Status { get; set; }
 

@@ -10,7 +10,7 @@ namespace Agora.DAL.Entities
         public int EstimatedDays { get; set; }
 
         public int SellerId { get; set; }
-        public virtual Shipping? Shipping { get; set; }
+        public virtual ICollection<Shipping>? Shipping { get; set; }
         public virtual Seller? Seller { get; set; }
     }
 }

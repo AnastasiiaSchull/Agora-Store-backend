@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Agora.DAL.Repository
 {
-    public class PaymentRepository: IRepository<Payment>
+    public class PaymentRepository: IPaymentRepository
     {
         private AgoraContext db;
         public PaymentRepository(AgoraContext context)
@@ -22,7 +22,10 @@ namespace Agora.DAL.Repository
         {
             return await db.Payments.FindAsync(id);
         }
-
+        public async Task<Payment> GetByOrderId(int orderId)
+        {
+            return await db.Payments.FirstOrDefaultAsync(p => p.OrderId == orderId);
+        }
         public async Task Create(Payment payment)
         {
             await db.Payments.AddAsync(payment);
