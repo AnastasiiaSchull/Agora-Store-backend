@@ -2,6 +2,7 @@
 using Agora.DAL.Entities;
 using Agora.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 
 namespace Agora.DAL.Repository
@@ -43,6 +44,11 @@ namespace Agora.DAL.Repository
             Subcategory? subcategory = await db.Subcategories.FindAsync(id);
             if (subcategory != null)
                 db.Subcategories.Remove(subcategory);
+        }
+
+        public async Task<IEnumerable<Subcategory>> Find(Expression<Func<Subcategory, bool>> predicate)
+        {
+            return await db.Subcategories.Where(predicate).ToListAsync();
         }
     }
 }
