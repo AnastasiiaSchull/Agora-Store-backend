@@ -23,12 +23,13 @@ namespace Agora.DAL.Entities
         public virtual Brand? Brand { get; set; }
 
         public virtual int? StoreId { get; set; }
-        public virtual Store? Store { get; set; }      
-        
+        public virtual Store? Store { get; set; }
+        public int? DiscountId { get; set; }
         public virtual Discount? Discount { get; set; }
         public virtual ICollection<OrderItem>? OrderItems { get; set; }
         public virtual ICollection<ReturnItem>? ReturnItems { get; set; }
         public virtual ICollection<ProductWishlist>? ProductWishlists { get; set; }
         public virtual ICollection<ProductReview>? ProductReviews { get; set; }
+
     }
 }
