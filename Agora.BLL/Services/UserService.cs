@@ -299,5 +299,32 @@ namespace Agora.BLL.Services
                 return false;
             }
         }
+
+        public async Task UpdateNameSurnameAsync(int userId, string newName, string newSurname)
+        {
+            var user = await Database.Users.Get(userId);
+
+            if (user == null)
+                throw new ValidationExceptionFromService("User not found", "");
+
+            user.Name = newName;
+            user.Surname = newSurname;
+
+            Database.Users.Update(user);
+            await Database.Save();
+        }
+
+        public async Task UpdatePasswordAsync(int userId, string newPassword)
+        {
+            var user = await Database.Users.Get(userId);
+
+            if (user == null)
+                throw new ValidationExceptionFromService("User not found", "");
+
+            user.Password = HashPassword(newPassword);
+
+            Database.Users.Update(user);
+            await Database.Save();
+        }
     }
 }

@@ -31,5 +31,7 @@ namespace Agora.BLL.Interfaces
         Task<UserDTO> GetById(int id);
         Task UpdateSellerEmailAsync(int userId, string newEmail);
         Task UpdateSellerPhoneNumberAsync(int userId, string newPhoneNumber);
+        Task UpdateNameSurnameAsync(int userId, string newName, string newSurname);
+        Task UpdatePasswordAsync(int userId, string newPassword);
     }
 }

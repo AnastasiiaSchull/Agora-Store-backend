@@ -515,5 +515,33 @@ namespace Agora.Controllers
                 return StatusCode(500, new { message = ex.Message });
             }
         }
+
+        [HttpPut("update-name-surname")]
+        public async Task<IActionResult> UpdateNameSurname([FromBody] UpdateNameSurnameDTO dto)
+        {
+            try
+            {
+                await _userService.UpdateNameSurnameAsync(dto.UserId, dto.NewName, dto.NewSurname);
+                return Ok(new { message = "Name and surname updated successfully" });
+            }
+            catch (ValidationExceptionFromService ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("update-password")]
+        public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordDTO dto)
+        {
+            try
+            {
+                await _userService.UpdatePasswordAsync(dto.UserId, dto.NewPassword);
+                return Ok(new { message = "Password updated successfully" });
+            }
+            catch (ValidationExceptionFromService ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
     }
 }
