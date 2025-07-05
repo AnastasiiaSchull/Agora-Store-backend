@@ -4,11 +4,6 @@ using Agora.DAL.Entities;
 using Agora.DAL.Interfaces;
 using AutoMapper;
 using Agora.BLL.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Agora.BLL.Services
 {
@@ -42,6 +37,7 @@ namespace Agora.BLL.Services
                 StartDate = discount.StartDate,
                 EndDate = discount.EndDate,
                 Type = discount.Type,
+                AllProducts = discount.AllProducts
             };
         }
 
@@ -55,6 +51,7 @@ namespace Agora.BLL.Services
                 StartDate = discountDTO.StartDate,
                 EndDate = discountDTO.EndDate,
                 Type = discountDTO.Type,
+                AllProducts = discountDTO.AllProducts
             };
             await Database.Discounts.Create(discount);
             await Database.Save();
@@ -69,6 +66,7 @@ namespace Agora.BLL.Services
                 StartDate = discountDTO.StartDate,
                 EndDate = discountDTO.EndDate,
                 Type = discountDTO.Type,
+                AllProducts = discountDTO.AllProducts
             };
             Database.Discounts.Update(discount);
             await Database.Save();

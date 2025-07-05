@@ -44,7 +44,8 @@ namespace Agora.BLL.Infrastructure
                  .ForMember(dest => dest.UserDTO, opt => opt.MapFrom(src => src.User));
             CreateMap<DeliveryOptions, DeliveryOptionsDTO>()
                  .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()));
-            CreateMap<Discount, DiscountDTO>();
+            CreateMap<DiscountDTO, Discount>()
+                 .ForMember(dest => dest.AllProducts, opt => opt.MapFrom(src => src.AllProducts));
             CreateMap<FAQ, FAQDTO>();
             CreateMap<FAQCategory, FAQCategoryDTO>();
             CreateMap<GiftCard, GiftCardDTO>();

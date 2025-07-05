@@ -10,5 +10,6 @@ namespace Agora.BLL.DTO
         public DateOnly StartDate { get; set; }
         public DateOnly EndDate { get; set; }
         public DiscountType Type { get; set; }
+        public bool AllProducts { get; set; } = false;
     }
 }
