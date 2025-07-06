@@ -23,6 +23,19 @@ namespace Agora.DAL.Repository
             return await db.Discounts.FindAsync(id);
         }
 
+        public async Task<IEnumerable<Discount>> GetActiveWithRelations()
+        {
+            DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+            return await db.Discounts
+                     .AsNoTracking()
+                .Include(d => d.Products)
+                .Include(d => d.Brands)
+                .Include(d => d.Categories)
+                .Include(d => d.Subcategories)
+                .Where(d => d.StartDate <= today && d.EndDate >= today)
+                .ToListAsync();
+        }
+
         public async Task Create(Discount discount)
         {
             await db.Discounts.AddAsync(discount);

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Agora.BLL.DTO;
 using Agora.DAL.Entities;
 using AutoMapper;
@@ -44,20 +41,37 @@ namespace Agora.BLL.Infrastructure
                  .ForMember(dest => dest.UserDTO, opt => opt.MapFrom(src => src.User));
             CreateMap<DeliveryOptions, DeliveryOptionsDTO>()
                  .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()));
+            // для чтения из БД (GET)
+            CreateMap<Discount, DiscountDTO>()
+                .ForMember(dest => dest.AllProducts, opt => opt.MapFrom(src => src.AllProducts))
+                .ForMember(dest => dest.Brands, opt => opt.MapFrom(src => src.Brands))
+                .ForMember(dest => dest.Categories, opt => opt.MapFrom(src => src.Categories))
+                .ForMember(dest => dest.Subcategories, opt => opt.MapFrom(src => src.Subcategories))
+                .ForMember(dest => dest.Products, opt => opt.MapFrom(src => src.Products));
+            // для записи в БД (POST/PUT)
+            CreateMap<BrandDTO, Brand>();
+            CreateMap<CategoryDTO, Category>();
+            CreateMap<SubcategoryDTO, Subcategory>();
+            CreateMap<ProductDTO, Product>();
             CreateMap<DiscountDTO, Discount>()
-                 .ForMember(dest => dest.AllProducts, opt => opt.MapFrom(src => src.AllProducts));
+                .ForMember(dest => dest.AllProducts, opt => opt.MapFrom(src => src.AllProducts))
+                .ForMember(dest => dest.Brands, opt => opt.MapFrom(src => src.Brands))
+                .ForMember(dest => dest.Categories, opt => opt.MapFrom(src => src.Categories))
+                .ForMember(dest => dest.Subcategories, opt => opt.MapFrom(src => src.Subcategories))
+                .ForMember(dest => dest.Products, opt => opt.MapFrom(src => src.Products));            
             CreateMap<FAQ, FAQDTO>();
             CreateMap<FAQCategory, FAQCategoryDTO>();
             CreateMap<GiftCard, GiftCardDTO>();
             CreateMap<ReturnItem, ReturnItemDTO>();
             CreateMap<Product, ProductDTO>()
-                 .ForMember(dest => dest.Store, opt => opt.MapFrom(src => src.Store))              
+                 .ForMember(dest => dest.Store, opt => opt.MapFrom(src => src.Store))
                  .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
                  .ForMember(dest => dest.SubcategoryId, opt => opt.MapFrom(src => src.SubcategoryId))
                  .ForMember(dest => dest.BrandId, opt => opt.MapFrom(src => src.BrandId))
                  .ForMember(dest => dest.StoreId, opt => opt.MapFrom(src => src.StoreId))
                  .ForMember(dest => dest.ReviewCount, opt => opt.MapFrom(src => src.ProductReviews!.Count))
-                 .ForMember(dest => dest.SellerId, opt => opt.MapFrom(src => src.Store!.SellerId));
+                 .ForMember(dest => dest.SellerId, opt => opt.MapFrom(src => src.Store!.SellerId))
+                 .ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(src => src.DiscountedPrice));
             CreateMap<ProductReview, ProductReviewDTO>();
             CreateMap<Payment, PaymentDTO>();
             CreateMap<PaymentMethod, PaymentMethodDTO>();

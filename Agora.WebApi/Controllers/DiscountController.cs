@@ -9,10 +9,11 @@ namespace Agora.Controllers
     public class DiscountController : ControllerBase
     {
         private readonly IDiscountService _discountService;
-
-        public DiscountController(IDiscountService discountService)
+        private readonly IProductService _productService;
+        public DiscountController(IDiscountService discountService, IProductService productService)
         {
             _discountService = discountService;
+            _productService = productService;
         }
 
         [HttpGet]
@@ -20,6 +21,21 @@ namespace Agora.Controllers
         {
             var discounts = await _discountService.GetAll();
             return Ok(discounts);
+        }
+
+        [HttpGet("active")]
+        public async Task<IActionResult> GetActive()
+        {
+            var activeDiscounts = await _discountService.GetActiveDiscounts();
+            return Ok(activeDiscounts);
+        }
+
+
+        [HttpPost("apply-discounts")]
+        public async Task<IActionResult> ApplyDiscounts()
+        {
+            await _productService.UpdateAllDiscountedPrices();
+            return Ok("Discounts applied to all products");
         }
 
         [HttpGet("{id}")]
@@ -32,7 +48,6 @@ namespace Agora.Controllers
             return Ok(discount);
         }
 
-
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] DiscountDTO dto)
         {
@@ -40,7 +55,9 @@ namespace Agora.Controllers
                 return BadRequest(ModelState);
 
             await _discountService.Create(dto);
-            return Ok("Discount created");
+            await _productService.UpdateAllDiscountedPrices();
+
+            return Ok("Discount created and applied to products");          
         }
 
         [HttpPut("{id}")]
@@ -53,14 +70,15 @@ namespace Agora.Controllers
                 return BadRequest(ModelState);
 
             await _discountService.Update(dto);
+            await _productService.UpdateAllDiscountedPrices();
             return Ok("Discount updated");
         }
-
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             await _discountService.Delete(id);
+            await _productService.UpdateAllDiscountedPrices();
             return Ok();
         }
     }

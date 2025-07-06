@@ -11,6 +11,7 @@ namespace Agora.BLL.Interfaces
         Task<IEnumerable<ProductDTO>> GetSimilarProducts(int productId);
         Task<ProductDTO> Get(int id);
         Task<ProductDTO> GetByName(string name);
+        Task UpdateAllDiscountedPrices();
         Task Create(ProductDTO productDTO);
         Task Update(ProductDTO productDTO);
         Task Delete(int id);
