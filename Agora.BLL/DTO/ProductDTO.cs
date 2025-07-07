@@ -6,6 +6,7 @@
         public string? Name { get; set; }
         public string? Description { get; set; }
         public decimal Price { get; set; }
+        public decimal? DiscountedPrice { get; set; }
         public int StockQuantity { get; set; }
         public decimal Rating { get; set; }
         public int ReviewCount { get; set; }
@@ -20,5 +21,6 @@
         public List<string>? ImagesUrls { get; set; }
         public BrandDTO? Brand { get; set; }
         public StoreDTO? Store { get; set; }
+
     }
 }

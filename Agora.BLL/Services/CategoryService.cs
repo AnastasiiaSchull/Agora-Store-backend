@@ -1,9 +1,10 @@
 ﻿using Agora.BLL.DTO;
+using Agora.BLL.Infrastructure;
+using Agora.BLL.Interfaces;
 using Agora.DAL.Entities;
 using Agora.DAL.Interfaces;
 using AutoMapper;
-using Agora.BLL.Infrastructure;
-using Agora.BLL.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Agora.BLL.Services
 {
@@ -40,7 +41,7 @@ namespace Agora.BLL.Services
         {
             var category = new Category
             {
-                Id = categoryDTO.Id,
+                //Id = categoryDTO.Id,
                 Name= categoryDTO.Name,
             };
             await Database.Categories.Create(category);
@@ -60,6 +61,16 @@ namespace Agora.BLL.Services
 
         public async Task Delete(int id)
         {
+            var category = await Database.Categories.Get(id);
+
+            var relatedProducts = await Database.Products.Find(p => p.CategoryId == id);
+            if (relatedProducts.Any())
+                throw new ValidationExceptionFromService("Cannot delete category because it is linked to products.", "");
+
+            var relatedSubcategories = await Database.Subcategories.Find(s => s.CategoryId == id);
+            if (relatedSubcategories.Any())
+                throw new ValidationExceptionFromService("Cannot delete category because it is linked to subcategories.", "");
+
             await Database.Categories.Delete(id);
             await Database.Save();
         }

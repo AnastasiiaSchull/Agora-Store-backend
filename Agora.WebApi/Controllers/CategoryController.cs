@@ -1,4 +1,5 @@
 ﻿using Agora.BLL.DTO;
+using Agora.BLL.Infrastructure;
 using Agora.BLL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -57,8 +58,15 @@ namespace Agora.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
-            await _categoryService.Delete(id);
-            return Ok("Category deleted");
+            try
+            {
+                await _categoryService.Delete(id);
+                return Ok("Category deleted");
+            }
+            catch (ValidationExceptionFromService ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

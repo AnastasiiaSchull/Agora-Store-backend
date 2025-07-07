@@ -3,6 +3,7 @@ using Agora.BLL.Infrastructure;
 using Agora.BLL.Interfaces;
 using Agora.DAL.Entities;
 using Agora.DAL.Interfaces;
+using Agora.DAL.Repository;
 using AutoMapper;
 
 namespace Agora.BLL.Services
@@ -11,6 +12,7 @@ namespace Agora.BLL.Services
     {
         IUnitOfWork Database { get; set; }
         IMapper _mapper;
+
         public ProductService(IUnitOfWork uow, IMapper mapper)
         {
             Database = uow;
@@ -19,8 +21,34 @@ namespace Agora.BLL.Services
 
         public async Task<IEnumerable<ProductDTO>> GetAll()
         {
+            var today = DateOnly.FromDateTime(DateTime.Today);
+
             var products = await Database.Products.Find(p => p.IsAvailable);
-            return _mapper.Map<IEnumerable<ProductDTO>>(products);
+
+            // загружаем все  скидки           
+            var discountsRaw = await Database.Discounts.Find(d =>
+                d.StartDate <= today && d.EndDate >= today);
+
+            var discounts = discountsRaw?.ToList() ?? new List<Discount>();
+
+            var productDTOs = _mapper.Map<IEnumerable<ProductDTO>>(products);
+
+            foreach (var product in productDTOs)
+            {
+                var discount = discounts.FirstOrDefault(d =>
+                   d.AllProducts
+                    || (d.Products?.Any(p => p.Id == product.Id) ?? false)
+                    || (d.Categories?.Any(c => c.Id == product.CategoryId) ?? false)
+                    || (d.Subcategories?.Any(s => s.Id == product.SubcategoryId) ?? false)
+                    || (d.Brands?.Any(b => b.Id == product.BrandId) ?? false)
+                );
+
+                if (discount != null)
+                {
+                    product.DiscountedPrice = product.Price - (product.Price * discount.Percentage / 100);
+                }
+            }
+            return productDTOs;
         }
 
         public async Task<IEnumerable<ProductDTO>> GetFilteredByName(string filter)
@@ -41,7 +69,6 @@ namespace Agora.BLL.Services
         {
             var products = await Database.Products.GetProductsBySeller(sellerId);
             return _mapper.Map<IEnumerable<ProductDTO>>(products.ToList());
-
         }
 
         public async Task<IEnumerable<ProductDTO>> GetProductsByStore(int storeId)
@@ -61,6 +88,7 @@ namespace Agora.BLL.Services
                 Name = product.Name,
                 Description = product.Description,
                 Price = product.Price,
+                DiscountedPrice = product.DiscountedPrice,
                 StockQuantity = product.StockQuantity,
                 Rating = product.Rating,
                 ImagesPath = product.ImagesPath,
@@ -72,9 +100,9 @@ namespace Agora.BLL.Services
                 Store = product.Store == null ? null : _mapper.Map<StoreDTO>(product.Store),
                 ReviewCount = product.ProductReviews?.Count ?? 0,
                 SellerId = product.Store?.SellerId ?? 0,
-
             };
         }
+
         public async Task<ProductDTO> GetByName(string name)
         {
             var product = await Database.Products.GetByName(name);
@@ -86,12 +114,12 @@ namespace Agora.BLL.Services
                 Name = product.Name,
                 Description = product.Description,
                 Price = product.Price,
+                DiscountedPrice = product.DiscountedPrice,
                 StockQuantity = product.StockQuantity,
                 Rating = product.Rating,
                 ImagesPath = product.ImagesPath,
                 IsAvailable = product.IsAvailable,
                 ReviewCount = product.ProductReviews?.Count ?? 0
-
             };
         }
 
@@ -101,13 +129,37 @@ namespace Agora.BLL.Services
             if (product == null)
                 throw new ValidationExceptionFromService("Product not found", "");
 
+            var today = DateOnly.FromDateTime(DateTime.Today);
+
+            // ищем похожие продукты по категории или подкатегории
             var all = await Database.Products.Find(p =>
                 p.Id != productId &&
                 (p.CategoryId == product.CategoryId || p.SubcategoryId == product.SubcategoryId));
 
-            return _mapper.Map<IEnumerable<ProductDTO>>(all.Take(10));
-        }
+            var discountsRaw = await Database.Discounts.Find(d =>
+                d.StartDate <= today && d.EndDate >= today);
 
+            var discounts = discountsRaw?.ToList() ?? new List<Discount>();
+
+            var productDTOs = _mapper.Map<IEnumerable<ProductDTO>>(all.Take(10));
+
+            foreach (var item in productDTOs)
+            {
+                var discount = discounts.FirstOrDefault(d =>
+                    d.AllProducts
+                    || (d.Products?.Any(p => p.Id == product.Id) ?? false)
+                    || (d.Categories?.Any(c => c.Id == product.CategoryId) ?? false)
+                    || (d.Subcategories?.Any(s => s.Id == product.SubcategoryId) ?? false)
+                    || (d.Brands?.Any(b => b.Id == product.BrandId) ?? false)
+                );
+
+                if (discount != null)
+                {
+                    item.DiscountedPrice = item.Price - (item.Price * discount.Percentage / 100);
+                }
+            }
+            return productDTOs;
+        }
 
         public async Task Create(ProductDTO productDTO)
         {
@@ -123,11 +175,18 @@ namespace Agora.BLL.Services
                 StoreId = productDTO.StoreId,
                 SubcategoryId = productDTO.SubcategoryId,
                 CategoryId = productDTO.CategoryId,
-                BrandId = productDTO.BrandId
+                BrandId = productDTO.BrandId,
             };
+
+            var discountRepo = (DiscountRepository)Database.Discounts;
+            var discounts = await discountRepo.GetActiveWithRelations();
+
+            ApplyDiscount(product, discounts);
+
             await Database.Products.Create(product);
             await Database.Save();
         }
+
         public async Task Update(ProductDTO productDTO)
         {
 
@@ -145,8 +204,11 @@ namespace Agora.BLL.Services
                 CategoryId = productDTO.CategoryId,
                 BrandId = productDTO.BrandId,
                 StoreId = productDTO.StoreId,
-               
             };
+            var discountRepo = (DiscountRepository)Database.Discounts;
+            var discounts = await discountRepo.GetActiveWithRelations();
+            ApplyDiscount(product, discounts);
+
             Database.Products.Update(product);
             await Database.Save();
         }
@@ -157,5 +219,49 @@ namespace Agora.BLL.Services
             await Database.Save();
         }
 
+        private void ApplyDiscount(Product product, IEnumerable<Discount> discounts)
+        {
+            if (discounts == null || !discounts.Any())
+            {
+                product.DiscountedPrice = null;
+                return;
+            }
+            var applicableDiscounts = discounts.Where(d =>
+                d.AllProducts
+                || (d.Products?.Any(p => p.Id == product.Id) ?? false)
+                || (d.Categories?.Any(c => c.Id == product.CategoryId) ?? false)
+                || (d.Subcategories?.Any(s => s.Id == product.SubcategoryId) ?? false)
+                || (d.Brands?.Any(b => b.Id == product.BrandId) ?? false)
+            );
+            var bestDiscount = applicableDiscounts.OrderByDescending(d => d.Percentage).FirstOrDefault();
+
+            if (bestDiscount != null)
+            {
+                //Console.WriteLine($"скидка {bestDiscount.Percentage}% к товару {product.Name}");
+                product.DiscountedPrice = product.Price - (product.Price * bestDiscount.Percentage / 100);
+            }
+            else
+            {
+                product.DiscountedPrice = null;
+            }
+        }
+
+        public async Task UpdateAllDiscountedPrices()
+        {
+            var products = await Database.Products.GetAll();
+
+            var discountRepo = (DiscountRepository)Database.Discounts;
+            var discounts = await discountRepo.GetActiveWithRelations();
+
+            foreach (var product in products)
+            {
+                ApplyDiscount(product, discounts); 
+                Console.WriteLine($"Product {product.Name} new price: {product.DiscountedPrice}");
+                Database.Products.Update(product);
+            }
+
+            await Database.Save();
+
+        }
     }
 }

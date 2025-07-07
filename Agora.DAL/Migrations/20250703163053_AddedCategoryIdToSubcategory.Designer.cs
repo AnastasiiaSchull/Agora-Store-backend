@@ -4,6 +4,7 @@ using Agora.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Agora.DAL.Migrations
 {
     [DbContext(typeof(AgoraContext))]
-    partial class AgoraContextModelSnapshot : ModelSnapshot
+    [Migration("20250703163053_AddedCategoryIdToSubcategory")]
+    partial class AddedCategoryIdToSubcategory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -191,15 +194,10 @@ namespace Agora.DAL.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("DiscountId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DiscountId");
 
                     b.ToTable("Brands");
                 });
@@ -249,15 +247,10 @@ namespace Agora.DAL.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("DiscountId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DiscountId");
 
                     b.ToTable("Categories");
                 });
@@ -331,9 +324,6 @@ namespace Agora.DAL.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("AllProducts")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateOnly>("EndDate")
                         .HasColumnType("date");
@@ -603,9 +593,6 @@ namespace Agora.DAL.Migrations
 
                     b.Property<int?>("DiscountId")
                         .HasColumnType("int");
-
-                    b.Property<decimal?>("DiscountedPrice")
-                        .HasColumnType("decimal(65,30)");
 
                     b.Property<string>("ImagesPath")
                         .HasColumnType("longtext");
@@ -892,17 +879,12 @@ namespace Agora.DAL.Migrations
                     b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DiscountId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("DiscountId");
 
                     b.ToTable("Subcategories");
                 });
@@ -1170,15 +1152,6 @@ namespace Agora.DAL.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("Agora.DAL.Entities.Brand", b =>
-                {
-                    b.HasOne("Agora.DAL.Entities.Discount", "Discount")
-                        .WithMany("Brands")
-                        .HasForeignKey("DiscountId");
-
-                    b.Navigation("Discount");
-                });
-
             modelBuilder.Entity("Agora.DAL.Entities.BrandSubcategory", b =>
                 {
                     b.HasOne("Agora.DAL.Entities.Brand", "Brand")
@@ -1205,15 +1178,6 @@ namespace Agora.DAL.Migrations
                         .HasForeignKey("Agora.DAL.Entities.Cashback", "CustomerId");
 
                     b.Navigation("Customer");
-                });
-
-            modelBuilder.Entity("Agora.DAL.Entities.Category", b =>
-                {
-                    b.HasOne("Agora.DAL.Entities.Discount", "Discount")
-                        .WithMany("Categories")
-                        .HasForeignKey("DiscountId");
-
-                    b.Navigation("Discount");
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.Customer", b =>
@@ -1492,13 +1456,7 @@ namespace Agora.DAL.Migrations
                         .WithMany("Subcategories")
                         .HasForeignKey("CategoryId");
 
-                    b.HasOne("Agora.DAL.Entities.Discount", "Discount")
-                        .WithMany("Subcategories")
-                        .HasForeignKey("DiscountId");
-
                     b.Navigation("Category");
-
-                    b.Navigation("Discount");
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.Support", b =>
@@ -1636,13 +1594,7 @@ namespace Agora.DAL.Migrations
 
             modelBuilder.Entity("Agora.DAL.Entities.Discount", b =>
                 {
-                    b.Navigation("Brands");
-
-                    b.Navigation("Categories");
-
                     b.Navigation("Products");
-
-                    b.Navigation("Subcategories");
                 });
 
             modelBuilder.Entity("Agora.DAL.Entities.FAQCategory", b =>
