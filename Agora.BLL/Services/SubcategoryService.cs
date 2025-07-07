@@ -32,7 +32,7 @@ namespace Agora.BLL.Services
             {
                 Id = subcategory.Id,
                 Name = subcategory.Name,
-                CategoryId = subcategory.Category.Id
+                CategoryDTO = subcategory.Category == null ? null : _mapper.Map<CategoryDTO>(subcategory.Category),
             };
         }
 
@@ -41,7 +41,7 @@ namespace Agora.BLL.Services
             var subcategory = new Subcategory
             {
                 Name = subcategoryDTO.Name,
-                CategoryId = subcategoryDTO.CategoryId
+                CategoryId = subcategoryDTO.CategoryDTO.Id
             };
             await Database.Subcategories.Create(subcategory);
             await Database.Save();
@@ -54,7 +54,7 @@ namespace Agora.BLL.Services
             {
                 Id = subcategoryDTO.Id,
                 Name = subcategoryDTO.Name,
-                CategoryId = subcategoryDTO.CategoryId
+                CategoryId = subcategoryDTO.CategoryDTO.Id
             };
             Database.Subcategories.Update(subcategory);
             await Database.Save();
