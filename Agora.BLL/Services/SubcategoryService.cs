@@ -31,7 +31,8 @@ namespace Agora.BLL.Services
             return new SubcategoryDTO
             {
                 Id = subcategory.Id,
-                Name = subcategory.Name
+                Name = subcategory.Name,
+                CategoryId = subcategory.Category.Id
             };
         }
 
@@ -39,7 +40,8 @@ namespace Agora.BLL.Services
         {
             var subcategory = new Subcategory
             {
-                Name = subcategoryDTO.Name
+                Name = subcategoryDTO.Name,
+                CategoryId = subcategoryDTO.CategoryId
             };
             await Database.Subcategories.Create(subcategory);
             await Database.Save();
@@ -51,7 +53,8 @@ namespace Agora.BLL.Services
             var subcategory = new Subcategory
             {
                 Id = subcategoryDTO.Id,
-                Name = subcategoryDTO.Name
+                Name = subcategoryDTO.Name,
+                CategoryId = subcategoryDTO.CategoryId
             };
             Database.Subcategories.Update(subcategory);
             await Database.Save();

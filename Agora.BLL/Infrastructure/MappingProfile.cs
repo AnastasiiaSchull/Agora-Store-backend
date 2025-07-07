@@ -21,7 +21,8 @@ namespace Agora.BLL.Infrastructure
                 .ForMember(dest => dest.Products, opt => opt.MapFrom(src => src.ProductWishlists.Select(pw => pw.Product)))
                 .ForMember(dest => dest.ProductWishlists, opt => opt.MapFrom(src => src.ProductWishlists));
             CreateMap<Support, SupportDTO>();
-            CreateMap<Subcategory, SubcategoryDTO>();
+            CreateMap<Subcategory, SubcategoryDTO>()
+                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Category.Id));
             CreateMap<Store, StoreDTO>();
             CreateMap<Shipping, ShippingDTO>()
                 .ForMember(dest => dest.DeliveryOptionsDTO, opt => opt.MapFrom(src => src.DeliveryOptions))
