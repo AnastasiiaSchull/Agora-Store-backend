@@ -26,8 +26,17 @@ namespace Agora.BLL.Services
         public async Task<IQueryable<SellerDTO>> GetAll()
         {
             var sellers = await Database.Sellers.GetAll();
-            return _mapper.Map<IQueryable<SellerDTO>>(sellers.ToList());
+            var sellerList = sellers.ToList();
 
+            var sellerDTOs = sellerList.Select(s => new SellerDTO
+            {
+                Id = s.Id,
+                UserId = s.UserId,
+                Name = s.User?.Name,
+                Surname = s.User?.Surname
+            });
+
+            return sellerDTOs.AsQueryable();
         }
 
         public async Task<List<int>> GetAllSellerIds()

@@ -15,7 +15,7 @@ namespace Agora.DAL.Repository
 
         public async Task<IQueryable<Seller>> GetAll()
         {
-            return db.Sellers;
+            return db.Sellers.Include(s => s.User);
         }
 
         public async Task<Seller> Get(int id)
