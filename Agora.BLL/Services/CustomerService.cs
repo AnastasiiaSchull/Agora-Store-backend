@@ -38,7 +38,7 @@ namespace Agora.BLL.Services
             {
                 Id = customer.Id,
                 UserId = customer.UserId,
-                CashbackId = customer.Cashback.Id,
+                CashbackId = customer.Cashback?.Id,
             };
         }
 
