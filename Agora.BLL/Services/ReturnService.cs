@@ -43,17 +43,21 @@ namespace Agora.BLL.Services
             };
         }
 
-        public async Task Create(ReturnDTO returnDTO)
+        public async Task<int> Create(ReturnDTO returnDTO)
         {
-            var oneReturn = new Return
+            var Return = new Return
             {
                 ReturnDate = returnDTO.ReturnDate,
                 Status = returnDTO.Status,
-                RefundAmount = returnDTO.RefundAmount
-
+                RefundAmount = returnDTO.RefundAmount,
+                OrderId = returnDTO.OrderId,
+                CustomerId = returnDTO.CustomerId
             };
-            await Database.Returns.Create(oneReturn);
+
+            await Database.Returns.Create(Return);
             await Database.Save();
+
+            return Return.Id;
         }
         public async Task Update(ReturnDTO returnDTO)
         {
