@@ -8,7 +8,7 @@ namespace Agora.DAL.Entities
 
         public int? UserId { get; set; }
         public virtual User? User { get; set; }
-
+        public bool IsBlocked { get; set; } = false;
         public virtual ICollection<Store>? Stores { get; set; }
         public virtual ICollection<SellerReview>? SellerReviews { get; set; }
         public virtual ICollection<Shipping>? Shippings { get; set; }

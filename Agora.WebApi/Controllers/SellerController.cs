@@ -1,4 +1,5 @@
-﻿using Agora.BLL.Interfaces;
+﻿using Agora.BLL.Infrastructure;
+using Agora.BLL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Agora.Controllers
@@ -19,6 +20,34 @@ namespace Agora.Controllers
         {
             var sellers = await _sellerService.GetAll();
             return Ok(sellers.ToList());
+        }
+
+        [HttpPut("block/{id}")]
+        public async Task<IActionResult> BlockSeller(int id)
+        {
+            try
+            {
+                await _sellerService.BlockSeller(id);
+                return Ok(new { message = "Seller blocked and products disabled." });
+            }
+            catch (ValidationExceptionFromService ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("unblock/{id}")]
+        public async Task<IActionResult> UnblockSeller(int id)
+        {
+            try
+            {
+                await _sellerService.UnblockSeller(id);
+                return Ok(new { message = "Seller unblocked." });
+            }
+            catch (ValidationExceptionFromService ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
         }
     }
 }

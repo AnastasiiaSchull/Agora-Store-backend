@@ -10,6 +10,7 @@ using Agora.BLL.Interfaces;
 using Agora.DAL.Entities;
 using Agora.DAL.Interfaces;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace Agora.BLL.Services
 {
@@ -33,7 +34,8 @@ namespace Agora.BLL.Services
                 Id = s.Id,
                 UserId = s.UserId,
                 Name = s.User?.Name,
-                Surname = s.User?.Surname
+                Surname = s.User?.Surname,
+                IsBlocked = s.IsBlocked
             });
 
             return sellerDTOs.AsQueryable();
@@ -54,7 +56,8 @@ namespace Agora.BLL.Services
             {
                 Id = seller.Id,
                 Rating = seller.Rating,
-                UserId = seller.UserId
+                UserId = seller.UserId,
+                IsBlocked= seller.IsBlocked
             };
         }
 
@@ -89,6 +92,71 @@ namespace Agora.BLL.Services
             await Database.Save();
         }
 
+        public async Task BlockSeller(int sellerId)
+        {
+            var seller = await Database.Sellers
+                .FindWithIncludes(
+                    s => s.Id == sellerId,
+                    include => include
+                        .Include(s => s.Stores!)
+                            .ThenInclude(store => store.Products!)
+                );
+
+            if (seller == null)
+                throw new ValidationExceptionFromService("Seller not found", "");
+
+            seller.IsBlocked = true;
+
+            if (seller.Stores != null)
+            {
+                foreach (var store in seller.Stores)
+                {
+                    if (store.Products != null)
+                    {
+                        foreach (var product in store.Products)
+                        {
+                            product.IsAvailable = false;
+                        }
+                    }
+                }
+            }
+
+            Database.Sellers.Update(seller);
+            await Database.Save();
+        }
+
+        public async Task UnblockSeller(int sellerId)
+        {
+            var seller = await Database.Sellers
+                .FindWithIncludes(
+                    s => s.Id == sellerId,
+                    include => include
+                        .Include(s => s.Stores!)
+                            .ThenInclude(store => store.Products!)
+                );
+
+            if (seller == null)
+                throw new ValidationExceptionFromService("Seller not found", "");
+
+            seller.IsBlocked = false;
+
+            if (seller.Stores != null)
+            {
+                foreach (var store in seller.Stores)
+                {
+                    if (store.Products != null)
+                    {
+                        foreach (var product in store.Products)
+                        {
+                            product.IsAvailable = true;
+                        }
+                    }
+                }
+            }
+
+            Database.Sellers.Update(seller);
+            await Database.Save();
+        }
     }
 }
 

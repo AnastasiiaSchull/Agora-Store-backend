@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Agora.DAL.Entities;
+using Microsoft.EntityFrameworkCore.Query;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using Agora.DAL.Entities;
 
 namespace Agora.DAL.Interfaces
 {
@@ -15,5 +17,8 @@ namespace Agora.DAL.Interfaces
         Task Create(Seller seller);
         void Update(Seller seller);
         Task Delete(int id);
+        Task<Seller?> FindWithIncludes(
+            Expression<Func<Seller, bool>> predicate,
+            Func<IQueryable<Seller>, IIncludableQueryable<Seller, object>> include);
     }
 }

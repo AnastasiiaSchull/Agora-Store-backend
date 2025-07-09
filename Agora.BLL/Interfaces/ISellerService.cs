@@ -15,5 +15,7 @@ namespace Agora.BLL.Interfaces
         Task<int> Create(SellerDTO sellerDTO);
         Task Update(SellerDTO sellerDTO);
         Task Delete(int id);
+        Task BlockSeller(int sellerId);
+        Task UnblockSeller(int sellerId);
     }
 }
