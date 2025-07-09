@@ -51,12 +51,14 @@ namespace Agora.Controllers
         public async Task<IActionResult> GetOrdersByCustomer(int customerId, [FromQuery] int? months = null)
         {
             IEnumerable<OrderItemDTO> orders = await _orderItemService.GetAllByCustomer(customerId, months);
-            if (orders == null || !orders.Any())
-                return NotFound("No orders found for this customer.");
+            
+            if (orders == null)
+                return Ok(new List<object>());
 
             var orderItems = orders
                 .Select(oi => new
                 {
+                    id = oi.Id,
                     UserName = oi.OrderDTO.CustomerDTO?.UserDTO?.Name,
                     UserSurname = oi.OrderDTO.CustomerDTO?.UserDTO?.Surname,
                     UserAddress = oi.ShippingDTO?.AddressDTO,
