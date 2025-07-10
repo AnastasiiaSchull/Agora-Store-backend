@@ -111,11 +111,21 @@ namespace Agora.BLL.Services
             Database.Discounts.Update(discount);
             await Database.Save();
         }
-      
+
         public async Task Delete(int id)
         {
-            await Database.Discounts.Delete(id);
-            await Database.Save();
+            var discount = await Database.Discounts.GetWithRelations(id);
+            if (discount != null)
+            {
+                discount.Brands?.Clear();
+                discount.Categories?.Clear();
+                discount.Subcategories?.Clear();
+                discount.Products?.Clear();
+
+                Database.Discounts.Delete(discount);
+                await Database.Save();
+            }
         }
     }
 }
+
