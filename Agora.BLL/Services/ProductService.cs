@@ -3,7 +3,6 @@ using Agora.BLL.Infrastructure;
 using Agora.BLL.Interfaces;
 using Agora.DAL.Entities;
 using Agora.DAL.Interfaces;
-using Agora.DAL.Repository;
 using AutoMapper;
 
 namespace Agora.BLL.Services
@@ -177,9 +176,8 @@ namespace Agora.BLL.Services
                 CategoryId = productDTO.CategoryId,
                 BrandId = productDTO.BrandId,
             };
+            var discounts = await Database.Discounts.GetActiveWithRelations();
 
-            var discountRepo = (DiscountRepository)Database.Discounts;
-            var discounts = await discountRepo.GetActiveWithRelations();
 
             ApplyDiscount(product, discounts);
 
@@ -205,8 +203,8 @@ namespace Agora.BLL.Services
                 BrandId = productDTO.BrandId,
                 StoreId = productDTO.StoreId,
             };
-            var discountRepo = (DiscountRepository)Database.Discounts;
-            var discounts = await discountRepo.GetActiveWithRelations();
+            var discounts = await Database.Discounts.GetActiveWithRelations();
+
             ApplyDiscount(product, discounts);
 
             Database.Products.Update(product);
@@ -250,13 +248,12 @@ namespace Agora.BLL.Services
         {
             var products = await Database.Products.GetAll();
 
-            var discountRepo = (DiscountRepository)Database.Discounts;
-            var discounts = await discountRepo.GetActiveWithRelations();
+            var discounts = await Database.Discounts.GetActiveWithRelations();
 
             foreach (var product in products)
             {
                 ApplyDiscount(product, discounts); 
-                Console.WriteLine($"Product {product.Name} new price: {product.DiscountedPrice}");
+                // Console.WriteLine($"Product {product.Name} new price: {product.DiscountedPrice}");
                 Database.Products.Update(product);
             }
 

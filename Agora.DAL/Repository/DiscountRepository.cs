@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Agora.DAL.Repository
 {
-    public class DiscountRepository : IRepository<Discount>
+    public class DiscountRepository : IDiscountRepository
     {
         private AgoraContext db;
         public DiscountRepository(AgoraContext context)
