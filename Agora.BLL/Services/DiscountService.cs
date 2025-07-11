@@ -35,9 +35,10 @@ namespace Agora.BLL.Services
 
         public async Task<DiscountDTO> Get(int id)
         {
-            var discount = await Database.Discounts.Get(id);
+            var discount = await Database.Discounts.GetWithRelations(id);
             if (discount == null)
                 throw new ValidationExceptionFromService("There is no discount with this id", "");
+
             return new DiscountDTO
             {
                 Id = discount.Id,
@@ -46,10 +47,16 @@ namespace Agora.BLL.Services
                 StartDate = discount.StartDate,
                 EndDate = discount.EndDate,
                 Type = discount.Type,
-                AllProducts = discount.AllProducts
+                AllProducts = discount.AllProducts,
+
+                //включаем связанные сущности
+                Brands = discount.Brands?.Select(b => new BrandDTO { Id = b.Id, Name = b.Name }).ToList(),
+                Categories = discount.Categories?.Select(c => new CategoryDTO { Id = c.Id, Name = c.Name }).ToList(),
+                Subcategories = discount.Subcategories?.Select(s => new SubcategoryDTO { Id = s.Id, Name = s.Name }).ToList(),
+                Products = discount.Products?.Select(p => new ProductDTO { Id = p.Id, Name = p.Name }).ToList()
             };
         }
-  
+
         public async Task Create(DiscountDTO discountDTO)
         {
             var discount = _mapper.Map<Discount>(discountDTO);
@@ -98,20 +105,73 @@ namespace Agora.BLL.Services
 
         public async Task Update(DiscountDTO discountDTO)
         {
-            var discount = new Discount
+            var existingDiscount = await Database.Discounts.GetWithRelations(discountDTO.Id);
+            if (existingDiscount == null)
+                throw new ValidationExceptionFromService("Discount not found", "");
+
+            // обновляем основные поля
+            existingDiscount.Name = discountDTO.Name;
+            existingDiscount.Percentage = discountDTO.Percentage;
+            existingDiscount.StartDate = discountDTO.StartDate;
+            existingDiscount.EndDate = discountDTO.EndDate;
+            existingDiscount.Type = discountDTO.Type;
+            existingDiscount.AllProducts = discountDTO.AllProducts;
+
+            // очищаем текущие связи
+            existingDiscount.Brands?.Clear();
+            existingDiscount.Categories?.Clear();
+            existingDiscount.Subcategories?.Clear();
+            existingDiscount.Products?.Clear();
+
+            // заново устанавливаем связи
+
+            if (discountDTO.Brands?.Any() == true)
             {
-                Id = discountDTO.Id,
-                Name = discountDTO.Name,
-                Percentage = discountDTO.Percentage,
-                StartDate = discountDTO.StartDate,
-                EndDate = discountDTO.EndDate,
-                Type = discountDTO.Type,
-                AllProducts = discountDTO.AllProducts
-            };
-            Database.Discounts.Update(discount);
+                existingDiscount.Brands = new List<Brand>();
+                foreach (var brandDTO in discountDTO.Brands)
+                {
+                    var brand = await Database.Brands.Get(brandDTO.Id);
+                    if (brand != null)
+                        existingDiscount.Brands.Add(brand);
+                }
+            }
+
+            if (discountDTO.Categories?.Any() == true)
+            {
+                existingDiscount.Categories = new List<Category>();
+                foreach (var catDTO in discountDTO.Categories)
+                {
+                    var cat = await Database.Categories.Get(catDTO.Id);
+                    if (cat != null)
+                        existingDiscount.Categories.Add(cat);
+                }
+            }
+
+            if (discountDTO.Subcategories?.Any() == true)
+            {
+                existingDiscount.Subcategories = new List<Subcategory>();
+                foreach (var subDTO in discountDTO.Subcategories)
+                {
+                    var sub = await Database.Subcategories.Get(subDTO.Id);
+                    if (sub != null)
+                        existingDiscount.Subcategories.Add(sub);
+                }
+            }
+
+            if (discountDTO.Products?.Any() == true)
+            {
+                existingDiscount.Products = new List<Product>();
+                foreach (var prodDTO in discountDTO.Products)
+                {
+                    var prod = await Database.Products.Get(prodDTO.Id);
+                    if (prod != null)
+                        existingDiscount.Products.Add(prod);
+                }
+            }
+
+            Database.Discounts.Update(existingDiscount);
             await Database.Save();
         }
-
         public async Task Delete(int id)
         {
             var discount = await Database.Discounts.GetWithRelations(id);
