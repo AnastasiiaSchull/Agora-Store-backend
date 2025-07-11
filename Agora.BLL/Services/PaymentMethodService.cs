@@ -42,7 +42,7 @@ namespace Agora.BLL.Services
             };
         }
 
-        public async Task Create(PaymentMethodDTO paymentMethodDTO)
+        public async Task<int> Create(PaymentMethodDTO paymentMethodDTO)
         {
             var paymentMethod = new PaymentMethod
             {
@@ -53,6 +53,7 @@ namespace Agora.BLL.Services
             };
             await Database.PaymentMethods.Create(paymentMethod);
             await Database.Save();
+            return paymentMethod.Id;
         }
         public async Task Update(PaymentMethodDTO paymentMethodDTO)
         {

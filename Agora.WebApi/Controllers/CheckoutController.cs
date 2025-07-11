@@ -47,7 +47,7 @@ namespace Agora.Controllers
                 var orderId = await Purchase(model, selectedAddressId);
                 if (orderId != null)
                 {
-                    var formModel = _liqpayService.GetLiqPayModel(orderId.ToString(), model.Amount);
+                    var formModel = _liqpayService.GetLiqPayModelForOrder(orderId.ToString(), model.Amount);
                     await CreatePayment(model, orderId);
                     return Ok(formModel);
                 }
@@ -110,11 +110,11 @@ namespace Agora.Controllers
                 {
                     var orderId = jsonResponse["order_id"];
                     int  orderidInt = Int32.Parse(orderId);
-                    var paymnet = await _paymentService.GetByOrderId(orderidInt);
-                    paymnet.Status = Enums.PaymentStatus.Completed;
-                    paymnet.Data = data;
-                    paymnet.Signature = signature;
-                    await _paymentService.Update(paymnet);
+                    var payment = await _paymentService.GetByOrderId(orderidInt);
+                    payment.Status = Enums.PaymentStatus.Completed;
+                    payment.Data = data;
+                    payment.Signature = signature;
+                    await _paymentService.Update(payment);
 
                     return Redirect(redirectUrl);
                 }

@@ -12,6 +12,7 @@ namespace Agora.DAL.Interfaces
         Task<IQueryable<Payment>> GetAll();
         Task<Payment> Get(int id);
         Task<Payment> GetByOrderId(int orderId);
+        Task<Payment> GetByGiftCardId(int giftCardId);
         Task Create(Payment item);
         void Update(Payment item);
         Task Delete(int id);

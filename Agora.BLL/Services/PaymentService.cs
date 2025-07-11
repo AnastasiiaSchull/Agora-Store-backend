@@ -46,6 +46,24 @@ namespace Agora.BLL.Services
                 CustomerId = payment.CustomerId
             };
         }
+        public async Task<PaymentDTO> GetByGiftCardId(int giftCardId)
+        {
+            var payment = await Database.Payments.GetByGiftCardId(giftCardId);
+            if (payment == null)
+                throw new ValidationExceptionFromService("There is no payment with this gift card id", "");
+            return new PaymentDTO
+            {
+                Id = payment.Id,
+                Amount = payment.Amount,
+                TransactionDate = payment.TransactionDate,
+                CashbackUsed = payment.CashbackUsed,
+                Status = payment.Status,
+                PaymentMethodId = payment.PaymentMethodId,
+                OrderId = payment.OrderId,
+                Signature = payment.Signature,
+                CustomerId = payment.CustomerId
+            };
+        }
         public async Task<PaymentDTO> Get(int id)
         {
             var payment = await Database.Payments.Get(id);

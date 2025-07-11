@@ -26,6 +26,10 @@ namespace Agora.DAL.Repository
         {
             return await db.Payments.FirstOrDefaultAsync(p => p.OrderId == orderId);
         }
+        public async Task<Payment> GetByGiftCardId(int giftCardId)
+        {
+            return await db.Payments.FirstOrDefaultAsync(p => p.PaymentMethod.GiftCardId == giftCardId);
+        }
         public async Task Create(Payment payment)
         {
             await db.Payments.AddAsync(payment);

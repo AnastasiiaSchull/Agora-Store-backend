@@ -11,7 +11,7 @@ namespace Agora.BLL.Interfaces
     {
         Task<IQueryable<PaymentMethodDTO>> GetAll();
         Task<PaymentMethodDTO> Get(int id);
-        Task Create(PaymentMethodDTO paymentMethodDTO);
+        Task<int> Create(PaymentMethodDTO paymentMethodDTO);
         Task Update(PaymentMethodDTO paymentMethodDTO);
         Task Delete(int id);
     }

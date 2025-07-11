@@ -2,7 +2,7 @@
 
 namespace Agora.BLL.DTO
 {
-    public class LiqpayCheckoutViewModelDTO
+    public class LiqpayDTO
     {
         // Required parameters
         [JsonProperty("version")]
@@ -32,24 +32,8 @@ namespace Agora.BLL.DTO
         [JsonProperty("order_id")]
         public string OrderId { get; set; }
 
-        // Optional parameters
-        [JsonProperty("expired_date")]
-        public string ExpiredDate { get; set; }
-
-        [JsonProperty("language")]
-        public string Language { get; set; }
-
-        [JsonProperty("paytypes")]
-        public string PayTypes { get; set; }
-
         [JsonProperty("result_url")]
         public string ResultUrl { get; set; }
-
-        [JsonProperty("server_url")]
-        public string ServerUrl { get; set; }
-
-        [JsonProperty("verifycode")]
-        public string VerifyCode { get; set; }
 
         /// <summary>
         /// Test mode: 1 - test, 0 - production (in test mode money isn't withdrawn)

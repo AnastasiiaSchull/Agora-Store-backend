@@ -20,18 +20,18 @@ namespace Agora.BLL.Services
             _publicKey = configuration["Liqpay:PublicKey"];
         }
 
-        public LiqpayFormViewModelDTO GetLiqPayModel(string orderId, decimal amount)
+        public LiqpayFormDTO GetLiqPayModelForOrder(string orderId, decimal amount)
         {
             // Fill data for submit them to the view
-            var signatureSource = new LiqpayCheckoutViewModelDTO
+            var signatureSource = new LiqpayDTO
             {
                 PublicKey = _publicKey,
                 Version = 3,
                 Action = "pay",
                 Amount = amount,
                 Currency = "USD",
-                Description = "Test order payment",
-                OrderId = orderId,
+                Description = "Order payment",
+                OrderId = "OrderId: " + orderId,
                 Sandbox = 1,
                 ResultUrl = $"http://localhost:5193/api/checkout/redirect"
 
@@ -42,7 +42,36 @@ namespace Agora.BLL.Services
             var signatureHash = GetSignature(dataHash);
 
            
-            var model = new LiqpayFormViewModelDTO
+            var model = new LiqpayFormDTO
+            {
+                Data = dataHash,
+                Signature = signatureHash
+            };
+            return model;
+        }
+        public LiqpayFormDTO GetLiqPayModelForGiftCard(string giftCardId, decimal amount)
+        {
+            // Fill data for submit them to the view
+            var signatureSource = new LiqpayDTO
+            {
+                PublicKey = _publicKey,
+                Version = 3,
+                Action = "pay",
+                Amount = amount,    
+                Currency = "USD",
+                Description = "Gift card payment",
+                OrderId = "giftCardId: " + giftCardId,
+                Sandbox = 1,
+                ResultUrl = $"http://localhost:5193/api/gift-card/redirect" //change URL
+
+            };
+
+            var jsonString = JsonConvert.SerializeObject(signatureSource);
+            var dataHash = Convert.ToBase64String(Encoding.UTF8.GetBytes(jsonString));
+            var signatureHash = GetSignature(dataHash);
+
+
+            var model = new LiqpayFormDTO
             {
                 Data = dataHash,
                 Signature = signatureHash

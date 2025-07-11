@@ -40,12 +40,11 @@ namespace Agora.BLL.Services
                 Code = giftCard.Code,
                 Balance = giftCard.Balance,
                 ExpirationDate = giftCard.ExpirationDate,
-                CustomerId = giftCard.Customer.Id,
-                PaymentMethodId = giftCard.PaymentMethod.Id,
+                CustomerId = giftCard.Customer?.Id
             };
         }
 
-        public async Task Create(GiftCardDTO giftCardDTO)
+        public async Task<int> Create(GiftCardDTO giftCardDTO)
         {
             var giftCard = new GiftCard
             {
@@ -56,6 +55,7 @@ namespace Agora.BLL.Services
             };
             await Database.GiftCards.Create(giftCard);
             await Database.Save();
+            return giftCard.Id;
         }
         public async Task Update(GiftCardDTO giftCardDTO)
         {
