@@ -51,6 +51,8 @@ namespace Agora.BLL.Services
                 Id = returnItemDTO.Id,
                 Quantity = returnItemDTO.Quantity,
                 Reason = returnItemDTO.Reason,
+                ReturnId = returnItemDTO.ReturnId,
+                ProductId = returnItemDTO.ProductId
             };
             await Database.ReturnItems.Create(returnItem);
             await Database.Save();

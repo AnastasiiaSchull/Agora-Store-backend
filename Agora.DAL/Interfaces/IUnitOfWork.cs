@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Agora.DAL.Entities;
-using Agora.DAL.Repository;
 
 namespace Agora.DAL.Interfaces
 {
@@ -19,7 +15,7 @@ namespace Agora.DAL.Interfaces
         IRepository<Country> Countries { get; }
         ICustomerRepository Customers { get; }
         IRepository<DeliveryOptions> DeliveryOptions { get; }
-        IRepository<Discount> Discounts { get; }
+        IDiscountRepository Discounts { get; }
         IRepository<FAQ> FAQs { get; }
         IRepository<FAQCategory> FAQCategories { get; }
         IRepository<GiftCard> GiftCards { get; }

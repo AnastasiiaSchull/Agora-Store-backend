@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Agora.DAL.Repository
 {
-    public class DiscountRepository : IRepository<Discount>
+    public class DiscountRepository : IDiscountRepository
     {
         private AgoraContext db;
         public DiscountRepository(AgoraContext context)
@@ -46,11 +46,29 @@ namespace Agora.DAL.Repository
             db.Entry(discount).State = EntityState.Modified;
         }
 
+        public async Task<Discount> GetWithRelations(int id)
+        {
+            return await db.Discounts
+                .Include(d => d.Brands)
+                .Include(d => d.Categories)
+                .Include(d => d.Subcategories)
+                .Include(d => d.Products)
+                .FirstOrDefaultAsync(d => d.Id == id);
+        }
+
+        //если у скидки нет связей (с брендами, категориями, подкатегориями)
         public async Task Delete(int id)
         {
             Discount? discount = await db.Discounts.FindAsync(id);
             if (discount != null)
                 db.Discounts.Remove(discount);
         }
+
+        //если у скидки есть связи (с брендами, категориями, подкатегориями)
+        public void Delete(Discount discount)
+        {
+            db.Discounts.Remove(discount);
+        }
+
     }
 }

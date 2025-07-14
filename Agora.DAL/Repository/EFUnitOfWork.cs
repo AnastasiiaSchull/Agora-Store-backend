@@ -130,7 +130,7 @@ namespace Agora.DAL.Repository
                 return deliveryOptionsRepository;
             }
         }
-        public IRepository<Discount> Discounts
+        public IDiscountRepository Discounts
         {
             get
             {

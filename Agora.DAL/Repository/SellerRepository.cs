@@ -2,6 +2,8 @@
 using Agora.DAL.Entities;
 using Agora.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using System.Linq.Expressions;
 
 namespace Agora.DAL.Repository
 {
@@ -15,7 +17,7 @@ namespace Agora.DAL.Repository
 
         public async Task<IQueryable<Seller>> GetAll()
         {
-            return db.Sellers;
+            return db.Sellers.Include(s => s.User);
         }
 
         public async Task<Seller> Get(int id)
@@ -43,5 +45,15 @@ namespace Agora.DAL.Repository
             if (seller != null)
                 db.Sellers.Remove(seller);
         }
+
+        public async Task<Seller?> FindWithIncludes(
+            Expression<Func<Seller, bool>> predicate,
+            Func<IQueryable<Seller>, IIncludableQueryable<Seller, object>> include)
+        {
+            var query = db.Sellers.AsQueryable();
+            query = include(query);
+            return await query.FirstOrDefaultAsync(predicate);
+        }
+
     }
 }

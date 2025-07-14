@@ -1,5 +1,6 @@
 ﻿using Agora.BLL.DTO;
 using Agora.BLL.Interfaces;
+using Agora.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Agora.Controllers
@@ -46,6 +47,20 @@ namespace Agora.Controllers
                 return NotFound();
 
             return Ok(discount);
+        }
+
+        [HttpGet("types")]
+        public IActionResult GetDiscountTypes()
+        {
+            var values = Enum.GetValues(typeof(DiscountType))
+                .Cast<DiscountType>()
+                .Select(e => new
+                {
+                    key = e.ToString(),
+                    value = (int)e
+                });
+
+            return Ok(values);
         }
 
         [HttpPost]

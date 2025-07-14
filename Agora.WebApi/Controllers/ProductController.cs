@@ -14,13 +14,15 @@ namespace Agora.Controllers
         private readonly IDeliveryOptionsService _deliveryOptionsService;
         private readonly ITranslationService _translationService;
         private readonly IUtilsService _utilsService;
+        private readonly ISellerService _sellerService;
 
-        public ProductController(IProductService productService, IUtilsService utilsService, IDeliveryOptionsService deliveryOptionsService, ITranslationService translationService)
+        public ProductController(IProductService productService, IUtilsService utilsService, IDeliveryOptionsService deliveryOptionsService, ITranslationService translationService, ISellerService sellerService)
         {
             _productService = productService;
             _utilsService = utilsService;
             _deliveryOptionsService = deliveryOptionsService;
             _translationService = translationService;
+            _sellerService = sellerService;
         }
 
         [HttpGet("all")]
@@ -263,6 +265,14 @@ namespace Agora.Controllers
                 var product = await _productService.Get(id);
                 if (product == null)
                     return NotFound("Product not found");
+
+                if (product.Store == null || product.Store.SellerId == null)
+                    return BadRequest("Product store or seller information is missing");
+
+                var seller = await _sellerService.Get(product.Store.SellerId.Value);
+                if (seller.IsBlocked)
+                    return BadRequest("Blocked sellers cannot change product availability.");
+
                 product.IsAvailable = status;
 
                 await _productService.Update(product);

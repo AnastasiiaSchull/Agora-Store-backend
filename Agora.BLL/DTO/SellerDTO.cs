@@ -14,5 +14,10 @@ namespace Agora.BLL.DTO
         public int? UserId { get; set; }
         //public UserDTO User { get; set; }
         //public ICollection<SellerReviewDTO> sellerReviews { get; set; }
+
+        public string? Name { get; set; }
+        public string? Surname { get; set; }
+
+        public bool IsBlocked { get; set; }
     }
 }
