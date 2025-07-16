@@ -229,7 +229,7 @@ namespace Agora.DAL.Repository
                 return returnRepository;
             }
         }
-        public IRepository<ReturnItem> ReturnItems
+        public IReturnItemRepository ReturnItems
         {
             get
             {

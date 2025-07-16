@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Agora.BLL.DTO;
+﻿using Agora.BLL.DTO;
 using Agora.BLL.Infrastructure;
 using Agora.BLL.Interfaces;
 using Agora.DAL.Entities;
 using Agora.DAL.Interfaces;
+using Agora.Enums;
 using AutoMapper;
+
 
 namespace Agora.BLL.Services
 {
@@ -36,10 +33,9 @@ namespace Agora.BLL.Services
             return new ReturnDTO
             {
                 Id = oneReturn.Id,
-                ReturnDate = oneReturn.ReturnDate,
-                Status = oneReturn.Status,
+                ReturnDate = oneReturn.ReturnDate,                
+                Status = oneReturn.Status.ToString(),
                 RefundAmount = oneReturn.RefundAmount
-
             };
         }
 
@@ -47,8 +43,8 @@ namespace Agora.BLL.Services
         {
             var Return = new Return
             {
-                ReturnDate = returnDTO.ReturnDate,
-                Status = returnDTO.Status,
+                ReturnDate = returnDTO.ReturnDate,                
+                Status = Enum.Parse<ReturnStatus>(returnDTO.Status, ignoreCase: true),
                 RefundAmount = returnDTO.RefundAmount,
                 OrderId = returnDTO.OrderId,
                 CustomerId = returnDTO.CustomerId
@@ -64,8 +60,8 @@ namespace Agora.BLL.Services
             var oneReturn = new Return
             {
                 Id = returnDTO.Id,
-                ReturnDate = returnDTO.ReturnDate,
-                Status = returnDTO.Status,
+                ReturnDate = returnDTO.ReturnDate,                
+                Status = Enum.Parse<ReturnStatus>(returnDTO.Status, true),
                 RefundAmount = returnDTO.RefundAmount
 
             };

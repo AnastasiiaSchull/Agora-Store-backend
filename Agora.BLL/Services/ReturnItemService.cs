@@ -4,11 +4,6 @@ using Agora.DAL.Entities;
 using Agora.DAL.Interfaces;
 using AutoMapper;
 using Agora.BLL.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Agora.BLL.Services
 {
@@ -29,6 +24,21 @@ namespace Agora.BLL.Services
             return _mapper.Map<IQueryable<ReturnItemDTO>>(returnItem.ToList());
         }
 
+        public async Task<List<ReturnItemDTO>> GetAllByStore(int storeId)
+        {
+            var returnItem = await Database.ReturnItems.GetAllByStore(storeId);
+            return _mapper.Map<List<ReturnItemDTO>>(returnItem.ToList());
+
+        }
+
+        public async Task<List<ReturnItemDTO>> GetFiltredReturns(int storeId, string field, string value)
+        {
+
+            var returnItem = await Database.ReturnItems.GetFilteredReturns(storeId, field, value);
+            return _mapper.Map<List<ReturnItemDTO>>(returnItem.ToList());
+
+        }
+
         public async Task<ReturnItemDTO> Get(int id)
         {
             var returnItem = await Database.ReturnItems.Get(id);
@@ -44,7 +54,7 @@ namespace Agora.BLL.Services
             };
         }
 
-        public async Task Create(ReturnItemDTO returnItemDTO)
+        public async Task<int> Create(ReturnItemDTO returnItemDTO)
         {
             var returnItem = new ReturnItem
             {
@@ -52,10 +62,13 @@ namespace Agora.BLL.Services
                 Quantity = returnItemDTO.Quantity,
                 Reason = returnItemDTO.Reason,
                 ReturnId = returnItemDTO.ReturnId,
-                ProductId = returnItemDTO.ProductId
+                ProductId = returnItemDTO.ProductId,
+                OrderItemId = returnItemDTO.OrderItemId
             };
             await Database.ReturnItems.Create(returnItem);
             await Database.Save();
+
+            return returnItem.Id;
         }
         public async Task Update(ReturnItemDTO returnItemDTO)
         {
