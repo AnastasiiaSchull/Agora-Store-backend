@@ -125,6 +125,11 @@ namespace Agora.DAL.EF
                 .WithMany(w => w.ProductWishlists)
                 .HasForeignKey(pw => pw.WishlistId);
 
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(oi => oi.ReturnItem)
+                .WithOne(ri => ri.OrderItem)
+                .HasForeignKey<ReturnItem>(ri => ri.OrderItemId);
+
         }
     }
 

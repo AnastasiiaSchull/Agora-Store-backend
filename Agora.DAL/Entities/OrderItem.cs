@@ -15,5 +15,6 @@ namespace Agora.DAL.Entities
         public int OrderId { get; set; }
         public virtual Product? Product { get; set; }
         public int ProductId { get; set; }
+        public virtual ReturnItem? ReturnItem { get; set; }
     }
 }
