@@ -10,8 +10,8 @@ namespace Agora.BLL.DTO
     public class ReturnDTO
     {
         public int Id { get; set; }
-        public DateOnly ReturnDate { get; set; }
-        public ReturnStatus Status { get; set; }
+        public DateOnly ReturnDate { get; set; }        
+        public string? Status { get; set; }
         public decimal RefundAmount { get; set; }
 
         public int? OrderId { get; set; }

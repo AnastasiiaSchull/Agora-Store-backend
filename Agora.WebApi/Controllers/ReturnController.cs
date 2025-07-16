@@ -47,7 +47,7 @@ namespace Agora.Controllers
                 var returnDTO = new ReturnDTO
                 {
                     ReturnDate = DateOnly.FromDateTime(DateTime.UtcNow),
-                    Status = ReturnStatus.Requested,
+                    Status = ReturnStatus.Requested.ToString(),
                     RefundAmount = orderItem.PriceAtMoment,
                     OrderId = orderItem.OrderDTO.Id,
                     CustomerId = orderItem.OrderDTO.CustomerDTO.Id
@@ -60,16 +60,19 @@ namespace Agora.Controllers
                     Quantity = orderItem.Quantity,
                     Reason = model.Message,
                     ReturnId = createdReturnId,
-                    ProductId = orderItem.ProductDTO.Id
+                    ProductId = orderItem.ProductDTO.Id,
+                    OrderItemId = orderItem.Id
                 };
 
-                await _returnItemService.Create(returnItemDTO);
+                int createdReturnItemId = await _returnItemService.Create(returnItemDTO);
 
                 var subject = $"Return request for item #: {model.IdItem} from customer {orderItem.OrderDTO.CustomerDTO.UserDTO.Name} {orderItem.OrderDTO.CustomerDTO.UserDTO.Surname}";
                 var body = $@"
         <p><strong>From:</strong> {orderItem.OrderDTO.CustomerDTO.UserDTO.Email}</p>
         <p><strong>Item ID:</strong> {model.IdItem}</p>
+        <p><strong>Return Item ID:</strong> {createdReturnItemId}</p>
         <p><strong>Message:</strong><br>{model.Message}</p>";
+        
 
                 await _emailService.SendEmailWithAttachmentAsync(sellerUser.Email, subject, body, model.Photo);
 
@@ -80,6 +83,26 @@ namespace Agora.Controllers
                 Console.WriteLine(ex.Message);
                 return StatusCode(500, "Failed to send return request.");
             }
+        }
+
+        [HttpGet("get-returns-by-store/{storeId}")]
+        public async Task<IActionResult> GetReturnsByStore(int storeId)
+        {
+            IEnumerable<ReturnItemDTO> returns = await _returnItemService.GetAllByStore(storeId);
+
+            if (returns == null)
+                return Ok(new List<object>());
+            return Ok(returns);
+        }
+
+        [HttpGet("get-filtered-returns-by-store/id={storeId}&filterField={field}&filterValue={value}")]
+        public async Task<IActionResult> GetFiltredreturns(int storeId, string field, string value)
+        {
+
+            IEnumerable<ReturnItemDTO> returns = await _returnItemService.GetFiltredReturns(storeId, field, value);
+            if (returns == null)
+                return Ok(new List<object>());
+            return Ok(returns);
         }
     }
 }
