@@ -26,7 +26,7 @@ namespace Agora.DAL.Interfaces
         IProductRepository Products { get; }
         IProductReviewRepository ProductReviews { get; }
         IRepository<Return> Returns { get; }
-        IRepository<ReturnItem> ReturnItems { get; }
+        IReturnItemRepository ReturnItems { get; }
         ISellerRepository Sellers { get; }
         IRepository<SellerReview> SellerReviews { get; }
         IShippingRepository Shippings { get; }
