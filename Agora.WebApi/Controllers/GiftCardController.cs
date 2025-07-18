@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
 using Agora.BLL.DTO;
+using Agora.BLL.Infrastructure;
 using Agora.BLL.Interfaces;
 using Agora.BLL.Services;
 using Agora.DAL.Entities;
@@ -46,7 +47,7 @@ namespace Agora.Controllers
                 giftCardDTO.Code = code;
                 var giftCardId = await _giftCardService.Create(giftCardDTO);
                 await CreatePayment(model.Balance, model.CustomerId, giftCardId);
-                var formModel =  _liqpayService.GetLiqPayModelForGiftCard(giftCardId.ToString(), model.Balance);
+                var formModel = _liqpayService.GetLiqPayModelForGiftCard(giftCardId.ToString(), model.Balance);
                 //await CreatePayment(model, orderId);
                 return Ok(formModel);
             }
@@ -54,7 +55,7 @@ namespace Agora.Controllers
             {
                 return new JsonResult(new { message = ex.Message }) { StatusCode = 500 };
             }
-           
+
         }
 
         [HttpPost("redirect")]
@@ -89,7 +90,7 @@ namespace Agora.Controllers
 
             try
             {
-               
+
 
                 if (parsedQuery.TryGetValue("data", out StringValues dataValues) && parsedQuery.TryGetValue("signature", out StringValues signatureValues))
                 {
@@ -117,7 +118,7 @@ namespace Agora.Controllers
                 if (jsonResponse != null && jsonResponse.ContainsKey("status") &&
                 (jsonResponse["status"] == "success" || jsonResponse["status"] == "sandbox"))
                 {
-                  
+
                     var payment = await _paymentService.GetByGiftCardId(giftCardId);
                     payment.Status = Enums.PaymentStatus.Completed;
                     payment.Data = data;
@@ -209,14 +210,39 @@ namespace Agora.Controllers
                 await _paymentService.Delete(payment.Id);
                 await _paymentMethodService.Delete(payment.PaymentMethodId.Value); //check it here
                 await _giftCardService.Delete(giftCardId);
-       
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                throw new Exception( ex.Message);
-                
+                throw new Exception(ex.Message);
+
             }
 
+        }
+
+        [HttpGet("get-by-code/{code}")]
+        public async Task<IActionResult> GetByCode(string code)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(code))
+                    return BadRequest("Wrong code");
+                var giftCard = await _giftCardService.GetByCode(code);
+                if (giftCard == null)
+                    return BadRequest("There is no item with this code");
+                if (giftCard.ExpirationDate < DateOnly.FromDateTime(DateTime.Now))
+                    return BadRequest("This gift card is expired");
+                return Ok(giftCard);
+            }
+            catch(ValidationExceptionFromService ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Server error: " + ex.Message });
+            }
+            
         }
     }
 }

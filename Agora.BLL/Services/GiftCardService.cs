@@ -44,6 +44,20 @@ namespace Agora.BLL.Services
             };
         }
 
+        public async Task<GiftCardDTO> GetByCode(string code)
+        {
+            var giftCard = await Database.GiftCards.GetByCode(code);
+            if (giftCard == null)
+                throw new ValidationExceptionFromService("There is no gift card with this code", "");
+            return new GiftCardDTO
+            {
+                Id = giftCard.Id,
+                Code = giftCard.Code,
+                Balance = giftCard.Balance,
+                ExpirationDate = giftCard.ExpirationDate,
+                CustomerId = giftCard.Customer?.Id
+            };
+        }
         public async Task<int> Create(GiftCardDTO giftCardDTO)
         {
             var giftCard = new GiftCard

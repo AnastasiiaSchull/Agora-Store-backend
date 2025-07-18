@@ -39,19 +39,20 @@ namespace Agora.Controllers
         {
             try
             {
-                if(!ModelState.IsValid)
-                    return BadRequest("No data");
+                //if(!ModelState.IsValid)
+                //    return BadRequest("No data");
 
-                var selectedAddress = HttpContext.Request.Headers["selectedAddress"];
-                int selectedAddressId = Int32.Parse(selectedAddress);
-                var orderId = await Purchase(model, selectedAddressId);
-                if (orderId != null)
-                {
-                    var formModel = _liqpayService.GetLiqPayModelForOrder(orderId.ToString(), model.Amount);
-                    await CreatePayment(model, orderId);
-                    return Ok(formModel);
-                }
-                return BadRequest();
+                //var selectedAddress = HttpContext.Request.Headers["selectedAddress"];
+                //int selectedAddressId = Int32.Parse(selectedAddress);
+                //var orderId = await Purchase(model, selectedAddressId);
+                //if (orderId != null)
+                //{
+                //    var formModel = _liqpayService.GetLiqPayModelForOrder(orderId.ToString(), model.Amount);
+                //    await CreatePayment(model, orderId);
+                //    return Ok(formModel);
+                //}
+                //return BadRequest();
+                return Ok();
             }
             catch (Exception ex)
             {

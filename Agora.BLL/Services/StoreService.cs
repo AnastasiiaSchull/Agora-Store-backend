@@ -4,6 +4,7 @@ using Agora.DAL.Interfaces;
 using AutoMapper;
 using Agora.BLL.DTO;
 using Agora.DAL.Entities;
+using Agora.Enums;
 
 namespace Agora.BLL.Services
 {
@@ -43,7 +44,8 @@ namespace Agora.BLL.Services
                 Description = store.Description,
                 CreatedAt = store.CreatedAt,
                 UpdatedAt = store.UpdatedAt,
-                SellerId = store.SellerId
+                SellerId = store.SellerId,
+                FundsBalance = store.FundsBalance
             };
         }
         public async Task<int> Create(StoreDTO storeDTO)
@@ -54,7 +56,8 @@ namespace Agora.BLL.Services
                 Description = storeDTO.Description,
                 CreatedAt = storeDTO.CreatedAt,
                 UpdatedAt = storeDTO.UpdatedAt,
-                SellerId = storeDTO.SellerId
+                SellerId = storeDTO.SellerId,
+                FundsBalance = storeDTO.FundsBalance
             };
             await Database.Stores.Create(store);
             await Database.Save();
@@ -63,18 +66,34 @@ namespace Agora.BLL.Services
         }
         public async Task Update(StoreDTO storeDTO)
         {
-            var store = new Store
-            {
-                Id = storeDTO.Id,
-                Name = storeDTO.Name,
-                Description = storeDTO.Description,
-                CreatedAt = storeDTO.CreatedAt,
-                UpdatedAt = storeDTO.UpdatedAt,
-                SellerId = storeDTO.SellerId
-            };
-            Database.Stores.Update(store);
+            var existingStore = await Database.Stores.Get(storeDTO.Id);
+
+            if (existingStore == null)
+                throw new Exception($"Store with ID {storeDTO.Id} not found");
+
+            if (!string.IsNullOrWhiteSpace(storeDTO.Name))
+                existingStore.Name = storeDTO.Name;
+
+            if (!string.IsNullOrWhiteSpace(storeDTO.Description))
+                existingStore.Description = storeDTO.Description;
+
+            if (storeDTO.FundsBalance != null)
+                existingStore.FundsBalance = storeDTO.FundsBalance;
+
+            if (storeDTO.CreatedAt != default)
+                existingStore.CreatedAt = storeDTO.CreatedAt;
+
+            if (storeDTO.UpdatedAt != default)
+                existingStore.UpdatedAt = storeDTO.UpdatedAt;
+
+            if (storeDTO.SellerId.HasValue)
+                existingStore.SellerId = storeDTO.SellerId.Value;
+
+
+            Database.Stores.Update(existingStore);
             await Database.Save();
         }
+
         public async Task Delete(int id)
         {
             await Database.Stores.Delete(id);

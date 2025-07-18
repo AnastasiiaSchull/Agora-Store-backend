@@ -14,14 +14,16 @@ namespace Agora.Controllers
         private readonly IOrderItemService _orderItemService;
         private readonly IShippingService _shippingService;
         private readonly IUtilsService _utilsService;
+        private readonly IStoreService _storeService;
 
 
-        public ShippingController(IOrderItemService orderItemService, IUtilsService utilsService, IShippingService shippingService)
+        public ShippingController(IOrderItemService orderItemService, IUtilsService utilsService, IShippingService shippingService, IStoreService storeService)
 
         {
             _orderItemService = orderItemService;
             _utilsService = utilsService;
             _shippingService = shippingService;
+            _storeService = storeService;
         }
 
         [HttpPost("create-shipping")]
@@ -71,9 +73,12 @@ namespace Agora.Controllers
                             {
                                 orderItem.Status = Enums.OrderStatus.Delivered.ToString();
                                 await _orderItemService.Update(orderItem);
+                                var store = await _storeService.Get(orderItem.ProductDTO.Store.Id);
+                                store.FundsBalance += orderItem.ProductDTO.Price * orderItem.Quantity;
+                                await _storeService.Update(store);
                             }
-                                
-                            
+
+
                         }
                     }
                    

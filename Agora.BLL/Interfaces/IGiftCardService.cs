@@ -11,6 +11,7 @@ namespace Agora.BLL.Interfaces
     {
         Task<IQueryable<GiftCardDTO>> GetAll();
         Task<GiftCardDTO> Get(int id);
+        Task<GiftCardDTO> GetByCode(string code);
         Task<int> Create(GiftCardDTO giftCardDTO);
         Task Update(GiftCardDTO giftCardDTO);
         Task Delete(int id);

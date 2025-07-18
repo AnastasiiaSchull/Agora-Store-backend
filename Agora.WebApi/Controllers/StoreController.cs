@@ -1,5 +1,6 @@
 ﻿using Agora.BLL.DTO;
 using Agora.BLL.Interfaces;
+using Agora.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Agora.Controllers
@@ -12,14 +13,17 @@ namespace Agora.Controllers
         private readonly IProductService _productService;
         private readonly IStatisticsInitializer _statisticsInitializer;
         private readonly IUtilsService _utilsService;
+        private readonly ILiqpayService _liqpayService;
 
 
-        public StoreController(IStoreService storeService, IStatisticsInitializer statisticsInitializer, IProductService productService, IUtilsService utilsService)
+        public StoreController(IStoreService storeService, IStatisticsInitializer statisticsInitializer, 
+            IProductService productService, IUtilsService utilsService, ILiqpayService liqpayService)
         {
             _storeService = storeService;
             _productService = productService;
             _statisticsInitializer = statisticsInitializer;
             _utilsService = utilsService;
+            _liqpayService = liqpayService;
         }
 
         [HttpGet("{sellerId}/stores")]
@@ -111,6 +115,32 @@ namespace Agora.Controllers
             await _storeService.Delete(id);
             return Ok("Store deleted");
         }
+
+        [HttpPost("get-liqpay-model")]
+        public async Task<IActionResult> WithdrawFunds( WithdrawFundsModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest("No data");
+
+                var formModel = _liqpayService.GetLiqPayModelForWithdrawFunds(model.Amount, model.CardNumber, model.StoreId);
+                var store = await _storeService.Get(model.StoreId);
+                if (store == null)
+                    return BadRequest($"Store with ID {model.StoreId} not found");
+                if (store.FundsBalance < model.Amount)
+                    return BadRequest("Your balance less than your amount");
+
+                //store.FundsBalance -= model.Amount;
+                //await _storeService.Update(store);
+                return Ok(formModel);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error processing withdrawal: {ex.Message}");
+            }
+        }
+
     }
 
 }

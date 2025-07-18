@@ -10,6 +10,7 @@ namespace Agora.DAL.Entities
         public DateOnly? UpdatedAt { get; set; }
 
         public int? SellerId { get; set; }
+        public decimal? FundsBalance { get; set; } = 0;
         public virtual Seller? Seller { get; set; }
 
         public virtual ICollection<Product>? Products { get; set; }

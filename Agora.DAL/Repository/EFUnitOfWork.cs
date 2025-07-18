@@ -157,7 +157,7 @@ namespace Agora.DAL.Repository
                 return FAQRepository;
             }
         }
-        public IRepository<GiftCard> GiftCards
+        public IGiftCardRepository GiftCards
         {
             get
             {

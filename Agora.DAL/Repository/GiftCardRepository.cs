@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Agora.DAL.Repository
 {
-    public class GiftCardRepository : IRepository<GiftCard>
+    public class GiftCardRepository : IGiftCardRepository
     {
         private AgoraContext db;
         public GiftCardRepository(AgoraContext context)
@@ -21,6 +21,10 @@ namespace Agora.DAL.Repository
         public async Task<GiftCard> Get(int id)
         {
             return await db.GiftCards.FindAsync(id);
+        }
+        public async Task<GiftCard> GetByCode(string code)
+        {
+            return await db.GiftCards.Where(gc=> gc.Code == code).FirstOrDefaultAsync();
         }
 
         public async Task Create(GiftCard giftCard)

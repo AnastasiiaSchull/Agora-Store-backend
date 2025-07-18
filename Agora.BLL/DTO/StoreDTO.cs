@@ -8,6 +8,7 @@
         public DateOnly CreatedAt { get; set; }
         public DateOnly? UpdatedAt { get; set; }
         public int? SellerId { get; set; }
+        public decimal ?FundsBalance { get; set; }
         //public StoreDTO Store { get; set; }
     }
 }

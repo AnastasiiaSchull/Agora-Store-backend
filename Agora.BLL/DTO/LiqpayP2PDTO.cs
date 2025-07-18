@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Agora.BLL.DTO
 {
-    public class LiqpayGiftCardDTO
+    public class LiqpayP2PDTO
     {
         [JsonProperty("version")]
         public int Version { get; set; }
@@ -31,16 +31,30 @@ namespace Agora.BLL.DTO
         public string Phone { get; set; }
 
         [JsonProperty("description")]
-        public string Description { get; set; }
-
-        [JsonProperty("gift_card_id")]
-        public string GiftCardId { get; set; }
+        public string Description { get; set; }   
 
         [JsonProperty("result_url")]
         public string ResultUrl { get; set; }
 
         [JsonProperty("sandbox")]
         public int Sandbox { get; set; }
+
+        [JsonProperty("receiver_card")]
+        public string ReceiverCard { get; set; }
+
+        [JsonProperty("receiver_last_name")]
+        public string ReceiverLastname { get; set; }
+
+        [JsonProperty("receiver_first_name")]
+        public string ReceiverFirstName { get; set; }
+
+        [JsonProperty("order_id")]
+        public string OrderId { get; set; }
+
+        [JsonProperty("ip")]
+        public string Ip { get; set; }
+
+
 
     }
 }

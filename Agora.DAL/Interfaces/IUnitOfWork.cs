@@ -18,7 +18,7 @@ namespace Agora.DAL.Interfaces
         IDiscountRepository Discounts { get; }
         IRepository<FAQ> FAQs { get; }
         IRepository<FAQCategory> FAQCategories { get; }
-        IRepository<GiftCard> GiftCards { get; }
+        IGiftCardRepository GiftCards { get; }
         IRepository<Order> Orders { get; }
         IOrderItemRepository OrderItems { get; }
         IPaymentRepository Payments { get; }

@@ -35,8 +35,8 @@ namespace Agora.BLL.Services
                 Sandbox = 1,
                 ResultUrl = $"http://localhost:5193/api/checkout/redirect"
 
-            }
-                ;
+            };
+
             var jsonString = JsonConvert.SerializeObject(signatureSource);
             var dataHash = Convert.ToBase64String(Encoding.UTF8.GetBytes(jsonString));
             var signatureHash = GetSignature(dataHash);
@@ -79,11 +79,44 @@ namespace Agora.BLL.Services
             return model;
         }
 
-        public string GetSignature(string data)
-        {
-            return Convert.ToBase64String(SHA1.Create()
-                .ComputeHash(Encoding.UTF8.GetBytes(_privateKey + data + _privateKey)));
-        }
+            public LiqpayFormDTO GetLiqPayModelForWithdrawFunds(decimal amount, string cardNumber, int storeId)
+            {
+               
+                var signatureSource = new LiqpayP2PDTO
+                {
+                    PublicKey = _publicKey,
+                    Version = 3,
+                    Action = "p2pcredit",
+                    Amount = amount,
+                    Currency = "EUR",
+                    Description = "P2P payment. Store ID " + storeId,
+                    Sandbox = 1,
+                    ReceiverCard = cardNumber,
+                    OrderId = Guid.NewGuid().ToString(),
+                    Ip = "127.0.0.1"
+                    //ResultUrl = $"http://localhost:5193/api/gift-card/redirect" //change URL
+
+                };
+
+                var jsonString = JsonConvert.SerializeObject(signatureSource);
+                var dataHash = Convert.ToBase64String(Encoding.UTF8.GetBytes(jsonString));
+                var signatureHash = GetSignature(dataHash);
+
+
+                var model = new LiqpayFormDTO
+                {
+                    Data = dataHash,
+                    Signature = signatureHash
+                };
+                return model;
+            }
+
+
+            public string GetSignature(string data)
+            {
+                return Convert.ToBase64String(SHA1.Create()
+                    .ComputeHash(Encoding.UTF8.GetBytes(_privateKey + data + _privateKey)));
+            }
 
         public bool VerifySignature(string data, string receivedSignature)
         {

@@ -11,6 +11,7 @@ namespace Agora.BLL.Interfaces
     {
         LiqpayFormDTO GetLiqPayModelForOrder(string orderId, decimal amount);
         LiqpayFormDTO GetLiqPayModelForGiftCard(string giftCardId, decimal amount);
+        LiqpayFormDTO GetLiqPayModelForWithdrawFunds(decimal amount, string cardNumber, int storeId);
         bool VerifySignature(string data, string receivedSignature);
 
         string GetSignature(string data);
