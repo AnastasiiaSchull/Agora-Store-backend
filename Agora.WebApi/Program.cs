@@ -1,14 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Agora.BLL.Infrastructure;
+﻿using Agora.BLL.Infrastructure;
+using Agora.Hubs;
+using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Scalar.AspNetCore;
 using StackExchange.Redis;
-using Microsoft.AspNetCore.Identity;
 using System;
-
-using DotNetEnv;
+using System.Text;
 
 namespace Agora
 {
@@ -29,6 +29,8 @@ namespace Agora
             builder.Services.AddBusinessServices();
 
             builder.Services.AddIdentityServices();
+
+            builder.Services.AddSignalR();
 
             // for Redis caching:
             try
@@ -84,8 +86,6 @@ namespace Agora
                 app.MapOpenApi();
                 app.MapScalarApiReference();  // Scalar UI will be available at: http://localhost:5193/scalar/v1
             }
-            
-
 
             app.UseCors("AllowSpecificOrigin");
             app.UseAuthentication();  
@@ -103,7 +103,8 @@ namespace Agora
 
             app.MapControllers();
 
-            
+            app.MapHub<ChatHub>("/chatHub");
+
             app.Run();
             
 
