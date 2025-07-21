@@ -42,7 +42,7 @@ namespace Agora.Controllers
                 var sellerUser = await _userService.GetById(seller.UserId.Value);
 
                 if (sellerUser == null)
-                    return BadRequest("Seller user not found");
+                    return BadRequest("Seller not found");
 
                 var returnDTO = new ReturnDTO
                 {
@@ -64,7 +64,9 @@ namespace Agora.Controllers
                     OrderItemId = orderItem.Id
                 };
 
-                int createdReturnItemId = await _returnItemService.Create(returnItemDTO);
+                int createdReturnItemId = await _returnItemService.Create(returnItemDTO);                
+
+                await _orderItemService.UpdateStatus(orderItem.Id, OrderStatus.RefundRequested.ToString());
 
                 var subject = $"Return request for item #: {model.IdItem} from customer {orderItem.OrderDTO.CustomerDTO.UserDTO.Name} {orderItem.OrderDTO.CustomerDTO.UserDTO.Surname}";
                 var body = $@"

@@ -19,6 +19,7 @@ namespace Agora.BLL.Interfaces
         Task<OrderItemDTO> Get(int id);
         Task<int> Create(OrderItemDTO orderItemDTO);
         Task Update(OrderItemDTO orderItemDTO);
+        Task UpdateStatus(int orderItemId, string newStatus);
         Task Delete(int id);
     }
 }

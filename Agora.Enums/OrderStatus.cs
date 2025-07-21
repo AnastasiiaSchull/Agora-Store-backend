@@ -11,7 +11,8 @@ namespace Agora.Enums
         Delivered,      // Доставлен
         Cancelled,      // Отменен
         Refunded,       // Возвращен
-        Completed       // Завершен
+        Completed,       // Завершен
+        PartialRefunded,  // Частично возврaщен 
+        RefundRequested    // Запрос на возврат отправлен
     }
-
 }

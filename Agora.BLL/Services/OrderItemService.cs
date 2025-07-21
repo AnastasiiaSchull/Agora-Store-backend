@@ -115,6 +115,17 @@ namespace Agora.BLL.Services
             Database.OrderItems.Update(orderItem);
             await Database.Save();
         }
+        public async Task UpdateStatus(int orderItemId, string newStatus)
+        {
+            var orderItem = await Database.OrderItems.Get(orderItemId);
+            if (orderItem == null)
+                throw new Exception("Order item not found");
+
+            orderItem.Status = Enum.Parse<OrderStatus>(newStatus, true);
+
+            Database.OrderItems.Update(orderItem);
+            await Database.Save();
+        }
 
         public async Task Delete(int id)
         {
