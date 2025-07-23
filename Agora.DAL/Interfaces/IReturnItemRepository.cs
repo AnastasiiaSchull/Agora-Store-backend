@@ -10,7 +10,7 @@ namespace Agora.DAL.Interfaces
     public interface IReturnItemRepository
     {
         Task<IQueryable<ReturnItem>> GetAll();
-        //Task<IQueryable<ReturnItem>> GetNewReturns(int storeId);
+        Task<IQueryable<ReturnItem>> GetNewReturns(int storeId);
         Task<IQueryable<ReturnItem>> GetAllByStore(int storeId);
         //Task<IQueryable<ReturnItem>> GetAllByCustomer(int customerId);
         Task<IQueryable<ReturnItem>> GetFilteredReturns(int storeId, string field, string value);
