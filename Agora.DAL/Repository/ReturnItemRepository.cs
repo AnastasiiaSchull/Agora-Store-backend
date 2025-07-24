@@ -24,6 +24,10 @@ namespace Agora.DAL.Repository
         {
             return db.ReturnItems.Where(o => o.Product.Store.Id == storeId).OrderByDescending(o => o.Return.ReturnDate);
         }
+        public async Task<IQueryable<ReturnItem>> GetNewReturns(int storeId)
+        {
+            return db.ReturnItems.Where(o => o.Product.Store.Id == storeId && o.Return.Status == Enums.ReturnStatus.Requested);
+        }
 
         public async Task<IQueryable<ReturnItem>> GetFilteredReturns(int storeId, string field, string value)
         {

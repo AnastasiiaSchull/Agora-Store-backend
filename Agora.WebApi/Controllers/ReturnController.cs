@@ -1,5 +1,6 @@
 ﻿using Agora.BLL.DTO;
 using Agora.BLL.Interfaces;
+using Agora.DAL.Entities;
 using Agora.Enums;
 using Agora.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -85,6 +86,16 @@ namespace Agora.Controllers
                 Console.WriteLine(ex.Message);
                 return StatusCode(500, "Failed to send return request.");
             }
+        }
+
+        [HttpGet("get-new-returns-by-store/{storeId}")]
+        public async Task<IActionResult> GetNewReturns(int storeId)
+        {
+            IEnumerable<ReturnItemDTO> newReturns = await _returnItemService.GetNewReturns(storeId);
+            
+            if (newReturns == null)
+                return Ok(new List<object>());
+            return Ok(newReturns);
         }
 
         [HttpGet("get-returns-by-store/{storeId}")]

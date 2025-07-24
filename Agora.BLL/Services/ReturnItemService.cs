@@ -24,6 +24,13 @@ namespace Agora.BLL.Services
             return _mapper.Map<IQueryable<ReturnItemDTO>>(returnItem.ToList());
         }
 
+        public async Task<List<ReturnItemDTO>> GetNewReturns(int storeId)
+        {
+            var returnItems = await Database.ReturnItems.GetNewReturns(storeId);
+            return _mapper.Map<List<ReturnItemDTO>>(returnItems.ToList());
+
+        }
+
         public async Task<List<ReturnItemDTO>> GetAllByStore(int storeId)
         {
             var returnItem = await Database.ReturnItems.GetAllByStore(storeId);
