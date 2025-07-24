@@ -343,6 +343,7 @@ namespace Agora.Controllers
                 Id = model.Id,
                 Name = model.Name, 
                 Price = model.Price,
+                DiscountedPrice = model.DiscountedPrice,
                 StockQuantity = model.StockQuantity,
                 StoreId = model.StoreId,
                 Rating = model.Rating,

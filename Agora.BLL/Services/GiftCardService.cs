@@ -40,7 +40,8 @@ namespace Agora.BLL.Services
                 Code = giftCard.Code,
                 Balance = giftCard.Balance,
                 ExpirationDate = giftCard.ExpirationDate,
-                CustomerId = giftCard.Customer?.Id
+                CustomerId = giftCard.Customer?.Id,
+                IsAvailable = giftCard.IsAvailable,
             };
         }
 
@@ -55,7 +56,8 @@ namespace Agora.BLL.Services
                 Code = giftCard.Code,
                 Balance = giftCard.Balance,
                 ExpirationDate = giftCard.ExpirationDate,
-                CustomerId = giftCard.Customer?.Id
+                CustomerId = giftCard.Customer?.Id,
+                IsAvailable = giftCard.IsAvailable,
             };
         }
         public async Task<int> Create(GiftCardDTO giftCardDTO)
@@ -66,6 +68,7 @@ namespace Agora.BLL.Services
                 Code = giftCardDTO.Code,
                 Balance= giftCardDTO.Balance,
                 ExpirationDate= giftCardDTO.ExpirationDate,
+                IsAvailable= giftCardDTO.IsAvailable,
             };
             await Database.GiftCards.Create(giftCard);
             await Database.Save();
@@ -79,6 +82,7 @@ namespace Agora.BLL.Services
                 Code = giftCardDTO.Code,
                 Balance = giftCardDTO.Balance,
                 ExpirationDate = giftCardDTO.ExpirationDate,
+                IsAvailable = giftCardDTO.IsAvailable 
             };
             Database.GiftCards.Update(giftCard);
             await Database.Save();

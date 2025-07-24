@@ -23,14 +23,18 @@ namespace Agora.Controllers
         private readonly ILiqpayService _liqpayService;
         private readonly IPaymentService _paymentService;
         private readonly IPaymentMethodService _paymentMethodService;
+        private readonly IConfiguration _config;
+        private readonly ISecureService _secureService;
 
         public GiftCardController(IGiftCardService giftCardService, ILiqpayService liqpayService,
-            IPaymentService paymentService, IPaymentMethodService paymentMethodService)
+            IPaymentService paymentService, IPaymentMethodService paymentMethodService, IConfiguration config, ISecureService secureService)
         {
             _giftCardService = giftCardService;
             _liqpayService = liqpayService;
             _paymentService = paymentService;
             _paymentMethodService = paymentMethodService;
+            _config = config;
+            _secureService = secureService;
         }
 
         [HttpPost("buy")]
@@ -42,6 +46,7 @@ namespace Agora.Controllers
                 {
                     Balance = model.Balance,
                     ExpirationDate = model.ExpirationDate,
+                    IsAvailable = true
                 };
                 var code = GenerateFormattedCode();
                 giftCardDTO.Code = code;
@@ -65,9 +70,10 @@ namespace Agora.Controllers
             string data = "";
             string signature = "";
             Dictionary<string, string> jsonResponse = null;
-            string locale = Request.Cookies["NEXT_LOCALE"] ?? "en";
-            var redirectUrl = $"http://localhost:3000/{locale}/account/gift-card/";
-            var errorUrl = $"http://localhost:3000/{locale}/500";
+            var baseUrl = _config["FRONTEND_URL"]!;
+            var redirectUrl = $"{baseUrl}/en/account/gift-card/";
+            var errorUrl = $"{baseUrl}/en/error/payment-went-wrong";
+            
 
             using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
             {
@@ -80,34 +86,26 @@ namespace Agora.Controllers
             }
 
             Dictionary<string, StringValues> parsedQuery = QueryHelpers.ParseQuery(rawBody);
-            var json = Encoding.UTF8.GetString(Convert.FromBase64String(data));
-            jsonResponse = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+
+
+            if (parsedQuery.TryGetValue("data", out StringValues dataValues) && parsedQuery.TryGetValue("signature", out StringValues signatureValues))
+            {
+                if (!string.IsNullOrEmpty(dataValues.ToString()) && !string.IsNullOrEmpty(signatureValues.ToString()))
+                {
+                    data = dataValues.ToString();
+                    signature = signatureValues.ToString();
+                }
+            }
 
             var mySignature = _liqpayService.GetSignature(data);
+            var json = Encoding.UTF8.GetString(Convert.FromBase64String(data));
+            jsonResponse = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
             var id = jsonResponse["order_id"];
             id = Regex.Replace(id, "[^0-9]", "");
             int giftCardId = Int32.Parse(id);
 
             try
             {
-
-
-                if (parsedQuery.TryGetValue("data", out StringValues dataValues) && parsedQuery.TryGetValue("signature", out StringValues signatureValues))
-                {
-                    if (!string.IsNullOrEmpty(dataValues.ToString()) && !string.IsNullOrEmpty(signatureValues.ToString()))
-                    {
-                        data = dataValues.ToString();
-                        signature = signatureValues.ToString();
-                    }
-                }
-                else
-                {
-                    //delete gift card, payment and payment method rows in DB
-                    await DeleteGiftCard(giftCardId);
-                    return Redirect(errorUrl);
-                }
-
-
                 if (mySignature != signature)
                 {
 
@@ -134,6 +132,7 @@ namespace Agora.Controllers
                 await DeleteGiftCard(giftCardId);
                 return new JsonResult(new { message = ex.Message }) { StatusCode = 500 };
             }
+            await DeleteGiftCard(giftCardId);
             return Redirect(errorUrl);
 
         }
@@ -232,6 +231,8 @@ namespace Agora.Controllers
                     return BadRequest("There is no item with this code");
                 if (giftCard.ExpirationDate < DateOnly.FromDateTime(DateTime.Now))
                     return BadRequest("This gift card is expired");
+                if (giftCard.IsAvailable == false)
+                    return BadRequest("This card isn't available");
                 return Ok(giftCard);
             }
             catch(ValidationExceptionFromService ex)

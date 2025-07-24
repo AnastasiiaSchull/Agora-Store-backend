@@ -2,13 +2,17 @@
 using Agora.BLL.DTO;
 using Agora.BLL.Interfaces;
 using Agora.BLL.Services;
+using Agora.DAL.Entities;
 using Agora.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using Sprache;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace Agora.Controllers
 {
@@ -22,9 +26,13 @@ namespace Agora.Controllers
         private readonly IProductService _productService;
         private readonly IPaymentService _paymentService;
         private readonly IShippingService _shippingService;
+        private readonly IConfiguration _config;
+        private readonly IGiftCardService _giftCardService;
+        private readonly IPaymentMethodService _paymentMethodService;
 
-        public CheckoutController(ILiqpayService liqpayService, IOrderService orderService, IOrderItemService orderItemService, 
-            IProductService productService, IPaymentService paymentService, IShippingService shippingService)
+        public CheckoutController(ILiqpayService liqpayService, IOrderService orderService, IOrderItemService orderItemService,
+            IProductService productService, IPaymentService paymentService, IShippingService shippingService, IConfiguration config, 
+            IGiftCardService giftCardService, IPaymentMethodService paymentMethodService)
         {
             _liqpayService = liqpayService;
             _orderService = orderService;
@@ -32,6 +40,9 @@ namespace Agora.Controllers
             _productService = productService;
             _paymentService = paymentService;
             _shippingService = shippingService;
+            _config = config;
+            _giftCardService = giftCardService;
+            _paymentMethodService = paymentMethodService;
         }
 
         [HttpPost("pay")]
@@ -39,20 +50,38 @@ namespace Agora.Controllers
         {
             try
             {
-                //if(!ModelState.IsValid)
-                //    return BadRequest("No data");
+                if (!ModelState.IsValid)
+                    return BadRequest("No data");
 
-                //var selectedAddress = HttpContext.Request.Headers["selectedAddress"];
-                //int selectedAddressId = Int32.Parse(selectedAddress);
-                //var orderId = await Purchase(model, selectedAddressId);
-                //if (orderId != null)
-                //{
-                //    var formModel = _liqpayService.GetLiqPayModelForOrder(orderId.ToString(), model.Amount);
-                //    await CreatePayment(model, orderId);
-                //    return Ok(formModel);
-                //}
-                //return BadRequest();
-                return Ok();
+                var selectedAddress = HttpContext.Request.Headers["selectedAddress"];
+                int selectedAddressId = Int32.Parse(selectedAddress);
+                var orderId = await Purchase(model, selectedAddressId);
+                if (orderId != null)
+                {
+                    await CreatePayment(model, orderId);
+                    if(model.GiftCardId > 0)
+                    {
+                        var giftCard = await _giftCardService.Get(model.GiftCardId.Value);
+                        if (giftCard != null)
+                        {
+                            giftCard.IsAvailable = false;
+                            await _giftCardService.Update(giftCard);
+                        }
+                    }
+                    if (model.Amount == 0) {
+                        var payment = await _paymentService.GetByOrderId(orderId);
+                        payment.Status = Enums.PaymentStatus.Completed;
+                        await _paymentService.Update(payment);
+                      
+                        return Ok();
+                    }
+
+                    var formModel = _liqpayService.GetLiqPayModelForOrder(orderId.ToString(), model.Amount);
+                    return Ok(formModel);
+
+                }
+                return BadRequest();
+
             }
             catch (Exception ex)
             {
@@ -67,9 +96,9 @@ namespace Agora.Controllers
             string data = null;
             string signature = null;
             Dictionary<string, string> jsonResponse = null;
-            string locale = Request.Cookies["NEXT_LOCALE"] ?? "en";
-            var redirectUrl = $"http://localhost:3000/{locale}/account/orders";
-            var errorUrl = $"http://localhost:3000/{locale}/500";
+            var baseUrl = _config["FRONTEND_URL"]!;
+            var redirectUrl = $"{baseUrl}/en/account/orders";
+            var errorUrl = $"{baseUrl}/en/error/payment-went-wrong";
             try
             {
                 using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
@@ -110,8 +139,9 @@ namespace Agora.Controllers
                 (jsonResponse["status"] == "success" || jsonResponse["status"] == "sandbox"))
                 {
                     var orderId = jsonResponse["order_id"];
-                    int  orderidInt = Int32.Parse(orderId);
-                    var payment = await _paymentService.GetByOrderId(orderidInt);
+                    var orderIdParts = orderId.Split(':');
+                    int orderIdInt = Int32.Parse(orderIdParts[1].Trim()); 
+                    var payment = await _paymentService.GetByOrderId(orderIdInt);
                     payment.Status = Enums.PaymentStatus.Completed;
                     payment.Data = data;
                     payment.Signature = signature;
@@ -150,7 +180,7 @@ namespace Agora.Controllers
 
                     OrderItemDTO orderItem = new OrderItemDTO
                     {
-                        PriceAtMoment = product.Price,
+                        PriceAtMoment = product.DiscountedPrice ?? product.Price,
                         Quantity = cartItem.Quantity,
                         ProductId = cartItem.ProductId,
                         OrderId = orderId,
@@ -180,10 +210,10 @@ namespace Agora.Controllers
 
         }
 
-
         [NonAction]
         public async Task CreatePayment(PaymentModel model, int orderId)
         {
+           
             PaymentDTO paymentDTO = new PaymentDTO
             {
                 Amount = model.Amount,
@@ -194,7 +224,20 @@ namespace Agora.Controllers
                 CustomerId = model.CustomerId
 
             };
+            if (model.GiftCardId != null)
+            {
+                PaymentMethodDTO paymentMethodDTO = new PaymentMethodDTO
+                {
+                    GiftCardId = model.GiftCardId
+                };
+                int paymentMethodId = await _paymentMethodService.Create(paymentMethodDTO);
+                paymentDTO.PaymentMethodId = paymentMethodId;
+            }
+
+            
             await _paymentService.Create(paymentDTO);
         }
+
+      
     }
 }

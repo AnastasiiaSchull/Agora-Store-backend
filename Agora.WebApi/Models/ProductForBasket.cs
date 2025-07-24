@@ -7,6 +7,7 @@ namespace Agora.Models
         public int Id { get; set; }
         public string? Name { get; set; }
         public decimal Price { get; set; }
+        public decimal? DiscountedPrice { get; set; }
         public int StockQuantity { get; set; }
         public decimal Rating { get; set; }
         public bool IsAvailable { get; set; }

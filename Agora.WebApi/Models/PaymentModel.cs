@@ -5,7 +5,9 @@
         public int CustomerId { get; set; }
         public decimal Amount { get; set; }
         public List<Cart> Cart { get; set; }
-        
+
+        public int? GiftCardId  { get; set; }
+
 
     }
 }

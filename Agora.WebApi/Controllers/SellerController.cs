@@ -22,6 +22,22 @@ namespace Agora.Controllers
             return Ok(sellers.ToList());
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            try
+            {
+                var seller = _sellerService.Get(id);
+                if (seller == null)
+                    return BadRequest("There is no seller with this id");
+                return Ok(seller);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error processing withdrawal: {ex.Message}");
+            }
+        }
+
         [HttpPut("block/{id}")]
         public async Task<IActionResult> BlockSeller(int id)
         {
