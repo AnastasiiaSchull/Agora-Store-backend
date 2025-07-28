@@ -17,6 +17,12 @@ namespace Agora.Hubs
 
             ChatStorage.Messages.Add(newMessage);
 
+            if (sender == "client" && !ChatStorage.HasClientStarted)
+            {
+                ChatStorage.HasClientStarted = true;
+                await Clients.All.SendAsync("ChatStatusChanged", true);
+            }
+
             await Clients.All.SendAsync("ReceiveMessage", newMessage.Sender, newMessage.MessageText, newMessage.SentAt);
         }
 
@@ -28,6 +34,12 @@ namespace Agora.Hubs
             }
 
             await base.OnConnectedAsync();
+        }
+
+        public async Task ClearChat()
+        {
+            ChatStorage.Messages.Clear();
+            await Clients.All.SendAsync("ChatCleared");
         }
     }
 }
