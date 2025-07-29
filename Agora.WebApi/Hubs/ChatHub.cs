@@ -36,6 +36,26 @@ namespace Agora.Hubs
             await base.OnConnectedAsync();
         }
 
+        public override async Task OnDisconnectedAsync(Exception? exception)
+        {
+            ChatStorage.Messages.Clear();
+            ChatStorage.HasClientStarted = false;
+
+            await Clients.All.SendAsync("ChatCleared");
+            await Clients.All.SendAsync("ChatStatusChanged", false);
+
+            await base.OnDisconnectedAsync(exception);
+        }
+
+        public async Task UserLeftChat()
+        {
+            ChatStorage.Messages.Clear();
+            ChatStorage.HasClientStarted = false;
+
+            await Clients.All.SendAsync("ChatCleared");
+            await Clients.All.SendAsync("ChatStatusChanged", false);
+        }
+
         public async Task ClearChat()
         {
             ChatStorage.Messages.Clear();

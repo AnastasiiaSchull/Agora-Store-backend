@@ -1,19 +1,22 @@
-﻿using Agora.BLL.Infrastructure;
-using Agora.BLL.DTO;
+﻿using Agora.BLL.DTO;
+using Agora.BLL.Infrastructure;
 using Agora.BLL.Interfaces;
+using Agora.BLL.Services;
+using Agora.BLL.Storages;
+using Agora.Hubs;
 using Agora.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Text;
 using Konscious.Security.Cryptography;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-using Agora.BLL.Services;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
+using System.Text;
 
 namespace Agora.Controllers
 {
@@ -32,9 +35,10 @@ namespace Agora.Controllers
         private readonly IConfiguration _config;
         private readonly IEmailService _emailService;
         private readonly IStatisticsInitializer _statisticsInitializer;
+        private readonly IHubContext<ChatHub> _hubContext;
 
         public AccountController(IUserService userService, ISellerService sellerService, IStoreService storeService, IAddressService addressService,
-            ICountryService countryService, ISecureService secureService, ICustomerService customerService, IConfiguration config, IEmailService emailService, IStatisticsInitializer statisticsInitializer)
+            ICountryService countryService, ISecureService secureService, ICustomerService customerService, IConfiguration config, IEmailService emailService, IStatisticsInitializer statisticsInitializer, IHubContext<ChatHub> hubContext)
 
         {
             _userService = userService;
@@ -46,7 +50,8 @@ namespace Agora.Controllers
             _customerService = customerService;
             _config = config;
             _emailService = emailService;
-            _statisticsInitializer = statisticsInitializer;            
+            _statisticsInitializer = statisticsInitializer;
+            _hubContext = hubContext;
         }
 
         [HttpPost("register-seller")]
@@ -397,13 +402,20 @@ namespace Agora.Controllers
         }  
         
         [HttpPost("logout")]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
+            // очищаем сообщения (чат)
+            ChatStorage.Messages.Clear();
+            ChatStorage.HasClientStarted = false;
+
             // очищаем куки
             Response.Cookies.Delete("jwt");
             Response.Cookies.Delete("userId");
             Response.Cookies.Delete("id");
             Response.Cookies.Delete("role");
+
+            await _hubContext.Clients.All.SendAsync("ChatCleared");
+            await _hubContext.Clients.All.SendAsync("ChatStatusChanged", false);
 
             return Ok(new { message = "Logged out successfully" });
         }
