@@ -1,6 +1,8 @@
 ﻿using Agora.BLL.DTO;
 using Agora.BLL.Storages;
+using Agora.Hubs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Agora.Controllers
 {
@@ -8,6 +10,13 @@ namespace Agora.Controllers
     [Route("api/[controller]")]
     public class ChatController : ControllerBase
     {
+        private readonly IHubContext<ChatHub> _hubContext;
+
+        public ChatController(IHubContext<ChatHub> hubContext)
+        {
+            _hubContext = hubContext;
+        }
+
         [HttpGet("messages")]
         public IActionResult GetMessages()
         {
@@ -23,10 +32,20 @@ namespace Agora.Controllers
         }
 
         [HttpDelete("clear")]
-        public IActionResult ClearMessages()
+        public async Task<IActionResult> ClearMessages()
         {
             ChatStorage.Messages.Clear();
-            return Ok("Chat cleared");
+            ChatStorage.HasClientStarted = false;
+            await _hubContext.Clients.All.SendAsync("ChatCleared");
+            await _hubContext.Clients.All.SendAsync("ChatStatusChanged", false);
+
+            return Ok(new { message = "Chat cleared!" });
+        }
+
+        [HttpGet("can-admin-chat")]
+        public IActionResult CanAdminChat()
+        {
+            return Ok(new { canChat = ChatStorage.HasClientStarted });
         }
     }
 }
