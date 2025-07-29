@@ -52,10 +52,10 @@ namespace Agora.Controllers
                 return BadRequest("Search query is empty");
 
             var products = await _productService.GetFilteredByName(name);
-            foreach (var p in products)
-            {
-                Console.WriteLine($"!returned: {p.Id} - {p.Name} - available: {p.IsAvailable}");
-            }
+            //foreach (var p in products)
+            //{
+            //    Console.WriteLine($"!returned: {p.Id} - {p.Name} - available: {p.IsAvailable}");
+            //}
             //путь к Image для  продукта
             foreach (var product in products)
             {

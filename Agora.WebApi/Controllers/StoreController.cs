@@ -90,8 +90,6 @@ namespace Agora.Controllers
 
             var newStoreId = await _storeService.Create(store);
 
-            Console.WriteLine($"Store ID: {newStoreId}");
-
             await _statisticsInitializer.InitializeEmptyStatsForStore(newStoreId);
 
             return Ok(new { storeId = newStoreId });

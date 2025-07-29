@@ -27,7 +27,7 @@ namespace Agora.Controllers
         {
             try
             {
-                var seller = _sellerService.Get(id);
+                var seller = await _sellerService.Get(id);
                 if (seller == null)
                     return BadRequest("There is no seller with this id");
                 return Ok(seller);

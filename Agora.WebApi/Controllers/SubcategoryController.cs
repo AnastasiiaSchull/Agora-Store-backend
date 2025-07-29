@@ -35,9 +35,14 @@ namespace Agora.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] SubcategoryDTO subcategory)
         {
-            //if (!ModelState.IsValid)
-            //    return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
+            CategoryDTO category = new CategoryDTO
+            {
+                Id = subcategory.CategoryId
+            };
+            subcategory.CategoryDTO = category; 
             await _subcategoryService.Create(subcategory);
             return Ok("Subcategory created");
         }
@@ -49,6 +54,11 @@ namespace Agora.Controllers
             if (id != subcategory.Id)
                 return BadRequest("Subcategory ID mismatch");
 
+            CategoryDTO category = new CategoryDTO
+            {
+                Id = subcategory.CategoryId
+            };
+            subcategory.CategoryDTO = category;
             await _subcategoryService.Update(subcategory);
             return Ok("Subcategory updated");
         }
