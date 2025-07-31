@@ -14,6 +14,7 @@ namespace Agora.BLL.Interfaces
         Task<List<ReturnItemDTO>> GetAllByStore(int storeId);
         Task<List<ReturnItemDTO>> GetFiltredReturns(int storeId, string field, string value);
         Task<ReturnItemDTO> Get(int id);
+        Task<ReturnItemDetailsDTO> GetReturnItemDetails(int id);
         Task<int> Create(ReturnItemDTO returnItemDTO);
         Task Update(ReturnItemDTO returnItemDTO);
         Task Delete(int id);

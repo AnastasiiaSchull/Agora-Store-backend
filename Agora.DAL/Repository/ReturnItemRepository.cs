@@ -63,7 +63,11 @@ namespace Agora.DAL.Repository
 
         public async Task<ReturnItem> Get(int id)
         {
-            return await db.ReturnItems.FindAsync(id);
+            return await db.ReturnItems
+                .Include(ri => ri.Return)
+                .Include(ri => ri.Product)
+                .Include(ri => ri.OrderItem)
+                .FirstOrDefaultAsync(ri => ri.Id == id);
         }
 
         public async Task Create(ReturnItem returnItem)

@@ -1,6 +1,5 @@
 ﻿using Agora.BLL.DTO;
 using Agora.BLL.Interfaces;
-using Agora.DAL.Entities;
 using Agora.Enums;
 using Agora.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -17,9 +16,10 @@ namespace Agora.Controllers
         private readonly IOrderItemService _orderItemService;
         private readonly IReturnService _returnService;
         private readonly IReturnItemService _returnItemService;
+        private readonly IUtilsService _utilsService;
 
         public ReturnProductController(IEmailService emailService, IUserService userService, ISellerService sellerService,
-            IOrderItemService orderItemService, IReturnService returnService, IReturnItemService returnItemService)
+            IOrderItemService orderItemService, IReturnService returnService, IReturnItemService returnItemService, IUtilsService utilsService)
         {
             _emailService = emailService;
             _userService = userService;
@@ -27,6 +27,7 @@ namespace Agora.Controllers
             _orderItemService = orderItemService;
             _returnService = returnService;
             _returnItemService = returnItemService;
+            _utilsService = utilsService;
         }
 
         [HttpPost]
@@ -117,5 +118,17 @@ namespace Agora.Controllers
                 return Ok(new List<object>());
             return Ok(returns);
         }
+
+        [HttpGet("get-return-details/{returnId}")]
+        public async Task<IActionResult> GetReturnDetails(int returnId)
+        {
+            var dto = await _returnItemService.GetReturnItemDetails(returnId);
+            if (dto == null)
+                return NotFound(new { message = "Return item not found" });
+            dto.ProductImage = _utilsService.GetFirstImageUrl(dto.ProductImage, Request);
+
+            return Ok(dto);
+        }
+
     }
 }

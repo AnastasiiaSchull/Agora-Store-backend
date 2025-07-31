@@ -18,6 +18,6 @@ namespace Agora.BLL.DTO
         public int? CustomerId { get; set; }
 
         //public OrderDTO Order { get; set; }
-        //public CustomerDTO Customer { get; set; }
+        public CustomerDTO? CustomerDTO { get; set; }
     }
 }
