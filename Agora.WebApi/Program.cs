@@ -35,7 +35,7 @@ namespace Agora
             // for Redis caching:
             try
             {
-                var redis = ConnectionMultiplexer.Connect("localhost:6379");
+                var redis = ConnectionMultiplexer.Connect("redis:6379");
                 builder.Services.AddSingleton<IConnectionMultiplexer>(redis);
             }            
             catch
@@ -70,22 +70,24 @@ namespace Agora
             {
                 options.AddPolicy("AllowSpecificOrigin", policy =>
                 {
-                    policy.WithOrigins("http://localhost:3000", "http://localhost:5193", "https://www.liqpay.ua")
+                    policy.WithOrigins("https://api.agorastore.pp.ua", "https://agorastore.pp.ua", "https://www.liqpay.ua")
                           .AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials();
                 });
             });
-            
 
+            builder.Configuration
+            .AddJsonFile("appsettings.json", optional: true)
+            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+            .AddEnvironmentVariables();
 
             var app = builder.Build();
 
-            if (app.Environment.IsDevelopment())
-            {
-                app.MapOpenApi();
-                app.MapScalarApiReference();  // Scalar UI will be available at: http://localhost:5193/scalar/v1
-            }
+         
+            app.MapOpenApi();
+            app.MapScalarApiReference();  // Scalar UI will be available at: http://localhost:5193/scalar/v1
+            
 
             app.UseCors("AllowSpecificOrigin");
             app.UseAuthentication();  
