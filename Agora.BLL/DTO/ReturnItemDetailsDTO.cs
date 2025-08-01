@@ -13,6 +13,8 @@ namespace Agora.BLL.DTO
         public string? Reason { get; set; }
         public string? Status { get; set; }
 
+        public int? ReturnId { get; set; }
+
         public string? ProductImage { get; set; }
         public string? ProductName { get; set; }
 

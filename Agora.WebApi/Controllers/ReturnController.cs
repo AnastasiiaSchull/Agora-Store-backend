@@ -130,5 +130,25 @@ namespace Agora.Controllers
             return Ok(dto);
         }
 
+        [HttpGet("return-statuses")]
+        public IActionResult GetReturnStatuses()
+        {
+            var statuses = Enum.GetValues(typeof(ReturnStatus))
+                .Cast<ReturnStatus>()
+                .Select(e => new
+                {
+                    id = (int)e,
+                    name = e.ToString()
+                });
+
+            return Ok(statuses);
+        }
+        
+        [HttpPatch("{id}/status")]
+        public async Task<IActionResult> UpdateReturnStatus(int id, [FromBody] ReturnStatusUpdateDTO dto)
+        {
+            await _returnService.UpdateStatus(id, dto);
+            return NoContent();
+        }
     }
 }

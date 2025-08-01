@@ -74,5 +74,22 @@ namespace Agora.BLL.Services
             await Database.Returns.Delete(id);
             await Database.Save();
         }
+
+        public async Task UpdateStatus(int id, ReturnStatusUpdateDTO dto)
+        {
+            var oneReturn = await Database.Returns.Get(id);
+            if (oneReturn == null)
+                throw new ValidationExceptionFromService("Return not found", "");
+
+            // Обновляем только статус
+            if (!Enum.TryParse<ReturnStatus>(dto.Status, true, out var newStatus))
+                throw new ValidationExceptionFromService("Invalid return status", "");
+
+            oneReturn.Status = newStatus;
+
+            Database.Returns.Update(oneReturn);
+            await Database.Save();
+        }
+
     }
 }

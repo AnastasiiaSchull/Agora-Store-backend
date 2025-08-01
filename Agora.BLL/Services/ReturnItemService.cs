@@ -72,6 +72,7 @@ namespace Agora.BLL.Services
                 ReturnDate = returnItem.Return.ReturnDate,
                 Reason = returnItem.Reason,
                 Status = returnItem.Return.Status.ToString(),
+                ReturnId = returnItem.Return.Id,
 
                 ProductImage = returnItem.Product?.ImagesPath,
                 ProductName = returnItem.Product?.Name,
