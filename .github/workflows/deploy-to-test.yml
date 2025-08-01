@@ -12,6 +12,7 @@ jobs:
     env:
       DefaultConnection: ${{ secrets.CONNECTIONSTRINGS__DEFAULTCONNECTION }}
       JwtKey: ${{ secrets.JWT__KEY }}
+      JwtIssuer: ${{ secrets.JWT__ISSUER }}
       JwtAudience: ${{ secrets.JWT__AUDIENCE }}
       TokenExpirationInMinutes: ${{ secrets.JWT__TOKENEXPIRATIONINMINUTES }}
       SessionSecret: ${{ secrets.SESSION__SECRET }}
@@ -40,6 +41,7 @@ jobs:
 
             sed -i "s#\"Key\": *\".*\"#\"Key\": \"${JwtKey}\"#" Agora.WebApi/appsettings.Production.json
             sed -i "s#\"Audience\": *\".*\"#\"Audience\": \"${JwtAudience}\"#" Agora.WebApi/appsettings.Production.json
+            sed -i "s#\"Issuer\": *\".*\"#\"Issuer\\": \"${JwtIssuer}\"#" Agora.WebApi/appsettings.Production.json
             sed -i "s#\"TokenExpirationInMinutes\": *[0-9]*#\"TokenExpirationInMinutes\": ${TokenExpirationInMinutes}#" Agora.WebApi/appsettings.Production.json
 
             sed -i "s#\"Secret\": *\".*\"#\"Secret\": \"${SessionSecret}\"#" Agora.WebApi/appsettings.Production.json
