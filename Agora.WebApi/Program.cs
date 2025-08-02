@@ -31,7 +31,10 @@ namespace Agora
 
             builder.Services.AddIdentityServices();
 
-            builder.Services.AddSignalR();
+            builder.Services.AddSignalR(options =>
+            {
+                options.MaximumReceiveMessageSize = 10 * 1024 * 1024;
+            });
 
             // for Redis caching:
             try

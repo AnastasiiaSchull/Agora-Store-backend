@@ -29,7 +29,8 @@ namespace Agora.BLL.Infrastructure
             CreateMap<Seller, SellerDTO>();
             CreateMap<SellerReview, SellerReviewDTO>();
             CreateMap<Return, ReturnDTO>()
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.CustomerDTO, opt => opt.MapFrom(src => src.Customer));
             CreateMap<Address, AddressDTO>()
                 .ForMember(dest => dest.CountryName, opt => opt.MapFrom(src => src.Country.Name));
             CreateMap<Admin, AdminDTO>();
@@ -64,8 +65,11 @@ namespace Agora.BLL.Infrastructure
             CreateMap<FAQCategory, FAQCategoryDTO>();
             CreateMap<GiftCard, GiftCardDTO>();
             CreateMap<ReturnItem, ReturnItemDTO>()
-                .ForMember(dest => dest.OrderItemDTO, opt => opt.MapFrom(src => src.OrderItem))
-                .ForMember(dest => dest.ReturnDTO, opt => opt.MapFrom(src => src.Return)); 
+                //.ForMember(dest => dest.OrderItemDTO, opt => opt.MapFrom(src => src.OrderItem))
+                .ForMember(dest => dest.ReturnDTO, opt => opt.MapFrom(src => src.Return))
+                .ForMember(dest => dest.ReturnId, opt => opt.MapFrom(src => src.ReturnId))
+                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
+                .ForMember(dest => dest.OrderItemId, opt => opt.MapFrom(src => src.OrderItemId));
             CreateMap<Product, ProductDTO>()
                  .ForMember(dest => dest.Store, opt => opt.MapFrom(src => src.Store))
                  .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))

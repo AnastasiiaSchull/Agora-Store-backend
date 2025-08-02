@@ -283,7 +283,8 @@ namespace Agora.Controllers
                         HttpOnly = true,
                         Secure = true, //  Если HTTPS то true
                         SameSite = SameSiteMode.None,
-                        Expires = DateTime.UtcNow.AddMinutes(30)
+                        Expires = DateTime.UtcNow.AddMinutes(30),
+                        Domain = ".agorastore.pp.ua"
                     });
 
                     CreateSessions(user.Id, role.Id, role.Role);
@@ -355,21 +356,24 @@ namespace Agora.Controllers
             {
                 HttpOnly = true,
                 Secure = true, //  Если HTTPS то true
-                SameSite = SameSiteMode.None
+                SameSite = SameSiteMode.None,
+                Domain = ".agorastore.pp.ua"
             });
 
             Response.Cookies.Append("id", encryptedId, new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true, //  Если HTTPS то true
-                SameSite = SameSiteMode.None
+                SameSite = SameSiteMode.None,
+                Domain = ".agorastore.pp.ua"
             });
 
             Response.Cookies.Append("role", encryptedRole, new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true, //  Если HTTPS то true
-                SameSite = SameSiteMode.None
+                SameSite = SameSiteMode.None,
+                Domain = ".agorastore.pp.ua"
             });
         }
 
