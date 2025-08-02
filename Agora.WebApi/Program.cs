@@ -2,6 +2,7 @@
 using Agora.Hubs;
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -90,6 +91,10 @@ namespace Agora
             
 
             app.UseCors("AllowSpecificOrigin");
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedHost | ForwardedHeaders.XForwardedProto
+            });
             app.UseAuthentication();  
             app.UseAuthorization(); 
             //app.UseMiddleware<JwtValidationMiddleware>();
