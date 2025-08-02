@@ -94,10 +94,7 @@ namespace Agora
             
 
             app.UseCors("AllowSpecificOrigin");
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedHost | ForwardedHeaders.XForwardedProto
-            });
+            
             app.UseAuthentication();  
             app.UseAuthorization(); 
             //app.UseMiddleware<JwtValidationMiddleware>();
