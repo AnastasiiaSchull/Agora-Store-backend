@@ -14,5 +14,6 @@ namespace Agora.BLL.Interfaces
         Task<int> Create(ReturnDTO returnDTO);
         Task Update(ReturnDTO returnDTO);
         Task Delete(int id);
+        Task UpdateStatus(int id, ReturnStatusUpdateDTO dto);
     }
 }

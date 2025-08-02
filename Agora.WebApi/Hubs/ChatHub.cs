@@ -61,5 +61,12 @@ namespace Agora.Hubs
             ChatStorage.Messages.Clear();
             await Clients.All.SendAsync("ChatCleared");
         }
+
+        public async Task SendImage(ImageMessage message)
+        {
+            Console.WriteLine($"Image received: {message.FileName}, size: {message.Base64Image.Length} chars");
+            Console.WriteLine($"===> ReceiveImage called. Filename: {message.FileName}, Length: {message.Base64Image?.Length}");
+            await Clients.All.SendAsync("ReceiveImage", message);
+        }
     }
 }

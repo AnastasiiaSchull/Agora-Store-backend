@@ -10,8 +10,7 @@ namespace Agora.BLL.Services
     public class ReturnItemService : IReturnItemService
     {
         IUnitOfWork Database { get; set; }
-        IMapper _mapper;
-
+        IMapper _mapper;        
         public ReturnItemService(IUnitOfWork uow, IMapper mapper)
         {
             Database = uow;
@@ -58,6 +57,41 @@ namespace Agora.BLL.Services
                 Reason = returnItem.Reason,
                 ReturnId = returnItem.Return.Id,
                 ProductId = returnItem.Product.Id,
+            };
+        }
+
+        public async Task<ReturnItemDetailsDTO> GetReturnItemDetails(int id)
+        {
+            var returnItem = await Database.ReturnItems.Get(id);
+            if (returnItem == null)
+                throw new ValidationExceptionFromService("There is no return item with this id", "");
+            
+            return new ReturnItemDetailsDTO
+            {
+                ReturnItemId = returnItem.Id,
+                ReturnDate = returnItem.Return.ReturnDate,
+                Reason = returnItem.Reason,
+                Status = returnItem.Return.Status.ToString(),
+                ReturnId = returnItem.Return.Id,
+
+                ProductImage = returnItem.Product?.ImagesPath,
+                ProductName = returnItem.Product?.Name,
+
+                OrderItemId = returnItem.OrderItemId,
+                OrderDate = returnItem.OrderItem?.Date,
+                Price = returnItem.OrderItem?.PriceAtMoment,
+
+                UserName = returnItem.Return.Customer.User?.Name,
+                UserSurname = returnItem.Return.Customer.User?.Surname,
+
+                Building = returnItem.OrderItem.Shipping.Address.Building,
+                Appartement = returnItem.OrderItem.Shipping.Address.Appartement,
+                Street = returnItem.OrderItem.Shipping.Address.Street,
+                City = returnItem.OrderItem.Shipping.Address.City,
+                Country = returnItem.OrderItem.Shipping.Address.Country.Name,
+
+                Telephone = returnItem.Return.Customer.User?.PhoneNumber,
+                Email = returnItem.Return.Customer.User?.Email
             };
         }
 
