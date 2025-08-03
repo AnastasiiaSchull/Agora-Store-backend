@@ -282,14 +282,15 @@ namespace Agora.Controllers
                     {
                         HttpOnly = true,
                         Secure = true, //  Если HTTPS то true
-                        SameSite = SameSiteMode.Lax,
-                        Expires = DateTime.UtcNow.AddMinutes(30),
+                        SameSite = SameSiteMode.None,
+                        Expires = DateTime.UtcNow.AddMinutes(60),
+                        Domain = ".agorastore.pp.ua"
                     });
 
                     CreateSessions(user.Id, role.Id, role.Role);
                     Console.WriteLine($"Added cookie. Check");
 
-                    return Ok(new { message = "Authenticated11", userId = user.Id });
+                    return Ok(new { message = "Authenticateed", userId = user.Id });
                 }
                 else
                 {
@@ -356,22 +357,28 @@ namespace Agora.Controllers
             {
                 HttpOnly = true,
                 Secure = true, //  Если HTTPS то true
-                SameSite = SameSiteMode.Lax
-             
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddMinutes(60),
+                Domain = ".agorastore.pp.ua"
+
             });
 
             Response.Cookies.Append("id", encryptedId, new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true, //  Если HTTPS то true
-                SameSite = SameSiteMode.Lax
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddMinutes(60),
+                Domain = ".agorastore.pp.ua"
             });
 
             Response.Cookies.Append("role", encryptedRole, new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true, //  Если HTTPS то true
-                SameSite = SameSiteMode.Lax
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddMinutes(60),
+                Domain = ".agorastore.pp.ua"
             });
         }
 
