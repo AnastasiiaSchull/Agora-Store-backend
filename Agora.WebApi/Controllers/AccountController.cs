@@ -278,19 +278,23 @@ namespace Agora.Controllers
                 {
                     var role = await _userService.GetRoleByUserId(user.Id);
                     string jwtToken = _secureService.GenerateJwtToken(user, role);
-                    Response.Cookies.Append("jwt", jwtToken, new CookieOptions //добавление HTTP Only куки
-                    {
-                        HttpOnly = false,
-                        Secure = true, //  Если HTTPS то true
-                        SameSite = SameSiteMode.None,
-                        Expires = DateTime.UtcNow.AddMinutes(60),
-                        Domain = ".agorastore.pp.ua"
-                    });
 
-                    CreateSessions(user.Id, role.Id, role.Role);
+                    var encryptedUserId = _secureService.EncryptSessionInt(user.Id);
+                    var encryptedId = _secureService.EncryptSessionInt(role.Id);
+                    var encryptedRole = _secureService.EncryptSessionString(role.Role);
+                    //Response.Cookies.Append("jwt", jwtToken, new CookieOptions //добавление HTTP Only куки
+                    //{
+                    //    HttpOnly = false,
+                    //    Secure = true, //  Если HTTPS то true
+                    //    SameSite = SameSiteMode.None,
+                    //    Expires = DateTime.UtcNow.AddMinutes(60),
+                    //    Domain = ".agorastore.pp.ua"
+                    //});
+
+                    //CreateSessions(user.Id, role.Id, role.Role);
                     Console.WriteLine($"Added cookie. Check");
 
-                    return Ok(new { message = "Authenticateed", userId = user.Id });
+                    return Ok(new { message = "Authenticateed", userId = user.Id, jwt = jwtToken, encryptedUserId = encryptedUserId, encryptedId = encryptedId, encryptedRole = encryptedRole });
                 }
                 else
                 {
