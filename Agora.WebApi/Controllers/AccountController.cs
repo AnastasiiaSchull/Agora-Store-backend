@@ -280,7 +280,7 @@ namespace Agora.Controllers
                     string jwtToken = _secureService.GenerateJwtToken(user, role);
                     Response.Cookies.Append("jwt", jwtToken, new CookieOptions //добавление HTTP Only куки
                     {
-                        HttpOnly = true,
+                        HttpOnly = false,
                         Secure = true, //  Если HTTPS то true
                         SameSite = SameSiteMode.None,
                         Expires = DateTime.UtcNow.AddMinutes(60),
@@ -355,7 +355,7 @@ namespace Agora.Controllers
             var encryptedRole = _secureService.EncryptSessionString(role);
             Response.Cookies.Append("userId", encryptedUserId, new CookieOptions
             {
-                HttpOnly = true,
+                HttpOnly = false,
                 Secure = true, //  Если HTTPS то true
                 SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddMinutes(60),
@@ -365,7 +365,7 @@ namespace Agora.Controllers
 
             Response.Cookies.Append("id", encryptedId, new CookieOptions
             {
-                HttpOnly = true,
+                HttpOnly = false,
                 Secure = true, //  Если HTTPS то true
                 SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddMinutes(60),
@@ -374,7 +374,7 @@ namespace Agora.Controllers
 
             Response.Cookies.Append("role", encryptedRole, new CookieOptions
             {
-                HttpOnly = true,
+                HttpOnly = false,
                 Secure = true, //  Если HTTPS то true
                 SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddMinutes(60),
