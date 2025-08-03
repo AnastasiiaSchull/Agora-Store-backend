@@ -287,8 +287,9 @@ namespace Agora.Controllers
                     });
 
                     CreateSessions(user.Id, role.Id, role.Role);
+                    Console.WriteLine($"Added cookie. Check");
 
-                    return Ok(new { message = "Authenticated", userId = user.Id });
+                    return Ok(new { message = "Authenticated11", userId = user.Id });
                 }
                 else
                 {
