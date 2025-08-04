@@ -160,6 +160,7 @@ namespace Agora.Controllers
                     return StatusCode(500, "Error occurred while creating customer record.");
                 }
 
+
                 var user = await _userService.Get(userId);
                 var role = await _userService.GetRoleByUserId(user.Id);
 
