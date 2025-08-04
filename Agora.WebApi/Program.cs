@@ -107,10 +107,7 @@ namespace Agora
             app.UseSession();
     
             app.UseStaticFiles();
-            //app.UseCors(builder => builder.WithOrigins("http://localhost:3000", "http://localhost:5193")// for React и Scalar
-            //                           .AllowAnyHeader()
-            //                           .AllowAnyMethod()
-            //                            .AllowCredentials());
+          
 
             app.MapControllers();
 
