@@ -1,0 +1,72 @@
+name: Deploy to Test Server
+
+on:
+  push:
+    branches:
+      - test_production
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    env:
+      DefaultConnection: ${{ secrets.CONNECTIONSTRINGS__DEFAULTCONNECTION }}
+      JwtKey: ${{ secrets.JWT__KEY }}
+      JwtIssuer: ${{ secrets.JWT__ISSUER }}
+      JwtAudience: ${{ secrets.JWT__AUDIENCE }}
+      TokenExpirationInMinutes: ${{ secrets.JWT__TOKENEXPIRATIONINMINUTES }}
+      SessionSecret: ${{ secrets.SESSION__SECRET }}
+      SmtpServer: ${{ secrets.EMAILSETTINGS__SMTPSERVER }}
+      SmtpPort: ${{ secrets.EMAILSETTINGS__SMTPPORT }}
+      SmtpUsername: ${{ secrets.EMAILSETTINGS__SMTPUSERNAME }}
+      SmtpPassword: ${{ secrets.EMAILSETTINGS__SMTPPASSWORD }}
+      FromEmail: ${{ secrets.EMAILSETTINGS__FROMEMAIL }}
+      LiqpayPrivateKey: ${{ secrets.LIQPAY_PRIVATE_KEY }}
+      LiqpayPublicKey: ${{ secrets.LIQPAY_PUBLIC_KEY }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Deploy to test server via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no dev@172.17.9.24 << EOF
+            cd ~/agora-backend || git clone git@github.com:agorastore2025/agora-backend.git ~/agora-backend
+            cd ~/agora-backend
+
+            git pull origin test_production
+
+            # sed для подстановки всех секретов в appsettings.Production.json
+            sed -i "s#\"DefaultConnection\": *\".*\"#\"DefaultConnection\": \"${DefaultConnection}\"#" Agora.WebApi/appsettings.Production.json
+
+            sed -i "s#\"Key\": *\".*\"#\"Key\": \"${JwtKey}\"#" Agora.WebApi/appsettings.Production.json
+            sed -i "s#\"Audience\": *\".*\"#\"Audience\": \"${JwtAudience}\"#" Agora.WebApi/appsettings.Production.json
+            sed -i "s#\"Issuer\": *\".*\"#\"Issuer\\": \"${JwtIssuer}\"#" Agora.WebApi/appsettings.Production.json
+            sed -i "s#\"TokenExpirationInMinutes\": *[0-9]*#\"TokenExpirationInMinutes\": ${TokenExpirationInMinutes}#" Agora.WebApi/appsettings.Production.json
+
+            sed -i "s#\"Secret\": *\".*\"#\"Secret\": \"${SessionSecret}\"#" Agora.WebApi/appsettings.Production.json
+
+            sed -i "s#\"SmtpServer\": *\".*\"#\"SmtpServer\": \"${SmtpServer}\"#" Agora.WebApi/appsettings.Production.json
+            sed -i "s#\"SmtpPort\": *\".*\"#\"SmtpPort\": \"${SmtpPort}\"#" Agora.WebApi/appsettings.Production.json
+            sed -i "s#\"SmtpUsername\": *\".*\"#\"SmtpUsername\": \"${SmtpUsername}\"#" Agora.WebApi/appsettings.Production.json
+            sed -i "s#\"SmtpPassword\": *\".*\"#\"SmtpPassword\": \"${SmtpPassword}\"#" Agora.WebApi/appsettings.Production.json
+            sed -i "s#\"FromEmail\": *\".*\"#\"FromEmail\": \"${FromEmail}\"#" Agora.WebApi/appsettings.Production.json
+
+            sed -i "s#\"PrivateKey\": *\".*\"#\"PrivateKey\": \"${LiqpayPrivateKey}\"#" Agora.WebApi/appsettings.Production.json
+            sed -i "s#\"PublicKey\": *\".*\"#\"PublicKey\": \"${LiqpayPublicKey}\"#" Agora.WebApi/appsettings.Production.json
+
+            echo "AZURE_SPEECH_KEY=${{ secrets.AZURE_SPEECH_KEY }}" >> .env.Production
+            echo "AZURE_SPEECH_REGION=${{ secrets.AZURE_SPEECH_REGION }}" >> .env.Production
+            echo "AZURE_TRANSLATOR_KEY=${{ secrets.AZURE_TRANSLATOR_KEY }}" >> .env.Production
+            echo "AZURE_TRANSLATOR_ENDPOINT=${{ secrets.AZURE_TRANSLATOR_ENDPOINT }}" >> .env.Production
+            echo "FRONTEND_URL=${{ secrets.FRONTEND_URL }}" >> .env
+    
+            docker compose down
+            docker system prune -f
+            docker compose build --no-cache
+            docker compose up -d --remove-orphans
+            docker network connect agora-network agora-backend-webapi-1
+
+            docker restart nginx-proxy
+
+          EOF

@@ -274,8 +274,8 @@ namespace Agora.Controllers
                     var encryptedUserId = _secureService.EncryptSessionInt(user.Id);
                     var encryptedId = _secureService.EncryptSessionInt(role.Id);
                     var encryptedRole = _secureService.EncryptSessionString(role.Role);
-                    return Ok(new { message = "Authenticateed", userId = user.Id, jwt = jwtToken, encryptedUserId = encryptedUserId, encryptedId = encryptedId, encryptedRole = encryptedRole });
 
+                    return Ok(new { message = "Authenticateed", userId = user.Id, jwt = jwtToken, encryptedUserId = encryptedUserId, encryptedId = encryptedId, encryptedRole = encryptedRole });
                 }
                 else
                 {
@@ -340,24 +340,30 @@ namespace Agora.Controllers
             var encryptedRole = _secureService.EncryptSessionString(role);
             Response.Cookies.Append("userId", encryptedUserId, new CookieOptions
             {
-                HttpOnly = true,
+                HttpOnly = false,
                 Secure = true, //  Если HTTPS то true
-                SameSite = SameSiteMode.Lax
-             
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddMinutes(60),
+                Domain = ".agorastore.pp.ua"
+
             });
 
             Response.Cookies.Append("id", encryptedId, new CookieOptions
             {
-                HttpOnly = true,
+                HttpOnly = false,
                 Secure = true, //  Если HTTPS то true
-                SameSite = SameSiteMode.Lax
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddMinutes(60),
+                Domain = ".agorastore.pp.ua"
             });
 
             Response.Cookies.Append("role", encryptedRole, new CookieOptions
             {
-                HttpOnly = true,
+                HttpOnly = false,
                 Secure = true, //  Если HTTPS то true
-                SameSite = SameSiteMode.Lax
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddMinutes(60),
+                Domain = ".agorastore.pp.ua"
             });
         }
 
