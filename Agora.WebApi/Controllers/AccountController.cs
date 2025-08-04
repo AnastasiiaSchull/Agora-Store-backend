@@ -56,6 +56,7 @@ namespace Agora.Controllers
 
         [HttpPost("register-seller")]
         public async Task<IActionResult> RegisterSeller(RegSellerViewModel regSeller)
+
         {
             try
             {
@@ -105,16 +106,12 @@ namespace Agora.Controllers
                 var seller = await _sellerService.Get(sellerId);
                 var role = await _userService.GetRoleByUserId(userDTO.Id);
                 string jwtToken = _secureService.GenerateJwtToken(userDTO, role);
-                Response.Cookies.Append("jwt", jwtToken, new CookieOptions //добавление HTTP Only куки
-                {
-                    HttpOnly = true,
-                    Secure = true, //  Если HTTPS то true
-                    SameSite = SameSiteMode.None,
-                    Expires = DateTime.UtcNow.AddMinutes(30)
-                });
-                CreateSessions(userDTO.Id, role.Id, role.Role);
+                var encryptedUserId = _secureService.EncryptSessionInt(seller.UserId.Value);
+                var encryptedId = _secureService.EncryptSessionInt(role.Id);
+                var encryptedRole = _secureService.EncryptSessionString(role.Role);
 
-                return CreatedAtAction(nameof(RegisterSeller), new { id = seller.Id }, seller);
+
+                return CreatedAtAction(nameof(RegisterSeller), new { userId = seller.UserId, jwt = jwtToken, encryptedUserId = encryptedUserId, encryptedId = encryptedId, encryptedRole = encryptedRole });
             }
             catch (Exception ex)
             {
@@ -164,17 +161,12 @@ namespace Agora.Controllers
                 var role = await _userService.GetRoleByUserId(user.Id);
 
                 string jwtToken = _secureService.GenerateJwtToken(user, role);
-                Response.Cookies.Append("jwt", jwtToken, new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.None,
-                    Expires = DateTime.UtcNow.AddMinutes(30)
-                });
 
-                CreateSessions(user.Id, role.Id, role.Role);
+                var encryptedUserId = _secureService.EncryptSessionInt(user.Id);
+                var encryptedId = _secureService.EncryptSessionInt(role.Id);
+                var encryptedRole = _secureService.EncryptSessionString(role.Role);
 
-                return CreatedAtAction(nameof(RegisterUser), new { id = user.Id }, new { user, jwtToken });
+                return CreatedAtAction(nameof(RegisterUser), new { userId = user.Id , jwt = jwtToken, encryptedUserId = encryptedUserId, encryptedId = encryptedId, encryptedRole = encryptedRole });
             }
             catch (Exception ex)
             {
@@ -278,18 +270,12 @@ namespace Agora.Controllers
                 {
                     var role = await _userService.GetRoleByUserId(user.Id);
                     string jwtToken = _secureService.GenerateJwtToken(user, role);
-                    Response.Cookies.Append("jwt", jwtToken, new CookieOptions //добавление HTTP Only куки
-                    {
-                        HttpOnly = true,
-                        Secure = true, //  Если HTTPS то true
-                        SameSite = SameSiteMode.None,
-                        Expires = DateTime.UtcNow.AddMinutes(30),
-                        Domain = ".agorastore.pp.ua"
-                    });
 
-                    CreateSessions(user.Id, role.Id, role.Role);
+                    var encryptedUserId = _secureService.EncryptSessionInt(user.Id);
+                    var encryptedId = _secureService.EncryptSessionInt(role.Id);
+                    var encryptedRole = _secureService.EncryptSessionString(role.Role);
+                    return Ok(new { message = "Authenticateed", userId = user.Id, jwt = jwtToken, encryptedUserId = encryptedUserId, encryptedId = encryptedId, encryptedRole = encryptedRole });
 
-                    return Ok(new { message = "Authenticated", userId = user.Id });
                 }
                 else
                 {
