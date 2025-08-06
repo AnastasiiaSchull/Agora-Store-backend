@@ -33,7 +33,7 @@ namespace Agora.BLL.Services
                 Description = "Order payment",
                 OrderId = "OrderId: " + orderId,
                 Sandbox = 1,
-                ResultUrl = $"http://localhost:5193/api/checkout/redirect"
+                ResultUrl = $"https://api.agorastore.pp.ua/api/checkout/redirect"
 
             };
 
@@ -62,7 +62,7 @@ namespace Agora.BLL.Services
                 Description = "Gift card payment",
                 OrderId = "giftCardId: " + giftCardId,
                 Sandbox = 1,
-                ResultUrl = $"http://localhost:5193/api/gift-card/redirect" //change URL
+                ResultUrl = $"https://api.agorastore.pp.ua/api/gift-card/redirect" //change URL
 
             };
 
