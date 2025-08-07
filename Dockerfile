@@ -1,14 +1,26 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for fa>
-
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
+# Базовый образ для runtime
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-USER $APP_UID
+
+# Аргумент для UID пользователя, можно задавать при сборке
+ARG APP_UID=1654
+
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
+# Создаём группу и пользователя с заданным UID/GID
+RUN addgroup -g $APP_UID appgroup && \
+    adduser -u $APP_UID -G appgroup -S app
 
-# This stage is used to build the service project
+# Меняем владельца и права на папку wwwroot
+RUN mkdir -p /app/wwwroot && \
+    chown -R app:appgroup /app/wwwroot && \
+    chmod -R u+rwX /app/wwwroot
+
+# Переключаемся на пользователя app
+USER app
+
+# Этап сборки
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
@@ -18,13 +30,15 @@ COPY . .
 WORKDIR "/src/Agora.WebApi"
 RUN dotnet build "./Agora.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# This stage is used to publish the service project to be copied to the final stage
+# Этап публикации
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./Agora.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
+# Финальный этап
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
 ENTRYPOINT ["dotnet", "Agora.dll"]
+
