@@ -72,7 +72,7 @@ namespace Agora.Controllers
                     oi.Status,
                     oi.PriceAtMoment,
                     oi.Quantity,
-                    Date = oi.Date.ToString()
+                    Date = oi.Date.ToString("yyyy-MM-dd")
                 })
                 .ToList();
 
