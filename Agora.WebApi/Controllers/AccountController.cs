@@ -425,7 +425,7 @@ namespace Agora.Controllers
 
             var token = await _userService.CreatePasswordResetTokenAsync(model.Email);
 
-            var resetPasswordLink = $"http://localhost:3000/en/reset-password?token={token}&email={model.Email}";
+            var resetPasswordLink = $"https://agorastore.pp.ua/en/reset-password?token={token}&email={model.Email}";
 
             await _emailService.SendEmailAsync(model.Email, "Reset your password", $"Click here to reset your password: {resetPasswordLink}");
 
