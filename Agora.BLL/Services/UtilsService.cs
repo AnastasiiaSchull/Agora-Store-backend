@@ -59,7 +59,7 @@ namespace Agora.BLL.Services
             foreach(var image in images)
             {
                 var fileName = Path.GetFileName(image);
-                string url = $"{request.Scheme}://{request.Host}/{folderPath}/{fileName}";
+                string url = $"https://{request.Host}/{folderPath}/{fileName}";
                 imagesUrls.Add(url);
             }
 

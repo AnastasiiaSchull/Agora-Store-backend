@@ -17,29 +17,31 @@ namespace Agora.Controllers
         }
 
     [HttpGet("store/{storeId}")]
-    public async Task<ActionResult> GetReviewsByStoreId(int storeId)
-    {
-        var reviews = await _productReviewService.GetReviewsByStoreId(storeId);
-
-        if (reviews == null || !reviews.Any())
-            return NotFound("No reviews found for this store.");
-
-        var productReviews = reviews
-        .Select(r => new
+        public async Task<ActionResult> GetReviewsByStoreId(int storeId)
         {
-            UserName = r.Customer?.UserDTO?.Name,
-            UserSurname = r.Customer?.UserDTO?.Surname,
-            ProductName = r.Product?.Name,
-            ProductDescription = r.Product?.Description,
-            ProductImage = GetFirstProductImageUrl(r.Product?.ImagesPath, Request),
-            ProductRating = r.Product?.Rating,
-            r.Comment,
-            r.Rating,
-            Date = r.Date.ToString()
-        })
-        .ToList();
-        return Ok(productReviews);
+            var reviews = await _productReviewService.GetReviewsByStoreId(storeId);
+
+            if (reviews == null || !reviews.Any())
+                return Ok(new List<object>()); 
+
+            var productReviews = reviews
+                .Select(r => new
+                {
+                    UserName = r.Customer?.UserDTO?.Name,
+                    UserSurname = r.Customer?.UserDTO?.Surname,
+                    ProductName = r.Product?.Name,
+                    ProductDescription = r.Product?.Description,
+                    ProductImage = GetFirstProductImageUrl(r.Product?.ImagesPath, Request),
+                    ProductRating = r.Product?.Rating,
+                    r.Comment,
+                    r.Rating,
+                    Date = r.Date.ToString()
+                })
+                .ToList<object>(); 
+
+            return Ok(productReviews);
         }
+
 
         private string? GetFirstProductImageUrl(string? folderPath, HttpRequest request)
         {
