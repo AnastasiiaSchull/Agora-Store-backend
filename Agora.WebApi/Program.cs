@@ -91,8 +91,8 @@ namespace Agora
          
             app.MapOpenApi();
             app.MapScalarApiReference();  // Scalar UI will be available at: http://localhost:5193/scalar/v1
-            
 
+            app.UseRouting();
             app.UseCors("AllowSpecificOrigin");
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
@@ -103,7 +103,7 @@ namespace Agora
             app.UseAuthorization(); 
             //app.UseMiddleware<JwtValidationMiddleware>();
             //app.UseHttpsRedirection();
-            app.UseRouting();
+            
             app.UseSession();
     
             app.UseStaticFiles();
