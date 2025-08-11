@@ -23,6 +23,12 @@ jobs:
       FromEmail: ${{ secrets.EMAILSETTINGS__FROMEMAIL }}
       LiqpayPrivateKey: ${{ secrets.LIQPAY_PRIVATE_KEY }}
       LiqpayPublicKey: ${{ secrets.LIQPAY_PUBLIC_KEY }}
+      
+      AZURE_SPEECH_KEY: ${{ secrets.AZURE_SPEECH_KEY }}
+      AZURE_SPEECH_REGION: ${{ secrets.AZURE_SPEECH_REGION }}
+      AZURE_TRANSLATOR_KEY: ${{ secrets.AZURE_TRANSLATOR_KEY }}
+      AZURE_TRANSLATOR_ENDPOINT: ${{ secrets.AZURE_TRANSLATOR_ENDPOINT }}
+      FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
 
     steps:
       - name: Checkout repo
@@ -36,7 +42,7 @@ jobs:
 
             git pull origin test_production
 
-            # sed для подстановки всех секретов в appsettings.Production.json
+            # sed Г¤Г«Гї ГЇГ®Г¤Г±ГІГ Г­Г®ГўГЄГЁ ГўГ±ГҐГµ Г±ГҐГЄГ°ГҐГІГ®Гў Гў appsettings.Production.json
             sed -i "s#\"DefaultConnection\": *\".*\"#\"DefaultConnection\": \"${DefaultConnection}\"#" Agora.WebApi/appsettings.Production.json
 
             sed -i "s#\"Key\": *\".*\"#\"Key\": \"${JwtKey}\"#" Agora.WebApi/appsettings.Production.json
