@@ -91,15 +91,18 @@ namespace Agora.BLL.Services
                 TransactionDate = paymentDTO.TransactionDate,
                 CashbackUsed = paymentDTO.CashbackUsed,
                 Status = paymentDTO.Status,
-                PaymentMethodId = paymentDTO.PaymentMethodId,
                 OrderId = paymentDTO.OrderId,
                 CustomerId = paymentDTO.CustomerId,
                 Data = paymentDTO.Data,
                 Signature = paymentDTO.Signature
 
             };
+            if(paymentDTO.PaymentMethodId != 0)
+                payment.PaymentMethodId = paymentDTO.PaymentMethodId;
+            else
+                payment.PaymentMethodId = null;
             await Database.Payments.Create(payment);
-            await Database.Save();
+            //await Database.Save();
         }
         public async Task Update(PaymentDTO paymentDTO)
         {

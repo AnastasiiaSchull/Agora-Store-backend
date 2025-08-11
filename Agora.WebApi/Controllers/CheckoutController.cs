@@ -224,7 +224,7 @@ namespace Agora.Controllers
                 CustomerId = model.CustomerId
 
             };
-            if (model.GiftCardId != null)
+            if (model.GiftCardId > 0)
             {
                 PaymentMethodDTO paymentMethodDTO = new PaymentMethodDTO
                 {

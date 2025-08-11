@@ -33,6 +33,7 @@ namespace Agora.DAL.Repository
         public async Task Create(Payment payment)
         {
             await db.Payments.AddAsync(payment);
+            await db.SaveChangesAsync();
         }
 
         public void Update(Payment payment)
