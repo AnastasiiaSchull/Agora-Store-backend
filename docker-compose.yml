@@ -8,6 +8,8 @@ services:
     environment:
       - Redis_Host=redis
       - Redis_Port=6379
+    env_file:
+      - .env.production
     depends_on:
       - redis
 
