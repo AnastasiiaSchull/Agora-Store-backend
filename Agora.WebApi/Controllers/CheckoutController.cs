@@ -97,7 +97,8 @@ namespace Agora.Controllers
             string signature = null;
             Dictionary<string, string> jsonResponse = null;
             var baseUrl = _config["FRONTEND_URL"]!;
-            var redirectUrl = $"{baseUrl}/en/account/orders";
+            Console.WriteLine($"Base URL: {baseUrl}"); // For debugging purposes
+            var redirectUrl = "https://agorastore.pp.ua/en/account/orders";
             var errorUrl = $"{baseUrl}/en/error/payment-went-wrong";
             try
             {
