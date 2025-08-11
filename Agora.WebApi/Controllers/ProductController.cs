@@ -1,5 +1,6 @@
 ﻿using Agora.BLL.DTO;
 using Agora.BLL.Interfaces;
+using Agora.BLL.Services;
 using Agora.Models;
 using Microsoft.AspNetCore.Mvc;
 using Tensorflow;
@@ -34,14 +35,14 @@ namespace Agora.Controllers
             return Ok(products);
         }
 
-        [HttpGet("get-all-by-seller/{sellerId}")]
-        public async Task<IActionResult> GetAllProductsBySeller(int sellerId )
+        [HttpGet("get-all-by-store/{storeId}")]
+        public async Task<IActionResult> GetAllProductsBySeller(int storeId )
         {
-            var products = await _productService.GetProductsBySeller(sellerId);
+            var products = await _productService.GetAllProductsByStore(storeId);
             foreach(var item in products)
                 item.ImagePath = _utilsService.GetFirstImageUrl(item.ImagesPath, Request);
             if (products == null)
-                return BadRequest("This seller doesn't have products or id is wrong");
+                return BadRequest("This store doesn't have products or id is wrong");
             return Ok(products);
         }
 
@@ -417,6 +418,18 @@ namespace Agora.Controllers
                 ".webp" => "image/webp",
                 _ => "application/octet-stream"
             };
+        }
+
+        [HttpGet("get-filtered-products-by-store/id={storeId}&filterField={field}&filterValue={value}")]
+        public async Task<IActionResult> GetFiltredOrders(int storeId, string field, string value)
+        {
+
+            IEnumerable<ProductDTO> products = await _productService.GetFiltredProducts(storeId, field, value);
+            if (products == null)
+                return new JsonResult(new { message = "Server error!" }) { StatusCode = 500 };
+            foreach (var item in products)
+                item.ImagePath = _utilsService.GetFirstImageUrl(item.ImagesPath, Request);
+            return Ok(products);
         }
     }
 }

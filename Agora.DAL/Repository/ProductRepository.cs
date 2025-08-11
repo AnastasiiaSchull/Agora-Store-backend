@@ -1,7 +1,9 @@
 ﻿using Agora.DAL.EF;
 using Agora.DAL.Entities;
 using Agora.DAL.Interfaces;
+using Agora.Enums;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace Agora.DAL.Repository
@@ -40,7 +42,31 @@ namespace Agora.DAL.Repository
 
             return Task.FromResult(query);
         }
+        public async Task<IEnumerable<Product>> GetFiltredProducts(int storeId, string field, string value)
+        {
 
+            if (field == "name")
+            {
+                return db.Products.Where(product => product.Name.Contains(value.ToLower()));
+            }
+            else if (field == "status")
+            {
+
+                return db.Products.Where(product => product.IsAvailable);
+            }
+            else if (field == "id")
+            {
+                if (int.TryParse(value, out int productId))
+                {
+                    return db.Products.Where(product => product.Id == productId);
+                }
+                return Enumerable.Empty<Product>();
+            }
+
+
+            return null;
+
+        }
 
         public async Task Create(Product product)
         {
