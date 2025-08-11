@@ -69,11 +69,23 @@ namespace Agora.BLL.Services
             var products = await Database.Products.GetProductsBySeller(sellerId);
             return _mapper.Map<IEnumerable<ProductDTO>>(products.ToList());
         }
-
+        public async Task<IEnumerable<ProductDTO>> GetAllProductsByStore(int storeId)
+        {
+            var products = await Database.Products.Find(p => p.StoreId == storeId);
+            return _mapper.Map<IEnumerable<ProductDTO>>(products.ToList());
+        }
         public async Task<IEnumerable<ProductDTO>> GetProductsByStore(int storeId)
         {
             var products = await Database.Products.Find(p => p.StoreId == storeId && p.IsAvailable);
             return _mapper.Map<IEnumerable<ProductDTO>>(products);
+        }
+
+        public async Task<List<ProductDTO>> GetFiltredProducts(int storeId, string field, string value)
+        {
+
+            var orderItem = await Database.Products.GetFiltredProducts(storeId, field, value);
+            return _mapper.Map<List<ProductDTO>>(orderItem.ToList());
+
         }
 
         public async Task<ProductDTO> Get(int id)

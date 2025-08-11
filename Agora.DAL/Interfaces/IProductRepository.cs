@@ -10,6 +10,7 @@ namespace Agora.DAL.Interfaces
         Task<Product> GetByName(string name);
         Task<IQueryable<Product>> GetProductsBySeller(int sellerId);
         Task<IQueryable<Product>> GetSimilar(int categoryId, int subcategoryId, int excludeId);
+        Task<IEnumerable<Product>> GetFiltredProducts(int storeId, string field, string value);
         Task Create(Product item);
         void Update(Product item);
         Task Delete(int id);
