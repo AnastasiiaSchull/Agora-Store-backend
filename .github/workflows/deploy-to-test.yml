@@ -61,7 +61,7 @@ jobs:
             sed -i "s#\"PrivateKey\": *\".*\"#\"PrivateKey\": \"${LiqpayPrivateKey}\"#" Agora.WebApi/appsettings.Production.json
             sed -i "s#\"PublicKey\": *\".*\"#\"PublicKey\": \"${LiqpayPublicKey}\"#" Agora.WebApi/appsettings.Production.json
 
-            echo "AZURE_SPEECH_KEY=${{ secrets.AZURE_SPEECH_KEY }}" >> .env.Production
+            echo "AZURE_SPEECH_KEY=${{ secrets.AZURE_SPEECH_KEY }}" > .env.Production
             echo "AZURE_SPEECH_REGION=${{ secrets.AZURE_SPEECH_REGION }}" >> .env.Production
             echo "AZURE_TRANSLATOR_KEY=${{ secrets.AZURE_TRANSLATOR_KEY }}" >> .env.Production
             echo "AZURE_TRANSLATOR_ENDPOINT=${{ secrets.AZURE_TRANSLATOR_ENDPOINT }}" >> .env.Production
