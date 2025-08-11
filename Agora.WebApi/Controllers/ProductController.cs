@@ -372,5 +372,51 @@ namespace Agora.Controllers
             };
             return product;
         }
+
+        [HttpGet("image/{*imagePath}")]
+        public IActionResult GetImage(string imagePath)
+        {
+            try
+            {
+                var decodedPath = Uri.UnescapeDataString(imagePath);
+
+                var imagesFolder = Path.Combine("wwwroot", "images");
+                var fullPath = Path.Combine(imagesFolder, decodedPath);
+
+                if (!fullPath.StartsWith(imagesFolder))
+                {
+                    return BadRequest("Invalid image path");
+                }
+
+                if (!System.IO.File.Exists(fullPath))
+                {
+                    return NotFound("Image not found");
+                }
+
+                var fileInfo = new FileInfo(fullPath);
+                var contentType = GetContentType(fileInfo.Extension);
+
+                var fileBytes = System.IO.File.ReadAllBytes(fullPath);
+
+                return File(fileBytes, contentType);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error retrieving image");
+            }
+        }
+
+        [NonAction]
+        private string GetContentType(string extension)
+        {
+            return extension.ToLower() switch
+            {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".gif" => "image/gif",
+                ".webp" => "image/webp",
+                _ => "application/octet-stream"
+            };
+        }
     }
 }
