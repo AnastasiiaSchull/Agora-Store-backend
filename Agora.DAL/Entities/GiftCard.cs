@@ -8,7 +8,7 @@ namespace Agora.DAL.Entities
         public decimal Balance { get; set; }
         public DateOnly ExpirationDate { get; set; }
         public bool IsAvailable { get; set; }
-
+        public virtual Payment? Payment { get; set; }
         public virtual Customer? Customer { get; set; }
         public virtual PaymentMethod? PaymentMethod { get; set; }
     }

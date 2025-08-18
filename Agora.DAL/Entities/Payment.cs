@@ -16,7 +16,11 @@ namespace Agora.DAL.Entities
         public virtual PaymentMethod? PaymentMethod { get; set; }
 
         public int? OrderId { get; set; }
-        public virtual Order? Order { get; set; }         
+        public virtual Order? Order { get; set; }
+        public virtual GiftCard? GiftCard { get; set; }
+
+        public int? GiftCardId { get; set; }
+
 
         public string? Data { get; set; }
         public string? Signature { get; set; }
