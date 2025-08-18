@@ -161,12 +161,6 @@ namespace Agora.Controllers
         [NonAction]
         public async Task CreatePayment(decimal amount, int customerId, int giftCardId)
         {
-            PaymentMethodDTO paymentMethodDTO = new PaymentMethodDTO
-            {
-                GiftCardId = giftCardId
-            };
-            var paymentMethodId = await _paymentMethodService.Create(paymentMethodDTO);
-
             PaymentDTO paymentDTO = new PaymentDTO
             {
                 Amount = amount,
@@ -174,7 +168,6 @@ namespace Agora.Controllers
                 TransactionDate = DateTime.Now,
                 CashbackUsed = 0,
                 CustomerId = customerId,
-                PaymentMethodId = paymentMethodId
 
             };
             await _paymentService.Create(paymentDTO);
