@@ -20,7 +20,7 @@ namespace Agora.DAL.Repository
 
         public async Task<GiftCard> Get(int id)
         {
-            return await db.GiftCards.FindAsync(id);
+            return await db.GiftCards.AsNoTracking().Include(g => g.Customer).FirstOrDefaultAsync(g => g.Id == id);
         }
         public async Task<GiftCard> GetByCode(string code)
         {
