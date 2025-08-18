@@ -201,15 +201,12 @@ namespace Agora.Controllers
                 {
                     var role = await _userService.GetRoleByUserId(user.Id);
                     string jwtToken = _secureService.GenerateJwtToken(user, role);
-                    Response.Cookies.Append("jwt", jwtToken, new CookieOptions
-                    {
-                        HttpOnly = true,
-                        Secure = true,
-                        SameSite = SameSiteMode.None,
-                        Expires = DateTime.UtcNow.AddMinutes(30)
-                    });
-                    CreateSessions(user.Id, role.Id, role.Role);
-                    return Ok(new { jwtToken });
+                    var encryptedUserId = _secureService.EncryptSessionInt(user.Id);
+                    var encryptedId = _secureService.EncryptSessionInt(role.Id);
+                    var encryptedRole = _secureService.EncryptSessionString(role.Role);
+
+                    return Ok(new { message = "Authenticateed", userId = user.Id, jwt = jwtToken, encryptedUserId = encryptedUserId, encryptedId = encryptedId, encryptedRole = encryptedRole });
+
                 }
                 else
                 {
@@ -243,17 +240,12 @@ namespace Agora.Controllers
                 var role = await _userService.GetRoleByUserId(user.Id);
 
                 string jwtToken = _secureService.GenerateJwtToken(user, role);
-                Response.Cookies.Append("jwt", jwtToken, new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.None,
-                    Expires = DateTime.UtcNow.AddMinutes(30)
-                });
+                var encryptedUserId = _secureService.EncryptSessionInt(user.Id);
+                var encryptedId = _secureService.EncryptSessionInt(role.Id);
+                var encryptedRole = _secureService.EncryptSessionString(role.Role);
 
-                CreateSessions(user.Id, role.Id, role.Role);
+                return Ok(new { message = "Authenticateed", userId = user.Id, jwt = jwtToken, encryptedUserId = encryptedUserId, encryptedId = encryptedId, encryptedRole = encryptedRole });
 
-                return Ok(new { jwtToken });
             }
         }
 
