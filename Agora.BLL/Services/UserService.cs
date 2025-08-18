@@ -106,7 +106,7 @@ namespace Agora.BLL.Services
         {
             var user = await Database.Users.GetByEmail(email);
             if (user == null)
-                throw new ValidationExceptionFromService("There is no user with this email", "");
+                return null;
             return new UserDTO
             {
                 Id = user.Id,
