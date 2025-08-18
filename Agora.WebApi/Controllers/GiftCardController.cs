@@ -168,6 +168,7 @@ namespace Agora.Controllers
                 TransactionDate = DateTime.Now,
                 CashbackUsed = 0,
                 CustomerId = customerId,
+                GiftCardId = giftCardId
 
             };
             await _paymentService.Create(paymentDTO);

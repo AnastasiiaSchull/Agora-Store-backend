@@ -19,6 +19,7 @@ namespace Agora.BLL.DTO
         public int? PaymentMethodId { get; set; }
         //public PaymentMethodDTO PaymentMethod { get; set; }
         public int? OrderId { get; set; }
+        public int? GiftCardId { get; set; }
         //public OrderDTO Order { get; set; }
         public string? Data { get; set; }
         public string? Signature { get; set; }

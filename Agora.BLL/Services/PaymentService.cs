@@ -43,7 +43,8 @@ namespace Agora.BLL.Services
                 PaymentMethodId = payment.PaymentMethodId,
                 OrderId = payment.OrderId,
                 Signature = payment.Signature,
-                CustomerId = payment.CustomerId
+                CustomerId = payment.CustomerId,
+                GiftCardId = payment.GiftCardId,
             };
         }
         public async Task<PaymentDTO> GetByGiftCardId(int giftCardId)
@@ -61,7 +62,8 @@ namespace Agora.BLL.Services
                 PaymentMethodId = payment.PaymentMethodId,
                 OrderId = payment.OrderId,
                 Signature = payment.Signature,
-                CustomerId = payment.CustomerId
+                CustomerId = payment.CustomerId,
+                GiftCardId = payment.GiftCardId
             };
         }
         public async Task<PaymentDTO> Get(int id)
@@ -77,7 +79,8 @@ namespace Agora.BLL.Services
                 CashbackUsed = payment.CashbackUsed,
                 Status = payment.Status,
                 PaymentMethodId = payment.PaymentMethodId,
-                OrderId = payment.OrderId
+                OrderId = payment.OrderId,
+                GiftCardId = payment.GiftCardId,
 
             };
         }
@@ -94,7 +97,8 @@ namespace Agora.BLL.Services
                 OrderId = paymentDTO.OrderId,
                 CustomerId = paymentDTO.CustomerId,
                 Data = paymentDTO.Data,
-                Signature = paymentDTO.Signature
+                Signature = paymentDTO.Signature,
+                GiftCardId = paymentDTO.GiftCardId
 
             };
             if(paymentDTO.PaymentMethodId != 0)
@@ -115,6 +119,7 @@ namespace Agora.BLL.Services
             existingPayment.OrderId = paymentDTO.OrderId;
             existingPayment.Data = paymentDTO.Data;
             existingPayment.Signature = paymentDTO.Signature;
+            existingPayment.GiftCardId = paymentDTO.GiftCardId;
             Database.Payments.Update(existingPayment);
             await Database.Save();
         }
