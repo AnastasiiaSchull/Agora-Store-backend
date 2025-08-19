@@ -42,7 +42,7 @@ jobs:
               git clone https://agorastore2025:${GH_PAT_PROD}@github.com/agorastore2025/agora-backend.git /mnt/agora/agora-backend
             fi
           
-            cd /mnt/agora/agora-frontend
+            cd /mnt/agora/agora-backend
           
             git fetch origin
             git reset --hard origin/main
