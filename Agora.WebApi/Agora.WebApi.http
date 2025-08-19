@@ -1,0 +1,12 @@
+@Agora.WebApi_HostAddress = http://localhost:5193
+
+
+POST http://localhost:5193/api/statistics
+Content-Type: application/json
+
+{
+  "storeId": 1
+}
+
+
+###

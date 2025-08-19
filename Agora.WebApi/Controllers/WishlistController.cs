@@ -1,0 +1,116 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Agora.BLL.DTO;
+using Agora.BLL.Infrastructure;
+using Agora.BLL.Interfaces;
+
+[ApiController]
+[Route("api/[controller]")]
+public class WishlistController : ControllerBase
+{
+    private readonly IWishlistService _wishlistService;
+    private readonly IUtilsService _utilService;
+
+    public WishlistController(IWishlistService wishlistService, IUtilsService utilService)
+    {
+        _wishlistService = wishlistService;
+        _utilService = utilService;
+    }
+
+    // GET: api/Wishlist
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<WishlistDTO>>> GetAll()
+    {
+        var wishlists = await _wishlistService.GetAll();
+        return Ok(wishlists);
+    }    
+
+    // POST: api/Wishlist/create
+    [HttpPost("create")]    
+    public async Task<ActionResult<WishlistDTO>> Create([FromBody] WishlistDTO wishlistDTO)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        wishlistDTO.DateAdded = DateOnly.FromDateTime(DateTime.Today);
+
+        var createdWishlist = await _wishlistService.Create(wishlistDTO);
+
+        return CreatedAtAction(nameof(GetById), new { id = createdWishlist.Id }, createdWishlist);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<WishlistDTO>> GetById(int id)
+    {
+        var wishlist = await _wishlistService.Get(id);
+        if (wishlist == null)
+            return NotFound();
+
+        return Ok(wishlist);
+    }
+
+
+    // PUT: api/Wishlist/5
+    [HttpPut("{id}")]
+    public async Task<ActionResult> Update(int id, [FromBody] WishlistDTO wishlistDTO)
+    {
+        if (id != wishlistDTO.Id)
+            return BadRequest("ID mismatch.");
+
+        await _wishlistService.Update(wishlistDTO);
+        return NoContent();
+    }
+
+    // DELETE: api/Wishlist/5
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Delete(int id)
+    {
+        await _wishlistService.Delete(id);
+        return NoContent();
+    }
+
+    [HttpPost("{wishlistId}/add-product/{productId}")]
+    public async Task<IActionResult> AddProductToWishlist(int wishlistId, int productId)
+    {
+        await _wishlistService.AddProductToWishlist(wishlistId, productId);
+        return Ok();
+    }
+
+    [HttpDelete("{wishlistId}/remove-product/{productId}")]
+    public async Task<IActionResult> RemoveProductFromWishlist(int wishlistId, int productId)
+    {
+        await _wishlistService.RemoveProductFromWishlist(wishlistId, productId);
+        return NoContent();
+    }
+
+    [HttpGet("{id}/with-products")]
+    public async Task<ActionResult<WishlistDTO>> GetWithProducts(int id)
+    {
+        try
+        {
+            var wishlist = await _wishlistService.GetWithProducts(id);
+            return Ok(wishlist);
+        }
+        catch (ValidationExceptionFromService ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+    // GET: api/Wishlist/by-customer/5    
+    [HttpGet("by-customer/{customerId}")]
+    public async Task<ActionResult<IEnumerable<WishlistDTO>>> GetByCustomerId(int customerId)
+    {
+        var wishlists = await _wishlistService.GetByCustomerId(customerId);
+
+        foreach (var wishlist in wishlists)
+        {
+            foreach (var product in wishlist.Products)
+            {                
+                product.ImagePath = _utilService.GetFirstImageUrl(product.ImagesPath, Request);
+            }
+        }
+
+        return Ok(wishlists);
+    }
+
+
+}

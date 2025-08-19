@@ -1,0 +1,123 @@
+﻿using System.Globalization;
+using Agora.BLL.DTO;
+using Agora.BLL.Infrastructure;
+using Agora.BLL.Interfaces;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
+namespace Agora.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class OrderController : ControllerBase
+    {
+        private readonly IOrderItemService _orderItemService;
+        private readonly IShippingService _shippingService;
+        private readonly IUtilsService _utilsService;
+
+
+        public OrderController(IOrderItemService orderItemService, IUtilsService utilsService, IShippingService shippingService)
+
+        {
+            _orderItemService = orderItemService;
+            _utilsService = utilsService;
+            _shippingService = shippingService;
+        }
+
+        [HttpGet("get-new-orders/{storeId}")]
+        public async Task<IActionResult> GetNewOrders(int storeId)
+        {
+            IEnumerable<OrderItemDTO> newOrders = await _orderItemService.GetNewOrders(storeId);
+            if (newOrders == null)
+                return new JsonResult(new { message = "Server error!" }) { StatusCode = 500 };
+            return Ok(newOrders);
+        }
+
+
+        [HttpGet("get-orders-by-store/{storeId}")]
+        public async Task<IActionResult> GetOrdersByStore(int storeId)
+        {
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.WriteLine("WTF");
+            IEnumerable<OrderItemDTO> orders = await _orderItemService.GetAllByStore(storeId);
+            
+            if (orders == null)
+                return new JsonResult(new { message = "Server error!" }) { StatusCode = 500 };
+            return Ok(orders);
+        }
+
+        [HttpGet("get-orders-by-customer/{customerId}")]
+        public async Task<IActionResult> GetOrdersByCustomer(int customerId, [FromQuery] int? months = null)
+        {
+            IEnumerable<OrderItemDTO> orders = await _orderItemService.GetAllByCustomer(customerId, months);
+            
+            if (orders == null)
+                return Ok(new List<object>());
+
+            var orderItems = orders
+                .Select(oi => new
+                {
+                    id = oi.Id,
+                    UserName = oi.OrderDTO.CustomerDTO?.UserDTO?.Name,
+                    UserSurname = oi.OrderDTO.CustomerDTO?.UserDTO?.Surname,
+                    UserAddress = oi.ShippingDTO?.AddressDTO,
+                    OrderNumber = oi.OrderDTO.Id,
+                    ProductId = oi.ProductDTO?.Id,
+                    ProductName = oi.ProductDTO?.Name,
+                    ProductDescription = oi.ProductDTO?.Description,
+                    ProductImage = _utilsService.GetFirstImageUrl(oi.ProductDTO?.ImagesPath, Request),
+                    SellerId = oi.ProductDTO?.Store?.SellerId,
+                    StoreName = oi.ProductDTO?.Store?.Name,
+                    oi.Status,
+                    oi.PriceAtMoment,
+                    oi.Quantity,
+                    Date = oi.Date.ToString("yyyy-MM-dd")
+                })
+                .ToList();
+
+            return Ok(orderItems);
+        }
+
+        [HttpGet("get-filtered-orders-by-store/id={storeId}&filterField={field}&filterValue={value}")]
+        public async Task<IActionResult> GetFiltredOrders(int storeId, string field, string value)
+        {
+
+            IEnumerable<OrderItemDTO> orders = await _orderItemService.GetFiltredOrders(storeId, field, value);
+            if (orders == null)
+                return new JsonResult(new { message = "Server error!" }) { StatusCode = 500 };
+            return Ok(orders);
+        }
+
+        [HttpGet("get-order-details/{orderId}")]
+        public async Task<IActionResult> GetOrderDetails(int orderId)
+        {
+            try
+            {
+                if (orderId == null)
+                    return new JsonResult(new { message = "Invalid order ID!" }) { StatusCode = 400 };
+                OrderItemDTO order = await _orderItemService.Get(orderId);
+                if (order == null)
+                    return new JsonResult(new { message = "Invalid order!" }) { StatusCode = 400 };
+
+                order.ProductDTO.ImagePath = _utilsService.GetFirstImageUrl(order.ProductDTO.ImagesPath, Request);
+
+                order.ShippingDTO.ArrivingDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(order.ShippingDTO.DeliveryOptionsDTO.EstimatedDays))
+                .ToString("d MMM yyyy", CultureInfo.InvariantCulture);
+
+                return Ok(order);
+            }
+            catch (ValidationExceptionFromService ex)
+            {
+                return new JsonResult(new { message = ex.Message }) { StatusCode = 400 };
+
+            }
+           
+            
+        }
+
+
+
+
+    }
+}

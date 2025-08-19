@@ -1,0 +1,133 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Agora.BLL.DTO;
+using Agora.BLL.Infrastructure;
+using Agora.BLL.Interfaces;
+using Agora.DAL.Entities;
+using Agora.DAL.Interfaces;
+using AutoMapper;
+
+namespace Agora.BLL.Services
+{
+    public class PaymentService : IPaymentService
+    {
+        IUnitOfWork Database { get; set; }
+        IMapper _mapper;
+        public PaymentService(IUnitOfWork uow, IMapper mapper)
+        {
+            Database = uow;
+            _mapper = mapper;
+        }
+
+        public async Task<IQueryable<PaymentDTO>> GetAll()
+        {
+            var payments = await Database.Payments.GetAll();
+            return _mapper.Map<IQueryable<PaymentDTO>>(payments.ToList());
+
+        }
+        public async Task<PaymentDTO> GetByOrderId(int orderId)
+        {
+            var payment = await Database.Payments.GetByOrderId(orderId);
+            if (payment == null)
+                throw new ValidationExceptionFromService("There is no payment with this order id", "");
+            return new PaymentDTO
+            {
+                Id = payment.Id,
+                Amount = payment.Amount,
+                TransactionDate = payment.TransactionDate,
+                CashbackUsed = payment.CashbackUsed,
+                Status = payment.Status,
+                PaymentMethodId = payment.PaymentMethodId,
+                OrderId = payment.OrderId,
+                Signature = payment.Signature,
+                CustomerId = payment.CustomerId,
+                GiftCardId = payment.GiftCardId,
+            };
+        }
+        public async Task<PaymentDTO> GetByGiftCardId(int giftCardId)
+        {
+            var payment = await Database.Payments.GetByGiftCardId(giftCardId);
+            if (payment == null)
+                throw new ValidationExceptionFromService("There is no payment with this gift card id", "");
+            return new PaymentDTO
+            {
+                Id = payment.Id,
+                Amount = payment.Amount,
+                TransactionDate = payment.TransactionDate,
+                CashbackUsed = payment.CashbackUsed,
+                Status = payment.Status,
+                PaymentMethodId = payment.PaymentMethodId,
+                OrderId = payment.OrderId,
+                Signature = payment.Signature,
+                CustomerId = payment.CustomerId,
+                GiftCardId = payment.GiftCardId
+            };
+        }
+        public async Task<PaymentDTO> Get(int id)
+        {
+            var payment = await Database.Payments.Get(id);
+            if (payment == null)
+                throw new ValidationExceptionFromService("There is no user with this id", "");
+            return new PaymentDTO
+            {
+                Id = payment.Id,
+                Amount = payment.Amount,
+                TransactionDate = payment.TransactionDate,
+                CashbackUsed = payment.CashbackUsed,
+                Status = payment.Status,
+                PaymentMethodId = payment.PaymentMethodId,
+                OrderId = payment.OrderId,
+                GiftCardId = payment.GiftCardId,
+
+            };
+        }
+
+        public async Task Create(PaymentDTO paymentDTO)
+        {
+            var payment = new Payment
+            {
+               
+                Amount = paymentDTO.Amount,
+                TransactionDate = paymentDTO.TransactionDate,
+                CashbackUsed = paymentDTO.CashbackUsed,
+                Status = paymentDTO.Status,
+                OrderId = paymentDTO.OrderId,
+                CustomerId = paymentDTO.CustomerId,
+                Data = paymentDTO.Data,
+                Signature = paymentDTO.Signature,
+                GiftCardId = paymentDTO.GiftCardId
+
+            };
+            if(paymentDTO.PaymentMethodId != 0)
+                payment.PaymentMethodId = paymentDTO.PaymentMethodId;
+            else
+                payment.PaymentMethodId = null;
+            await Database.Payments.Create(payment);
+            //await Database.Save();
+        }
+        public async Task Update(PaymentDTO paymentDTO)
+        {
+            var existingPayment = await Database.Payments.Get(paymentDTO.Id);
+            existingPayment.Amount = paymentDTO.Amount;
+            existingPayment.TransactionDate = paymentDTO.TransactionDate;
+            existingPayment.CashbackUsed = paymentDTO.CashbackUsed;
+            existingPayment.Status = paymentDTO.Status;
+            existingPayment.PaymentMethodId = paymentDTO.PaymentMethodId;
+            existingPayment.OrderId = paymentDTO.OrderId;
+            existingPayment.Data = paymentDTO.Data;
+            existingPayment.Signature = paymentDTO.Signature;
+            existingPayment.GiftCardId = paymentDTO.GiftCardId;
+            Database.Payments.Update(existingPayment);
+            await Database.Save();
+        }
+
+        public async Task Delete(int id)
+        {
+            await Database.Payments.Delete(id);
+            await Database.Save();
+        }
+    }
+}

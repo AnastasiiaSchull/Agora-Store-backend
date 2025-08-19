@@ -1,0 +1,19 @@
+services:
+  webapi:
+    build: .
+    image: agora-backend-webapi
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      - Redis_Host=redis
+      - Redis_Port=6379
+    env_file:
+      - .env.Production
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
