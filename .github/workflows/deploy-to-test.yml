@@ -10,7 +10,7 @@ jobs:
     runs-on: self-hosted
 
     env:
-      GH_PAT: ${{ secrets.GH_PAT }}
+      GH_PAT_PROD: ${{ secrets.GH_PAT_PROD }}
       DefaultConnection: ${{ secrets.CONNECTIONSTRINGS__DEFAULTCONNECTION }}
       JwtKey: ${{ secrets.JWT__KEY }}
       JwtIssuer: ${{ secrets.JWT__ISSUER }}
@@ -39,7 +39,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no dev@172.17.9.22 "bash -s" <<EOF
             if [ ! -d /mnt/agora/agora-backend ]; then
-              git clone https://agorastore2025:${GH_PAT}@github.com/agorastore2025/agora-backend.git /mnt/agora/agora-backend
+              git clone https://agorastore2025:${GH_PAT_PROD}@github.com/agorastore2025/agora-backend.git /mnt/agora/agora-backend
             fi
           
             cd /mnt/agora/agora-frontend
