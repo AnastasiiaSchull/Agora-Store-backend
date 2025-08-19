@@ -3,13 +3,14 @@ name: Deploy to Test Server
 on:
   push:
     branches:
-      - test_production
+      - main
 
 jobs:
   deploy:
     runs-on: self-hosted
 
     env:
+      GH_PAT: ${{ secrets.GH_PAT }}
       DefaultConnection: ${{ secrets.CONNECTIONSTRINGS__DEFAULTCONNECTION }}
       JwtKey: ${{ secrets.JWT__KEY }}
       JwtIssuer: ${{ secrets.JWT__ISSUER }}
@@ -36,11 +37,15 @@ jobs:
 
       - name: Deploy to test server via SSH
         run: |
-          ssh -o StrictHostKeyChecking=no dev@172.17.9.24 << EOF
-            cd ~/agora-backend || git clone git@github.com:agorastore2025/agora-backend.git ~/agora-backend
-            cd ~/agora-backend
-
-            git pull origin test_production
+          ssh -o StrictHostKeyChecking=no dev@172.17.9.22 "bash -s" <<EOF
+            if [ ! -d /mnt/agora/agora-frontend ]; then
+              git clone https://agorastore2025:${GH_PAT}@github.com/agorastore2025/agora-frontend.git /mnt/agora/agora-frontend
+            fi
+          
+            cd /mnt/agora/agora-frontend
+          
+            git fetch origin
+            git reset --hard origin/main
 
             # sed äëÿ ïîäñòàíîâêè âñåõ ñåêðåòîâ â appsettings.Production.json
             sed -i "s#\"DefaultConnection\": *\".*\"#\"DefaultConnection\": \"${DefaultConnection}\"#" Agora.WebApi/appsettings.Production.json
