@@ -1,9 +1,13 @@
 name: Deploy to Test Server
 
 on:
-  push:
-    branches:
-      - test_production
+ workflow_dispatch: {}   # только вручную, на push не запустится
+# on:                      #  Workflow будет запускаться только вручную через кнопку “Run workflow” в GitHub Actions.
+                           # Автоматических запусков при push в test_production больше не будет.
+                           # Сообщения на почту о «cancelled jobs» перестанут приходить.
+#   push:
+#     branches:
+#       - test_production
 
 jobs:
   deploy:
