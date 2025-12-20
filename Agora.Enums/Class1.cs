@@ -9,4 +9,4 @@ namespace Agora.Enums
     internal class Class1
     {
     }
-}
+}//rebase test
