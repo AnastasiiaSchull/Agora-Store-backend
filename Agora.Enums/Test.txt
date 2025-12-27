@@ -1,6 +1,0 @@
-﻿for fetch
-second try
-third try
-fourth try
-
-for conflicts solving
