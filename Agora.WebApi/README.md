@@ -15,7 +15,6 @@ docker compose -f docker-compose.redis.yml up -d
 - Endpoint для Translator (Text Translation Endpoint)
 
 ## 2. Создать файл .env в корне проекта Agora.WebApi
-
 Добавьте туда переменные:
 
 AZURE_SPEECH_KEY=your-speech-api-key
